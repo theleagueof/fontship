@@ -6,10 +6,25 @@ on:
       - 'v*'
 
 jobs:
-  build:
+  release:
     runs-on: ubuntu-latest
-    env:
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
       - name: Checkout
         uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Fetch Tags
+        run: git fetch --prune --tags
+      - name: Build Source
+        run: |
+          ./bootstrap.sh
+          ./configure
+          make dist
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            fontship-${{ github.ref }}.zip
+            fontship-${{ github.ref }}.tar.gz
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
