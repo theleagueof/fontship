@@ -19,13 +19,27 @@ PROJECT ?= $(GITNAME)
 _PROJECTDIR != cd "$(shell dirname $(firstword $(MAKEFILE_LIST)))/" && pwd
 PROJECTDIR ?= $(_PROJECTDIR)
 PUBDIR ?= $(PROJECTDIR)/pub
-
 # Some Makefile shinanigans to avoid aggressive trimming
 space := $() $()
 
 # Allow overriding executables used
 FONTV ?= font-v
 PYTHON ?= python3
+
+# Read font name from metadata file or guess from repository name
+FontName ?= $(shell python -c 'print("$(PROJECT)".replace("-", " ").title())')
+
+# Determine font version automatically from repository git tags
+FontVersion ?= $(shell git describe --tags --abbrev=6 | sed 's/-.*//g')
+FontVersionMeta ?= $(shell git describe --tags --abbrev=6 --long | sed 's/-[0-9]\+/\\;/;s/-g/[/')]
+GitVersion ?= $(shell git describe --tags --abbrev=6 | sed 's/-/-r/')
+isTagged := $(if $(subst $(FontVersion),,$(GitVersion)),,true)
+
+# Look for what fonts & styles are in this repository that will need building
+FontBase = $(subst $(space),,$(FontName))
+FontStyles = $(subst $(FontBase)-,,$(basename $(wildcard $(FontBase)-*.ufo)))
+
+TARGETS = $(foreach BASE,$(FontBase),$(foreach STYLE,$(FontStyles),$(BASE)-$(STYLE)))
 
 .PHONY: default
 default: all
@@ -37,6 +51,16 @@ debug:
 	echo PROJECT = $(PROJECT)
 	echo PROJECTDIR = $(PROJECTDIR)
 	echo PUBDIR = $(PUBDIR)
+	echo ----------------------------
+	echo FontName = $(FontName)
+	echo FontBase: $(FontBase)
+	echo FontStyles: $(FontStyles)
+	echo FontVersion: $(FontVersion)
+	echo FontVersionMeta: $(FontVersionMeta)
+	echo GitVersion: $(GitVersion)
+	echo isTagged: $(isTagged)
+	echo ----------------------------
+	echo TARGETS: $(TARGETS)
 
 .PHONY: all
 all: debug
