@@ -6,3 +6,7 @@ license_DATA = LICENSE
 licensedir = $(datadir)/licenses/fontship
 
 CLEANFILES = $(bin_SCRIPTS)
+
+.PHONY: docker
+docker: Dockerfile build-aux/docker-entrypoint.sh
+	docker build --tag theleagueof/fontship:HEAD ./
