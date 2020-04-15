@@ -18,15 +18,17 @@ Fontship can be used in any of four different ways:
 
 ### Local Setup
 
-To install and use locally, you'll need some dependencies:
+If you use Arch Linux, you can install [this AUR package](https://aur.archlinux.org/packages/fontship) (prebuilt in [this repostiory](https://wiki.archlinux.org/index.php/Unofficial_user_repositories#alerque)).
 
-* Git
-* GNU core utilities plus `bsdtar`, `entr`, `zsh`
-* GNU `make` (4.2+) with corresponding autoconf tools
-* Python 3 plus assorted modules, see *requirements.txt* file
+Otherwise to install and use locally from source, you'll need some dependencies:
+
+* Git,
+* GNU core utilities plus `bsdtar`, `entr`, `zsh`,
+* GNU `make` (4.2+) with corresponding autoconf tools,
+* Python 3 plus assorted modules, see *requirements.txt* file.
 
 Install the software to your computer. Either clone this repository and
-run `./bootstrap.sh` or download and extract a tarball, then run:
+run `./bootstrap.sh` or [download and extract the latest release](https://github.com/theleagueof/fontship/releases), then run:
 
     $ ./configure
     $ make
@@ -40,7 +42,7 @@ Add an alias:
 
     $ alias fontship='docker run -it --volume "$(pwd):/data" --user "$(id -u):$(id -g)" theleagueof/fontship:latest"
 
-You may substitute *latest*, which will always be the most recently released tagged version, with *master* to use the latest unreleased build, with a tag name to explicitly use a specific version, or with *HEAD* to use an image build locally.
+You may substitute *latest*, which will always be the most recently released tagged version, with *master* to use the freshest unreleased build, with a tag name to explicitly use a specific version, or with *HEAD* to use an image build locally.
 
 To build a docker image locally, you'll want to clone this repository and run `./bootstrap.sh` or download and extract a tarball, then run:
 
