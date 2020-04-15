@@ -1,10 +1,20 @@
 #!/usr/bin/env @PYTHON@
 
-VERSION = "@VERSION@"
+__version__ = "@VERSION@"
 
 import sys
 sys.path.append("@pythondir@/".replace("${prefix}", "@prefix@"))
 
 import fontship
+
+import click
+
+@click.command()
+@click.version_option(__version__)
+@click.pass_context
+def fontship(ctx):
+    print("Thing")
+
+fontship()
 
 # vim: ft=python
