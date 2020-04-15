@@ -16,7 +16,7 @@ Fontship can be used in any of three different ways:
 ### Local Setup
 
 Install the software to your computer. Either clone this repository and
-run `autoreconf --install` or download and extract a tarball, then run:
+run `./bootstrap.sh` or download and extract a tarball, then run:
 
     $ ./configure
     $ make
