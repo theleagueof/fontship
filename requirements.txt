@@ -1,0 +1,11 @@
+#afdko==3.2.1
+#fonttools[ufo,lxml]==4.6.0
+#psautohint==2.0.1
+#fontmake==2.1.0
+#defcon==0.6.0
+#ufo2ft==2.13.0
+#ufoLib2==0.6.2
+#font-v==1.0.2
+#pcpp==1.21
+#skia-pathops==0.2.1
+#git+git://github.com/alif-type/sfdLib.git@v1.0.0#egg=sfdLib
