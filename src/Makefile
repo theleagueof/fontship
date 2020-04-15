@@ -69,6 +69,73 @@ all: debug
 clean:
 	git clean -dxf
 
+.PHONY: glyphs
+glyphs: $(addsuffix .glyphs,$(TARGETS))
+
+.PHONY: fontforge
+fontforge: $(addsuffix .sfd,$(TARGETS))
+
+.PHONY: fonts
+fonts: otf ttf
+
+.PHONY: otf
+otf: $(addsuffix .otf,$(TARGETS))
+
+.PHONY: ttf
+ttf: $(addsuffix .ttf,$(TARGETS))
+
+%.glyphs: %.ufo
+	fontmake -u $< -o glyphs
+
+%.designspace: %.glyphs
+	echo MM $@
+
+%.sfd: %.ufo
+	echo SDF: $@
+
+# %.ufo: %.glyphs
+#     fontmake -g $< -o ufo
+
+%.ufo: .last-commit
+	cat <<- EOF | $(PYTHON)
+		from defcon import Font, Info
+		ufo = Font('$@')
+		major, minor = "$(FontVersion)".split(".")
+		ufo.info.versionMajor, ufo.info.versionMinor = int(major), int(minor) + 7
+		ufo.save('$@')
+	EOF
+
+%.otf: %.ufo
+	cat <<- EOF | $(PYTHON)
+		from ufo2ft import compileOTF
+		from defcon import Font
+		ufo = Font('$<')
+		otf = compileOTF(ufo)
+		otf.save('$@')
+	EOF
+	$(normalizeVersion)
+
+%.ttf: %.ufo
+	cat <<- EOF | $(PYTHON)
+		from ufo2ft import compileTTF
+		from defcon import Font
+		ufo = Font('$<')
+		ttf = compileTTF(ufo)
+		ttf.save('$@')
+	EOF
+	$(normalizeVersion)
+
+.PHONY: .last-commit
+.last-commit:
+	git update-index --refresh --ignore-submodules ||:
+	git diff-index --quiet --cached HEAD -- *.ufo
+	ts=$$(git log -n1 --pretty=format:%cI HEAD)
+	touch -d "$$ts" -- $@
+
+define normalizeVersion =
+	font-v write --ver=$(FontVersion) $(if $(isTagged),--rel,--dev --sha1) $@
+endef
+
 # Empty recipie to suppres makefile regeneration
 $(MAKEFILE_LIST):;
 
