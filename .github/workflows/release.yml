@@ -20,11 +20,14 @@ jobs:
           ./bootstrap.sh
           ./configure
           make dist
+      - name: Get Build Info
+        run: |
+          echo ::set-env name=VERSION::$(./build-aux/git-version-gen .tarball-version)
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
           files: |
-            fontship-${{ github.ref }}.zip
-            fontship-${{ github.ref }}.tar.gz
+            fontship-${{ env.VERSION }}.zip
+            fontship-${{ env.VERSION }}.tar.gz
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
