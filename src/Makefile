@@ -41,6 +41,10 @@ debug:
 .PHONY: all
 all: debug
 
+.PHONY: clean
+clean:
+	git clean -dxf
+
 # Empty recipie to suppres makefile regeneration
 $(MAKEFILE_LIST):;
 
