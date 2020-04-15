@@ -7,11 +7,12 @@ League of Moveable Type](https://www.theleagueofmoveabletype.com/).
 
 ## Setup & Usage
 
-Fontship can be used in any of three different ways:
+Fontship can be used in any of four different ways:
 
-1.  Directly on a local system that has all the required dependencies.
+1.  Directly on a local system that has all the required dependencies and fontship has been installed.
 2.  On a local system via a Docker image for low hastle setup.
 3.  Remotely via a CI runner.
+4.  By including fontship into your project's Makefile.
 
 ### Local Setup
 
@@ -33,9 +34,18 @@ run `./bootstrap.sh` or download and extract a tarball, then run:
 
 ### Docker Setup
 
+Docker images are available from Docker Hub or you can build them yourself.
+
 Add an alias:
 
-    $ alias fontship='docker run -it --volume "$(pwd):/data" --user "$(id -u):$(id -g)" theleagueof/fontship:master"
+    $ alias fontship='docker run -it --volume "$(pwd):/data" --user "$(id -u):$(id -g)" theleagueof/fontship:latest fontship"
+
+You may substitute *latest*, which will always be the most recently released tagged version, with *master* to use the latest unreleased build, with a tag name to explicitly use a specific version, or with *HEAD* to use an image build locally.
+
+To build a docker image locally, you'll want to clone this repository and run `./bootstrap.sh` or download and extract a tarball, then run:
+
+    $ ./configure
+    $ make docker
 
 ### CI Setup
 
@@ -56,3 +66,13 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 ```
+
+### Makefile Setup
+
+If ⓐ your system has all the dependencies and ⓑ your project already has a `Makefile`, you can extend your existing makefile with fontship's targets my including it:
+
+```makefile
+include path/to/fontship/src/Makefile
+```
+
+This may reference a path to fontship as a git submodule (useful for locking the fontship version to your project's build), or just a relative path to somewhere you have the fontship source.

@@ -2,6 +2,9 @@
 
 VERSION = "@VERSION@"
 
+import sys
+sys.path.append("@pythondir@/".replace("${prefix}", "@prefix@"))
+
 import fontship
 
 # vim: ft=python
