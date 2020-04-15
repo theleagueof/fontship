@@ -33,9 +33,18 @@ run `./bootstrap.sh` or download and extract a tarball, then run:
 
 ### Docker Setup
 
+Docker images are available from Docker Hub or you can build them yourself.
+
 Add an alias:
 
-    $ alias fontship='docker run -it --volume "$(pwd):/data" --user "$(id -u):$(id -g)" theleagueof/fontship:master"
+    $ alias fontship='docker run -it --volume "$(pwd):/data" --user "$(id -u):$(id -g)" theleagueof/fontship:latest fontship"
+
+You may substitute *latest*, which will always be the most recently released tagged version, with *master* to use the latest unreleased build, with a tag name to explicitly use a specific version, or with *HEAD* to use an image build locally.
+
+To build a docker image locally, you'll want to clone this repository and run `./bootstrap.sh` or download and extract a tarball, then run:
+
+    $ ./configure
+    $ make docker
 
 ### CI Setup
 
