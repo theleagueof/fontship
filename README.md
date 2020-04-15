@@ -19,11 +19,9 @@ Fontship can be used in any of four different ways:
 To install and use locally, you'll need some dependencies:
 
 * Git
-* Python 3
-* GNU Make 4.2 & automake
-* GNU core utilities (tar, touch, sed, etc.)
-* BSD tar
-* Assorted python modules see `requirements.txt`.
+* GNU core utilities plus `bsdtar`, `entr`, `zsh`
+* GNU `make` (4.2+) with corresponding autoconf tools
+* Python 3 plus assorted modules, see *requirements.txt* file
 
 Install the software to your computer. Either clone this repository and
 run `./bootstrap.sh` or download and extract a tarball, then run:
@@ -38,7 +36,7 @@ Docker images are available from Docker Hub or you can build them yourself.
 
 Add an alias:
 
-    $ alias fontship='docker run -it --volume "$(pwd):/data" --user "$(id -u):$(id -g)" theleagueof/fontship:latest fontship"
+    $ alias fontship='docker run -it --volume "$(pwd):/data" --user "$(id -u):$(id -g)" theleagueof/fontship:latest"
 
 You may substitute *latest*, which will always be the most recently released tagged version, with *master* to use the latest unreleased build, with a tag name to explicitly use a specific version, or with *HEAD* to use an image build locally.
 

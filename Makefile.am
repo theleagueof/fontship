@@ -1,9 +1,11 @@
+licensedir = $(datarootdir)/licenses/fontship
+datadir = $(datarootdir)/fontship
+
 bin_SCRIPTS = fontship
 python_PYTHON = fontship.py
 dist_doc_DATA = README.md
 license_DATA = LICENSE
-
-licensedir = $(datadir)/licenses/fontship
+dist_data_DATA = src/Makefile
 
 CLEANFILES = $(bin_SCRIPTS)
 
