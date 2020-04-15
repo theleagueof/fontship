@@ -1,3 +1,5 @@
 #!/usr/bin/env @PYTHON@
 
+VERSION = "@VERSION@"
+
 import fontship
