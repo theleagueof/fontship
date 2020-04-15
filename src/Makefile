@@ -132,6 +132,26 @@ ttf: $(addsuffix .ttf,$(TARGETS))
 	ts=$$(git log -n1 --pretty=format:%cI HEAD)
 	touch -d "$$ts" -- $@
 
+DISTDIR = $(FontBase)-$(GitVersion)
+
+$(DISTDIR):
+	mkdir -p $@
+
+.PHONY: dist
+dist: $(DISTDIR).zip $(DISTDIR).tar.bz2
+
+$(DISTDIR).tar.bz2 $(DISTDIR).zip: install-dist
+	bsdtar -acf $@ $(DISTDIR)
+
+.PHONY: install-dist
+install-dist: all $(DISTDIR)
+	install -Dm644 -t "$(DISTDIR)/OTF/" *.otf
+	install -Dm644 -t "$(DISTDIR)/TTF/" *.ttf
+
+install-local: install-dist
+	install -Dm755 -t "$${HOME}/.local/share/fonts/OTF/" $(DISTDIR)/OTF/*.otf
+	install -Dm755 -t "$${HOME}/.local/share/fonts/TTF/" $(DISTDIR)/TTF/*.ttf
+
 define normalizeVersion =
 	font-v write --ver=$(FontVersion) $(if $(isTagged),--rel,--dev --sha1) $@
 endef
