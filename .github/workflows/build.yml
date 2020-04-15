@@ -1,0 +1,28 @@
+name: Build
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Fetch Tags
+        run: git fetch --prune --tags
+      - name: Build
+        run: |
+          ./bootstrap.sh
+          ./configure
+          make
+          make distdir
+      - name: Get Build Info
+        run: |
+          echo ::set-env name=VERSION::$(./build-aux/git-version-gen .tarball-version)
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v2-preview
+        with:
+          name: fontship-${{ env.VERSION }}
+          path: fontship*-${{ env.VERSION }}/
