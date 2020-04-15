@@ -19,11 +19,9 @@ Fontship can be used in any of four different ways:
 To install and use locally, you'll need some dependencies:
 
 * Git
-* Python 3
-* GNU Make 4.2 & automake
-* GNU core utilities (tar, touch, sed, etc.)
-* BSD tar
-* Assorted python modules see `requirements.txt`.
+* GNU core utilities plus `bsdtar`, `entr`, `zsh`
+* GNU `make` (4.2+) with corresponding autoconf tools
+* Python 3 plus assorted modules, see *requirements.txt* file
 
 Install the software to your computer. Either clone this repository and
 run `./bootstrap.sh` or download and extract a tarball, then run:
