@@ -11,4 +11,7 @@ CLEANFILES = $(bin_SCRIPTS)
 
 .PHONY: docker
 docker: Dockerfile build-aux/docker-entrypoint.sh
-	docker build --tag theleagueof/fontship:HEAD ./
+	docker build \
+		--build-arg VCS_REF="$(VERSION)" \
+		--tag theleagueof/fontship:HEAD \
+		./
