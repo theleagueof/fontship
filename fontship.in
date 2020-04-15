@@ -2,19 +2,32 @@
 
 __version__ = "@VERSION@"
 
+SRCDIR = "@datadir@/fontship/".replace("${prefix}", "@prefix@")
+
 import sys
 sys.path.append("@pythondir@/".replace("${prefix}", "@prefix@"))
 
-import fontship
-
 import click
+import fontship
+import subprocess
 
 @click.command()
 @click.version_option(__version__)
 @click.pass_context
-def fontship(ctx):
-    print("Thing")
+@click.argument('command')
+@click.argument('args', nargs=-1)
 
-fontship()
+def fontship(ctx, command, args):
+    """Execute any fontship supported subcommand COMMAND."""
+    if command == "make":
+        # TODO: Check if a local Makefile exists first, and run it with an extra include if so
+        process = subprocess.run([command, '-f', SRCDIR + "Makefile"] + list(args))
+            #, stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True)
+        process
+    else:
+        print("unknown command, try 'make'")
+
+if __name__ == '__main__':
+    fontship()
 
 # vim: ft=python
