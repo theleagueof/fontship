@@ -3,3 +3,5 @@
 VERSION = "@VERSION@"
 
 import fontship
+
+# vim: ft=python
