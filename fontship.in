@@ -34,6 +34,14 @@ fontship.add_command(make)
 
 @click.command()
 @click.pass_context
+def setup(ctx):
+    """Setup Fontship for use on a new Font project."""
+    click.echo("Anybody want a penut")
+
+fontship.add_command(setup)
+
+@click.command()
+@click.pass_context
 def status(ctx):
     """Show information about setup and build status."""
     click.echo("No what?")
