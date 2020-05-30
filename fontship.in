@@ -15,21 +15,22 @@ import click
 import fontship
 import subprocess
 
-@click.command()
+@click.group()
 @click.version_option(__version__)
-@click.pass_context
-@click.argument('command')
-@click.argument('args', nargs=-1)
-
-def fontship(ctx, command, args):
+def fontship():
     """Execute any fontship supported subcommand COMMAND."""
-    if command == "make":
-        # TODO: Check if a local Makefile exists first, and run it with an extra include if so
-        process = subprocess.run([command, '-f', SRCDIR + "Makefile"] + list(args))
-            #, stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True)
-        process
-    else:
-        print("unknown command, try 'make'")
+
+@click.command()
+@click.pass_context
+@click.argument('target', nargs=-1)
+def make(ctx, target):
+    """Build specified target(s)."""
+    # TODO: Check if a local Makefile exists first, and run it with an extra include if so
+    process = subprocess.run(['make', '-f', SRCDIR + "rules.mk"] + list(target))
+    #, stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True)
+    process
+
+fontship.add_command(make)
 
 if __name__ == '__main__':
     fontship()
