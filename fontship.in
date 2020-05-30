@@ -2,7 +2,11 @@
 
 __version__ = "@VERSION@"
 
-SRCDIR = "@datadir@/fontship/".replace("${prefix}", "@prefix@")
+# This is inscruitable, but basically allows us to take advantage of automake
+# knowing where system stuff is without having to process the source in two
+# stages to get the final answer here. All this to know where on the system we
+# are currently installed!
+SRCDIR = "@datarootdir@/fontship/".replace("${prefix}", "@prefix@")
 
 import sys
 sys.path.append("@pythondir@/".replace("${prefix}", "@prefix@"))
