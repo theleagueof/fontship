@@ -32,6 +32,14 @@ def make(ctx, target):
 
 fontship.add_command(make)
 
+@click.command()
+@click.pass_context
+def status(ctx):
+    """Show information about setup and build status."""
+    click.echo("No what?")
+
+fontship.add_command(status)
+
 if __name__ == '__main__':
     fontship()
 
