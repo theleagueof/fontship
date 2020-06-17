@@ -4,6 +4,15 @@ AC_INIT([fontship],
 AM_INIT_AUTOMAKE([foreign dist-zip])
 AM_SILENT_RULES([yes])
 
+AC_CHECK_PROG(GFTOOLS, gftools, yes)
+test "x$GFTOOLS" == "xyes" || AC_MSG_ERROR([gftools is required])
+
+AC_CHECK_PROG(TTFAUTOHINT, ttfautohint, yes)
+test "x$TTFAUTOHINT" == "xyes" || AC_MSG_ERROR([ttfautohint is required])
+
+AC_CHECK_PROG(ZSH, zsh, yes)
+test "x$ZSH" == "xyes" || AC_MSG_ERROR([zsh is required])
+
 AM_PATH_PYTHON([3.6])
 
 AC_CONFIG_FILES([Makefile])
