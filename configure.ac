@@ -7,6 +7,9 @@ AM_SILENT_RULES([yes])
 AC_CHECK_PROG(GFTOOLS, gftools, yes)
 test "x$GFTOOLS" == "xyes" || AC_MSG_ERROR([gftools is required])
 
+AC_CHECK_PROG(SFNT2WOFFZOPFLI, sfnt2woff-zopfli, yes)
+test "x$SFNT2WOFFZOPFLI" == "xyes" || AC_MSG_ERROR([sfnt2woff-zopfli is required])
+
 AC_CHECK_PROG(TTFAUTOHINT, ttfautohint, yes)
 test "x$TTFAUTOHINT" == "xyes" || AC_MSG_ERROR([ttfautohint is required])
 
