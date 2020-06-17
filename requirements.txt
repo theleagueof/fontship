@@ -1,5 +1,6 @@
 click==7.1.1
 defcon==0.6.0
+gftools==0.3.12
 font-v==1.0.2
 fontmake==2.1.0
 fonttools[lxml,ufo,unicode,woff]==4.6.0
