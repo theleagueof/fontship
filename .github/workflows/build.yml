@@ -12,6 +12,12 @@ jobs:
           fetch-depth: 0
       - name: Fetch Tags
         run: git fetch --prune --tags
+      - name: Setup system dependencies
+        run: sudo apt-get install sfnt2woff-zopfli ttfautohint zsh
+      - name: Setup Python
+        uses: actions/setup-python@v2
+      - name: Setup Python dependencies
+        run: pip install -r requirements.txt
       - name: Build
         run: |
           ./bootstrap.sh
