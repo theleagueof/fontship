@@ -14,7 +14,7 @@ Fontship can be used in any of four different ways:
 1.  Directly on a local system that has all the required dependencies and fontship has been installed.
 2.  On a local system via a Docker image for low hastle setup.
 3.  Remotely via a CI runner.
-4.  By including fontship into your project's Makefile.
+4.  By including fontship's rules into your project's Makefile.
 
 ### Local Setup
 
@@ -74,7 +74,7 @@ jobs:
 If ⓐ your system has all the dependencies and ⓑ your project already has a `Makefile`, you can extend your existing makefile with fontship's targets my including it:
 
 ```makefile
-include path/to/fontship/src/Makefile
+include path/to/fontship/src/rules.mk
 ```
 
 This may reference a path to fontship as a git submodule (useful for locking the fontship version to your project's build), or just a relative path to somewhere you have the fontship source.
