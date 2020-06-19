@@ -79,7 +79,7 @@ glyphs: $$(addsuffix .glyphs,$$(TARGETS))
 fontforge: $$(addsuffix .sfd,$$(TARGETS))
 
 .PHONY: fonts
-fonts: otf ttf woff woff2
+fonts: otf ttf variable woff woff2
 
 OTFS = $$(addsuffix .otf,$$(TARGETS))
 .PHONY: otf
@@ -96,6 +96,10 @@ woff: $(WOFFS)
 WOFF2S = $$(addsuffix .woff2,$$(TARGETS))
 .PHONY: woff2
 woff2: $(WOFF2S)
+
+VARIABLES = $$(addsuffix -VF.ttf,$$(FontBase))
+.PHONY: variable
+variable: $(VARIABLES)
 
 ifeq (glyphs,$(CANONICAL))
 
@@ -145,6 +149,9 @@ endif
 		ttf.save('$@')
 	EOF
 	$(normalizeVersion)
+
+%-VF.ttf: %.glyphs
+	fontmake -g $< -o variable --output-path $@
 
 instance_otf/$(FontBase)-%.otf: $(FontBase).glyphs
 	fontmake --master-dir '{tmp}' -g $< -i "$(FontName) $*" -o otf
