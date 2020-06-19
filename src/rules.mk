@@ -81,11 +81,13 @@ fontforge: $$(addsuffix .sfd,$$(TARGETS))
 .PHONY: fonts
 fonts: otf ttf
 
+OTFS = $$(addsuffix .otf,$$(TARGETS))
 .PHONY: otf
-otf: $$(addsuffix .otf,$$(TARGETS))
+otf: $(OTFS)
 
+TTFS = $$(addsuffix .ttf,$$(TARGETS))
 .PHONY: ttf
-ttf: $$(addsuffix .ttf,$$(TARGETS))
+ttf: $(TTFS)
 
 ifeq (glyphs,$(CANONICAL))
 
@@ -169,8 +171,8 @@ $(DISTDIR).tar.bz2 $(DISTDIR).zip: install-dist
 
 .PHONY: install-dist
 install-dist: all $(DISTDIR)
-	install -Dm644 -t "$(DISTDIR)/OTF/" *.otf
-	install -Dm644 -t "$(DISTDIR)/TTF/" *.ttf
+	install -Dm644 -t "$(DISTDIR)/OTF/" $(OTFS)
+	install -Dm644 -t "$(DISTDIR)/TTF/" $(TTFS)
 
 install-local: install-dist
 	install -Dm755 -t "$${HOME}/.local/share/fonts/OTF/" $(DISTDIR)/OTF/*.otf
