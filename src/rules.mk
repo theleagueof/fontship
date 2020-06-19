@@ -22,6 +22,8 @@ PUBDIR ?= $(PROJECTDIR)/pub
 # Some Makefile shinanigans to avoid aggressive trimming
 space := $() $()
 
+CANONICAL ?= $(shell git ls-files | grep -q '\.glyphs$'' && echo glyphs || echo ufo)
+
 # Allow overriding executables used
 FONTV ?= font-v
 PYTHON ?= python3
@@ -38,6 +40,7 @@ isTagged := $(if $(subst $(FontVersion),,$(GitVersion)),,true)
 # Look for what fonts & styles are in this repository that will need building
 FontBase = $(subst $(space),,$(FontName))
 FontStyles = $(subst $(FontBase)-,,$(basename $(wildcard $(FontBase)-*.ufo)))
+FontStyles += $(foreach GLYPHS,$(wildcard $(FontBase).glyphs),$(call glyphWeights,$(GLYPHS)))
 
 TARGETS = $(foreach BASE,$(FontBase),$(foreach STYLE,$(FontStyles),$(BASE)-$(STYLE)))
 
@@ -63,38 +66,58 @@ debug:
 	echo TARGETS: $(TARGETS)
 
 .PHONY: all
-all: debug
+all: debug fonts
 
 .PHONY: clean
 clean:
 	git clean -dxf
 
 .PHONY: glyphs
-glyphs: $(addsuffix .glyphs,$(TARGETS))
+glyphs: $$(addsuffix .glyphs,$$(TARGETS))
 
 .PHONY: fontforge
-fontforge: $(addsuffix .sfd,$(TARGETS))
+fontforge: $$(addsuffix .sfd,$$(TARGETS))
 
 .PHONY: fonts
-fonts: otf ttf
+fonts: otf ttf variable woff woff2
 
+OTFS = $$(addsuffix .otf,$$(TARGETS))
 .PHONY: otf
-otf: $(addsuffix .otf,$(TARGETS))
+otf: $(OTFS)
 
+TTFS = $$(addsuffix .ttf,$$(TARGETS))
 .PHONY: ttf
-ttf: $(addsuffix .ttf,$(TARGETS))
+ttf: $(TTFS)
+
+WOFFS = $$(addsuffix .woff,$$(TARGETS))
+.PHONY: woff
+woff: $(WOFFS)
+
+WOFF2S = $$(addsuffix .woff2,$$(TARGETS))
+.PHONY: woff2
+woff2: $(WOFF2S)
+
+VARIABLES = $$(addsuffix -VF.ttf,$$(FontBase))
+.PHONY: variable
+variable: $(VARIABLES)
+
+ifeq (glyphs,$(CANONICAL))
 
 %.glyphs: %.ufo
 	fontmake -u $< -o glyphs
 
+# %.ufo: %.glyphs
+#     fontmake -g $< -o ufo
+
 %.designspace: %.glyphs
 	echo MM $@
 
+endif
+
+ifeq (ufo,$(CANONICAL))
+
 %.sfd: %.ufo
 	echo SDF: $@
-
-# %.ufo: %.glyphs
-#     fontmake -g $< -o ufo
 
 %.ufo: .last-commit
 	cat <<- EOF | $(PYTHON)
@@ -104,6 +127,8 @@ ttf: $(addsuffix .ttf,$(TARGETS))
 		ufo.info.versionMajor, ufo.info.versionMinor = int(major), int(minor) + 7
 		ufo.save('$@')
 	EOF
+
+endif
 
 %.otf: %.ufo
 	cat <<- EOF | $(PYTHON)
@@ -125,6 +150,34 @@ ttf: $(addsuffix .ttf,$(TARGETS))
 	EOF
 	$(normalizeVersion)
 
+variable_ttf/%-VF.ttf: %.glyphs
+	fontmake -g $< -o variable
+	gftools fix-dsig --autofix $@
+
+%.ttf: variable_ttf/%.ttf
+	gftools fix-nonhinting $< $@
+	ttx -f -x "MVAR" $@
+	ttx $(@:.ttf=.ttx)
+
+instance_otf/$(FontBase)-%.otf: $(FontBase).glyphs
+	fontmake --master-dir '{tmp}' -g $< -i "$(FontName) $*" -o otf
+
+%.otf: instance_otf/%.otf
+	cp $< $@
+
+instance_ttf/$(FontBase)-%.ttf: $(FontBase).glyphs
+	fontmake --master-dir '{tmp}' -g $< -i "$(FontName) $*" -o ttf
+	gftools fix-dsig --autofix $@
+
+$(FontBase)-%.ttf: instance_ttf/$(FontBase)-%.ttf
+	ttfautohint $< $@
+
+%.woff: %.ttf
+	sfnt2woff-zopfli $<
+
+%.woff2: %.ttf
+	woff2_compress $<
+
 .PHONY: .last-commit
 .last-commit:
 	git update-index --refresh --ignore-submodules ||:
@@ -145,12 +198,18 @@ $(DISTDIR).tar.bz2 $(DISTDIR).zip: install-dist
 
 .PHONY: install-dist
 install-dist: all $(DISTDIR)
-	install -Dm644 -t "$(DISTDIR)/OTF/" *.otf
-	install -Dm644 -t "$(DISTDIR)/TTF/" *.ttf
+	install -Dm644 -t "$(DISTDIR)/OTF/" $(OTFS)
+	install -Dm644 -t "$(DISTDIR)/TTF/" $(TTFS)
+	install -Dm644 -t "$(DISTDIR)/WOFF/" $(WOFFS)
+	install -Dm644 -t "$(DISTDIR)/WOF2F/" $(WOFFS2)
+	install -Dm644 -t "$(DISTDIR)/variable/" $(VARIABLES)
 
 install-local: install-dist
 	install -Dm755 -t "$${HOME}/.local/share/fonts/OTF/" $(DISTDIR)/OTF/*.otf
 	install -Dm755 -t "$${HOME}/.local/share/fonts/TTF/" $(DISTDIR)/TTF/*.ttf
+	install -Dm755 -t "$${HOME}/.local/share/fonts/variable/" $(DISTDIR)/variable/*.ttf
+
+glyphWeights = $(shell python -c 'from glyphsLib import GSFont; list(map(lambda x: print(x.name), GSFont("$1").instances))')
 
 define normalizeVersion =
 	font-v write --ver=$(FontVersion) $(if $(isTagged),--rel,--dev --sha1) $@
