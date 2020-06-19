@@ -166,7 +166,7 @@ install-local: install-dist
 	install -Dm755 -t "$${HOME}/.local/share/fonts/OTF/" $(DISTDIR)/OTF/*.otf
 	install -Dm755 -t "$${HOME}/.local/share/fonts/TTF/" $(DISTDIR)/TTF/*.ttf
 
-glyphWeights = $(shell awk -F'[=; ]*' '/weightClass/ {print $$2}' $1)
+glyphWeights = $(shell python -c 'from glyphsLib import GSFont; list(map(lambda x: print(x.name), GSFont("$1").instances))')
 
 define normalizeVersion =
 	font-v write --ver=$(FontVersion) $(if $(isTagged),--rel,--dev --sha1) $@
