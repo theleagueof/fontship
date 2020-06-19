@@ -126,6 +126,9 @@ ttf: $(addsuffix .ttf,$(TARGETS))
 	EOF
 	$(normalizeVersion)
 
+$(FontBase)-%.ttf: $(FontBase).glyphs
+	fontmake -g $< -i "$(FontName) $*" -o ttf
+
 .PHONY: .last-commit
 .last-commit:
 	git update-index --refresh --ignore-submodules ||:
