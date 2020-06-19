@@ -136,8 +136,18 @@ endif
 	EOF
 	$(normalizeVersion)
 
-$(FontBase)-%.ttf: $(FontBase).glyphs
-	fontmake -g $< -i "$(FontName) $*" -o ttf
+instance_otf/$(FontBase)-%.otf: $(FontBase).glyphs
+	fontmake --master-dir '{tmp}' -g $< -i "$(FontName) $*" -o otf
+
+%.otf: instance_otf/%.otf
+	cp $< $@
+
+instance_ttf/$(FontBase)-%.ttf: $(FontBase).glyphs
+	fontmake --master-dir '{tmp}' -g $< -i "$(FontName) $*" -o ttf
+	gftools fix-dsig --autofix $@
+
+$(FontBase)-%.ttf: instance_ttf/$(FontBase)-%.ttf
+	ttfautohint $< $@
 
 .PHONY: .last-commit
 .last-commit:
