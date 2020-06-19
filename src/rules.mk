@@ -130,7 +130,7 @@ ifeq (ufo,$(CANONICAL))
 
 endif
 
-%.otf: %.ufo
+%.otf: %.ufo .last-commit
 	cat <<- EOF | $(PYTHON)
 		from ufo2ft import compileOTF
 		from defcon import Font
@@ -140,7 +140,7 @@ endif
 	EOF
 	$(normalizeVersion)
 
-%.ttf: %.ufo
+%.ttf: %.ufo .last-commit
 	cat <<- EOF | $(PYTHON)
 		from ufo2ft import compileTTF
 		from defcon import Font
@@ -154,7 +154,7 @@ variable_ttf/%-VF.ttf: %.glyphs
 	fontmake -g $< -o variable
 	gftools fix-dsig --autofix $@
 
-%.ttf: variable_ttf/%.ttf
+%.ttf: variable_ttf/%.ttf .last-commit
 	gftools fix-nonhinting $< $@
 	ttx -f -x "MVAR" $@
 	ttx $(@:.ttf=.ttx)
@@ -163,7 +163,7 @@ variable_ttf/%-VF.ttf: %.glyphs
 instance_otf/$(FontBase)-%.otf: $(FontBase).glyphs
 	fontmake --master-dir '{tmp}' -g $< -i "$(FontName) $*" -o otf
 
-%.otf: instance_otf/%.otf
+%.otf: instance_otf/%.otf .last-commit
 	cp $< $@
 	$(normalizeVersion)
 
@@ -171,7 +171,7 @@ instance_ttf/$(FontBase)-%.ttf: $(FontBase).glyphs
 	fontmake --master-dir '{tmp}' -g $< -i "$(FontName) $*" -o ttf
 	gftools fix-dsig --autofix $@
 
-%.ttf: instance_ttf/%.ttf
+%.ttf: instance_ttf/%.ttf .last-commit
 	ttfautohint $< $@
 	$(normalizeVersion)
 
