@@ -79,7 +79,7 @@ glyphs: $$(addsuffix .glyphs,$$(TARGETS))
 fontforge: $$(addsuffix .sfd,$$(TARGETS))
 
 .PHONY: fonts
-fonts: otf ttf
+fonts: otf ttf woff woff2
 
 OTFS = $$(addsuffix .otf,$$(TARGETS))
 .PHONY: otf
@@ -88,6 +88,14 @@ otf: $(OTFS)
 TTFS = $$(addsuffix .ttf,$$(TARGETS))
 .PHONY: ttf
 ttf: $(TTFS)
+
+WOFFS = $$(addsuffix .woff,$$(TARGETS))
+.PHONY: woff
+woff: $(WOFFS)
+
+WOFF2S = $$(addsuffix .woff2,$$(TARGETS))
+.PHONY: woff2
+woff2: $(WOFF2S)
 
 ifeq (glyphs,$(CANONICAL))
 
@@ -150,6 +158,12 @@ instance_ttf/$(FontBase)-%.ttf: $(FontBase).glyphs
 
 $(FontBase)-%.ttf: instance_ttf/$(FontBase)-%.ttf
 	ttfautohint $< $@
+
+%.woff: %.ttf
+	sfnt2woff-zopfli $<
+
+%.woff2: %.ttf
+	woff2_compress $<
 
 .PHONY: .last-commit
 .last-commit:
