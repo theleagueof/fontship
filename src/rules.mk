@@ -163,6 +163,7 @@ variable_ttf/%-VF.ttf: %.glyphs
 %.ttf: variable_ttf/%.ttf .last-commit
 	gftools fix-nonhinting $< $@
 	ttx -f -x "MVAR" $@
+	rm $@
 	ttx $(@:.ttf=.ttx)
 	$(normalizeVersion)
 
