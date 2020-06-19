@@ -169,7 +169,7 @@ instance_ttf/$(FontBase)-%.ttf: $(FontBase).glyphs
 	fontmake --master-dir '{tmp}' -g $< -i "$(FontName) $*" -o ttf
 	gftools fix-dsig --autofix $@
 
-$(FontBase)-%.ttf: instance_ttf/$(FontBase)-%.ttf
+%.ttf: instance_ttf/%.ttf
 	ttfautohint $< $@
 
 %.woff: %.ttf
