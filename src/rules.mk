@@ -158,12 +158,14 @@ variable_ttf/%-VF.ttf: %.glyphs
 	gftools fix-nonhinting $< $@
 	ttx -f -x "MVAR" $@
 	ttx $(@:.ttf=.ttx)
+	$(normalizeVersion)
 
 instance_otf/$(FontBase)-%.otf: $(FontBase).glyphs
 	fontmake --master-dir '{tmp}' -g $< -i "$(FontName) $*" -o otf
 
 %.otf: instance_otf/%.otf
 	cp $< $@
+	$(normalizeVersion)
 
 instance_ttf/$(FontBase)-%.ttf: $(FontBase).glyphs
 	fontmake --master-dir '{tmp}' -g $< -i "$(FontName) $*" -o ttf
@@ -171,6 +173,7 @@ instance_ttf/$(FontBase)-%.ttf: $(FontBase).glyphs
 
 %.ttf: instance_ttf/%.ttf
 	ttfautohint $< $@
+	$(normalizeVersion)
 
 %.woff: %.ttf
 	sfnt2woff-zopfli $<
