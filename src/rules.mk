@@ -73,19 +73,19 @@ clean:
 	git clean -dxf
 
 .PHONY: glyphs
-glyphs: $(addsuffix .glyphs,$(TARGETS))
+glyphs: $$(addsuffix .glyphs,$$(TARGETS))
 
 .PHONY: fontforge
-fontforge: $(addsuffix .sfd,$(TARGETS))
+fontforge: $$(addsuffix .sfd,$$(TARGETS))
 
 .PHONY: fonts
 fonts: otf ttf
 
 .PHONY: otf
-otf: $(addsuffix .otf,$(TARGETS))
+otf: $$(addsuffix .otf,$$(TARGETS))
 
 .PHONY: ttf
-ttf: $(addsuffix .ttf,$(TARGETS))
+ttf: $$(addsuffix .ttf,$$(TARGETS))
 
 ifeq (glyphs,$(CANONICAL))
 
