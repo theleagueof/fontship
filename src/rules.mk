@@ -194,10 +194,14 @@ $(DISTDIR).tar.bz2 $(DISTDIR).zip: install-dist
 install-dist: all $(DISTDIR)
 	install -Dm644 -t "$(DISTDIR)/OTF/" $(OTFS)
 	install -Dm644 -t "$(DISTDIR)/TTF/" $(TTFS)
+	install -Dm644 -t "$(DISTDIR)/WOFF/" $(WOFFS)
+	install -Dm644 -t "$(DISTDIR)/WOF2F/" $(WOFFS2)
+	install -Dm644 -t "$(DISTDIR)/variable/" $(VARIABLES)
 
 install-local: install-dist
 	install -Dm755 -t "$${HOME}/.local/share/fonts/OTF/" $(DISTDIR)/OTF/*.otf
 	install -Dm755 -t "$${HOME}/.local/share/fonts/TTF/" $(DISTDIR)/TTF/*.ttf
+	install -Dm755 -t "$${HOME}/.local/share/fonts/variable/" $(DISTDIR)/variable/*.ttf
 
 glyphWeights = $(shell python -c 'from glyphsLib import GSFont; list(map(lambda x: print(x.name), GSFont("$1").instances))')
 
