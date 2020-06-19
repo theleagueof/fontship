@@ -22,6 +22,8 @@ PUBDIR ?= $(PROJECTDIR)/pub
 # Some Makefile shinanigans to avoid aggressive trimming
 space := $() $()
 
+CANONICAL ?= $(shell git ls-files | grep -q '\.glyphs$'' && echo glyphs || echo ufo)
+
 # Allow overriding executables used
 FONTV ?= font-v
 PYTHON ?= python3
@@ -85,17 +87,23 @@ otf: $(addsuffix .otf,$(TARGETS))
 .PHONY: ttf
 ttf: $(addsuffix .ttf,$(TARGETS))
 
+ifeq (glyphs,$(CANONICAL))
+
 %.glyphs: %.ufo
 	fontmake -u $< -o glyphs
+
+# %.ufo: %.glyphs
+#     fontmake -g $< -o ufo
 
 %.designspace: %.glyphs
 	echo MM $@
 
+endif
+
+ifeq (ufo,$(CANONICAL))
+
 %.sfd: %.ufo
 	echo SDF: $@
-
-# %.ufo: %.glyphs
-#     fontmake -g $< -o ufo
 
 %.ufo: .last-commit
 	cat <<- EOF | $(PYTHON)
@@ -105,6 +113,8 @@ ttf: $(addsuffix .ttf,$(TARGETS))
 		ufo.info.versionMajor, ufo.info.versionMinor = int(major), int(minor) + 7
 		ufo.save('$@')
 	EOF
+
+endif
 
 %.otf: %.ufo
 	cat <<- EOF | $(PYTHON)
