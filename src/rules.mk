@@ -38,6 +38,7 @@ isTagged := $(if $(subst $(FontVersion),,$(GitVersion)),,true)
 # Look for what fonts & styles are in this repository that will need building
 FontBase = $(subst $(space),,$(FontName))
 FontStyles = $(subst $(FontBase)-,,$(basename $(wildcard $(FontBase)-*.ufo)))
+FontStyles += $(foreach GLYPHS,$(wildcard $(FontBase).glyphs),$(call glyphWeights,$(GLYPHS)))
 
 TARGETS = $(foreach BASE,$(FontBase),$(foreach STYLE,$(FontStyles),$(BASE)-$(STYLE)))
 
@@ -151,6 +152,8 @@ install-dist: all $(DISTDIR)
 install-local: install-dist
 	install -Dm755 -t "$${HOME}/.local/share/fonts/OTF/" $(DISTDIR)/OTF/*.otf
 	install -Dm755 -t "$${HOME}/.local/share/fonts/TTF/" $(DISTDIR)/TTF/*.ttf
+
+glyphWeights = $(shell awk -F'[=; ]*' '/weightClass/ {print $$2}' $1)
 
 define normalizeVersion =
 	font-v write --ver=$(FontVersion) $(if $(isTagged),--rel,--dev --sha1) $@
