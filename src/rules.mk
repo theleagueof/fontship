@@ -44,6 +44,12 @@ FontStyles += $(foreach GLYPHS,$(wildcard $(FontBase).glyphs),$(call glyphWeight
 
 TARGETS = $(foreach BASE,$(FontBase),$(foreach STYLE,$(FontStyles),$(BASE)-$(STYLE)))
 
+OTFS = $(addsuffix .otf,$(TARGETS))
+TTFS = $(addsuffix .ttf,$(TARGETS))
+WOFFS = $(addsuffix .woff,$(TARGETS))
+WOFF2S = $(addsuffix .woff2,$(TARGETS))
+VARIABLES = $(addsuffix -VF.ttf,$(FontBase))
+
 .PHONY: default
 default: all
 
@@ -64,6 +70,11 @@ debug:
 	echo isTagged: $(isTagged)
 	echo ----------------------------
 	echo TARGETS: $(TARGETS)
+	echo OTFS: $(OTFS)
+	echo TTFS: $(TTFS)
+	echo WOFFS: $(WOFFS)
+	echo WOFF2S: $(WOFF2S)
+	echo VARIABLES: $(VARIABLES)
 
 .PHONY: all
 all: debug fonts
@@ -81,23 +92,18 @@ fontforge: $$(addsuffix .sfd,$$(TARGETS))
 .PHONY: fonts
 fonts: otf ttf variable woff woff2
 
-OTFS = $$(addsuffix .otf,$$(TARGETS))
 .PHONY: otf
 otf: $(OTFS)
 
-TTFS = $$(addsuffix .ttf,$$(TARGETS))
 .PHONY: ttf
 ttf: $(TTFS)
 
-WOFFS = $$(addsuffix .woff,$$(TARGETS))
 .PHONY: woff
 woff: $(WOFFS)
 
-WOFF2S = $$(addsuffix .woff2,$$(TARGETS))
 .PHONY: woff2
 woff2: $(WOFF2S)
 
-VARIABLES = $$(addsuffix -VF.ttf,$$(FontBase))
 .PHONY: variable
 variable: $(VARIABLES)
 
@@ -200,7 +206,7 @@ $(DISTDIR).tar.bz2 $(DISTDIR).zip: install-dist
 	bsdtar -acf $@ $(DISTDIR)
 
 .PHONY: install-dist
-install-dist: all $(DISTDIR)
+install-dist: fonts $(DISTDIR)
 	install -Dm644 -t "$(DISTDIR)/OTF/" $(OTFS)
 	install -Dm644 -t "$(DISTDIR)/TTF/" $(TTFS)
 	install -Dm644 -t "$(DISTDIR)/WOFF/" $(WOFFS)
