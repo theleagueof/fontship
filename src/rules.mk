@@ -46,8 +46,8 @@ TARGETS = $(foreach BASE,$(FontBase),$(foreach STYLE,$(FontStyles),$(BASE)-$(STY
 
 OTFS = $(addsuffix .otf,$(TARGETS))
 TTFS = $(addsuffix .ttf,$(TARGETS))
-WOFFS = $(addsuffix .woff,$(TARGETS))
-WOFF2S = $(addsuffix .woff2,$(TARGETS))
+WOFFS = $(addsuffix .woff,$(TARGETS)) $(addsuffix -VF.woff,$(FontBase))
+WOFF2S = $(addsuffix .woff2,$(TARGETS)) $(addsuffix -VF.woff2,$(FontBase))
 VARIABLES = $(addsuffix -VF.ttf,$(FontBase))
 
 .PHONY: default
