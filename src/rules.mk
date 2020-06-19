@@ -150,8 +150,14 @@ endif
 	EOF
 	$(normalizeVersion)
 
-%-VF.ttf: %.glyphs
-	fontmake -g $< -o variable --output-path $@
+variable_ttf/%-VF.ttf: %.glyphs
+	fontmake -g $< -o variable
+	gftools fix-dsig --autofix $@
+
+%.ttf: variable_ttf/%.ttf
+	gftools fix-nonhinting $< $@
+	ttx -f -x "MVAR" $@
+	ttx $(@:.ttf=.ttx)
 
 instance_otf/$(FontBase)-%.otf: $(FontBase).glyphs
 	fontmake --master-dir '{tmp}' -g $< -i "$(FontName) $*" -o otf
