@@ -64,7 +64,7 @@ debug:
 	echo TARGETS: $(TARGETS)
 
 .PHONY: all
-all: debug
+all: debug fonts
 
 .PHONY: clean
 clean:
