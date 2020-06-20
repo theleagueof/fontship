@@ -211,7 +211,7 @@ install-dist: fonts $(DISTDIR)
 	install -Dm644 -t "$(DISTDIR)/OTF/" $(OTFS)
 	install -Dm644 -t "$(DISTDIR)/TTF/" $(TTFS)
 	install -Dm644 -t "$(DISTDIR)/WOFF/" $(WOFFS)
-	install -Dm644 -t "$(DISTDIR)/WOF2F/" $(WOFFS2)
+	install -Dm644 -t "$(DISTDIR)/WOFF2/" $(WOFF2S)
 	install -Dm644 -t "$(DISTDIR)/variable/" $(VARIABLES)
 
 install-local: install-dist
