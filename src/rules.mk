@@ -93,19 +93,19 @@ fontforge: $$(addsuffix .sfd,$$(TARGETS))
 fonts: otf ttf variable woff woff2
 
 .PHONY: otf
-otf: $(OTFS)
+otf: $$(OTFS)
 
 .PHONY: ttf
-ttf: $(TTFS)
+ttf: $$(TTFS)
 
 .PHONY: woff
-woff: $(WOFFS)
+woff: $$(WOFFS)
 
 .PHONY: woff2
-woff2: $(WOFF2S)
+woff2: $$(WOFF2S)
 
 .PHONY: variable
-variable: $(VARIABLES)
+variable: $$(VARIABLES)
 
 ifeq (glyphs,$(CANONICAL))
 
