@@ -12,8 +12,8 @@ RUN pacman --needed --noconfirm -Syuq && yes | pacman -Sccq
 
 # Install fontship run-time dependecies
 RUN pacman --needed --noconfirm -Syq \
-		entr font-v git libarchive make python zsh \
-		python-{click,defcon,font{make,tools},ufo{2ft,normalizer}} \
+		entr font-v gftools git libarchive make python sfnt2woff-zopfli ttfautohint zsh \
+		python-{brotli,click,defcon,font{make,tools},fs,lxml,ufo{2ft,normalizer},zopfli} \
 	&& yes | pacman -Sccq
 
 # Setup separate image to build fontship so we don't bloat the final image
