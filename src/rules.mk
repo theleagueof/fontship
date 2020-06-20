@@ -44,6 +44,12 @@ FontStyles += $(foreach GLYPHS,$(wildcard $(FontBase).glyphs),$(call glyphWeight
 
 TARGETS = $(foreach BASE,$(FontBase),$(foreach STYLE,$(FontStyles),$(BASE)-$(STYLE)))
 
+OTFS = $(addsuffix .otf,$(TARGETS))
+TTFS = $(addsuffix .ttf,$(TARGETS))
+WOFFS = $(addsuffix .woff,$(TARGETS)) $(addsuffix -VF.woff,$(FontBase))
+WOFF2S = $(addsuffix .woff2,$(TARGETS)) $(addsuffix -VF.woff2,$(FontBase))
+VARIABLES = $(addsuffix -VF.ttf,$(FontBase))
+
 .PHONY: default
 default: all
 
@@ -64,6 +70,11 @@ debug:
 	echo isTagged: $(isTagged)
 	echo ----------------------------
 	echo TARGETS: $(TARGETS)
+	echo OTFS: $(OTFS)
+	echo TTFS: $(TTFS)
+	echo WOFFS: $(WOFFS)
+	echo WOFF2S: $(WOFF2S)
+	echo VARIABLES: $(VARIABLES)
 
 .PHONY: all
 all: debug fonts
@@ -81,25 +92,20 @@ fontforge: $$(addsuffix .sfd,$$(TARGETS))
 .PHONY: fonts
 fonts: otf ttf variable woff woff2
 
-OTFS = $$(addsuffix .otf,$$(TARGETS))
 .PHONY: otf
-otf: $(OTFS)
+otf: $$(OTFS)
 
-TTFS = $$(addsuffix .ttf,$$(TARGETS))
 .PHONY: ttf
-ttf: $(TTFS)
+ttf: $$(TTFS)
 
-WOFFS = $$(addsuffix .woff,$$(TARGETS))
 .PHONY: woff
-woff: $(WOFFS)
+woff: $$(WOFFS)
 
-WOFF2S = $$(addsuffix .woff2,$$(TARGETS))
 .PHONY: woff2
-woff2: $(WOFF2S)
+woff2: $$(WOFF2S)
 
-VARIABLES = $$(addsuffix -VF.ttf,$$(FontBase))
 .PHONY: variable
-variable: $(VARIABLES)
+variable: $$(VARIABLES)
 
 ifeq (glyphs,$(CANONICAL))
 
@@ -130,7 +136,7 @@ ifeq (ufo,$(CANONICAL))
 
 endif
 
-%.otf: %.ufo
+%.otf: %.ufo .last-commit
 	cat <<- EOF | $(PYTHON)
 		from ufo2ft import compileOTF
 		from defcon import Font
@@ -140,7 +146,7 @@ endif
 	EOF
 	$(normalizeVersion)
 
-%.ttf: %.ufo
+%.ttf: %.ufo .last-commit
 	cat <<- EOF | $(PYTHON)
 		from ufo2ft import compileTTF
 		from defcon import Font
@@ -154,23 +160,27 @@ variable_ttf/%-VF.ttf: %.glyphs
 	fontmake -g $< -o variable
 	gftools fix-dsig --autofix $@
 
-%.ttf: variable_ttf/%.ttf
+%.ttf: variable_ttf/%.ttf .last-commit
 	gftools fix-nonhinting $< $@
 	ttx -f -x "MVAR" $@
+	rm $@
 	ttx $(@:.ttf=.ttx)
+	$(normalizeVersion)
 
 instance_otf/$(FontBase)-%.otf: $(FontBase).glyphs
 	fontmake --master-dir '{tmp}' -g $< -i "$(FontName) $*" -o otf
 
-%.otf: instance_otf/%.otf
+%.otf: instance_otf/%.otf .last-commit
 	cp $< $@
+	$(normalizeVersion)
 
 instance_ttf/$(FontBase)-%.ttf: $(FontBase).glyphs
 	fontmake --master-dir '{tmp}' -g $< -i "$(FontName) $*" -o ttf
 	gftools fix-dsig --autofix $@
 
-$(FontBase)-%.ttf: instance_ttf/$(FontBase)-%.ttf
+%.ttf: instance_ttf/%.ttf .last-commit
 	ttfautohint $< $@
+	$(normalizeVersion)
 
 %.woff: %.ttf
 	sfnt2woff-zopfli $<
@@ -197,11 +207,11 @@ $(DISTDIR).tar.bz2 $(DISTDIR).zip: install-dist
 	bsdtar -acf $@ $(DISTDIR)
 
 .PHONY: install-dist
-install-dist: all $(DISTDIR)
+install-dist: fonts $(DISTDIR)
 	install -Dm644 -t "$(DISTDIR)/OTF/" $(OTFS)
 	install -Dm644 -t "$(DISTDIR)/TTF/" $(TTFS)
 	install -Dm644 -t "$(DISTDIR)/WOFF/" $(WOFFS)
-	install -Dm644 -t "$(DISTDIR)/WOF2F/" $(WOFFS2)
+	install -Dm644 -t "$(DISTDIR)/WOFF2/" $(WOFF2S)
 	install -Dm644 -t "$(DISTDIR)/variable/" $(VARIABLES)
 
 install-local: install-dist
