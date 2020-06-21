@@ -12,6 +12,8 @@ SHELL := zsh
 .ONESHELL:
 .SECONDEXPANSION:
 
+CONTAINERIZED != test -f /.dockerenv && echo true || echo false
+
 # Initial environment setup
 FONTSHIPDIR != cd "$(shell dirname $(lastword $(MAKEFILE_LIST)))/" && pwd
 GITNAME := $(notdir $(shell git worktree list | head -n1 | awk '{print $$1}'))
@@ -29,7 +31,11 @@ FONTV ?= font-v
 PYTHON ?= python3
 
 # Read font name from metadata file or guess from repository name
-FontName ?= $(shell python -c 'print("$(PROJECT)".replace("-", " ").title())')
+FamilyName ?= $(shell $(CONTAINERIZED) || python -c 'print("$(PROJECT)".replace("-", " ").title())')
+
+ifeq ($(FamilyName),)
+$(error We cannot properly detect the font’s Family Name yet from inside Docker. Please manually specify it by adding FamilyName='Family Name' as an agument to your command invocation)
+endif
 
 # Determine font version automatically from repository git tags
 FontVersion ?= $(shell git describe --tags --abbrev=6 | sed 's/-.*//g')
@@ -38,7 +44,7 @@ GitVersion ?= $(shell git describe --tags --abbrev=6 | sed 's/-/-r/')
 isTagged := $(if $(subst $(FontVersion),,$(GitVersion)),,true)
 
 # Look for what fonts & styles are in this repository that will need building
-FontBase = $(subst $(space),,$(FontName))
+FontBase = $(subst $(space),,$(FamilyName))
 FontStyles = $(subst $(FontBase)-,,$(basename $(wildcard $(FontBase)-*.ufo)))
 FontStyles += $(foreach GLYPHS,$(wildcard $(FontBase).glyphs),$(call glyphWeights,$(GLYPHS)))
 
@@ -61,7 +67,7 @@ debug:
 	echo PROJECTDIR = $(PROJECTDIR)
 	echo PUBDIR = $(PUBDIR)
 	echo ----------------------------
-	echo FontName = $(FontName)
+	echo FamilyName = $(FamilyName)
 	echo FontBase: $(FontBase)
 	echo FontStyles: $(FontStyles)
 	echo FontVersion: $(FontVersion)
@@ -168,14 +174,14 @@ variable_ttf/%-VF.ttf: %.glyphs
 	$(normalizeVersion)
 
 instance_otf/$(FontBase)-%.otf: $(FontBase).glyphs
-	fontmake --master-dir '{tmp}' -g $< -i "$(FontName) $*" -o otf
+	fontmake --master-dir '{tmp}' -g $< -i "$(FamilyName) $*" -o otf
 
 %.otf: instance_otf/%.otf .last-commit
 	cp $< $@
 	$(normalizeVersion)
 
 instance_ttf/$(FontBase)-%.ttf: $(FontBase).glyphs
-	fontmake --master-dir '{tmp}' -g $< -i "$(FontName) $*" -o ttf
+	fontmake --master-dir '{tmp}' -g $< -i "$(FamilyName) $*" -o ttf
 	gftools fix-dsig --autofix $@
 
 %.ttf: instance_ttf/%.ttf .last-commit
