@@ -48,6 +48,7 @@ OTFS = $(addsuffix .otf,$(INSTANCES))
 TTFS = $(addsuffix .ttf,$(INSTANCES))
 WOFFS = $(addsuffix .woff,$(INSTANCES))
 WOFF2S = $(addsuffix .woff2,$(INSTANCES))
+VARIABLEOTFS = $(addsuffix -VF.otf,$(FontBase))
 VARIABLETTFS = $(addsuffix -VF.ttf,$(FontBase))
 VARIABLEWOFFS = $(addsuffix -VF.woff,$(FontBase))
 VARIABLEWOFF2S = $(addsuffix -VF.woff2,$(FontBase))
@@ -113,19 +114,19 @@ woff: $$(WOFFS)
 woff2: $$(WOFF2S)
 
 .PHONY: variable
-variable: variable_otf variable_ttf variable_woff variable_woff2
+variable: variable-otf variable-ttf variable-woff variable-woff2
 
-.PHONY: variable_otf
-variable_otf: $$(VARIABLEOTFS)
+.PHONY: variable-otf
+variable-otf: $$(VARIABLEOTFS)
 
-.PHONY: variable_ttf
-variable_ttf: $$(VARIABLETTFS)
+.PHONY: variable-ttf
+variable-ttf: $$(VARIABLETTFS)
 
-.PHONY: variable_woff
-variable_woff: $$(VARIABLEWOFFS)
+.PHONY: variable-woff
+variable-woff: $$(VARIABLEWOFFS)
 
-.PHONY: variable_woff2
-variable_woff2: $$(VARIABLEWOFF2S)
+.PHONY: variable-woff2
+variable-woff2: $$(VARIABLEWOFF2S)
 
 ifeq (glyphs,$(CANONICAL))
 
@@ -180,11 +181,18 @@ variable_ttf/%-VF.ttf: %.glyphs
 	fontmake -g $< -o variable
 	gftools fix-dsig --autofix $@
 
+variable_otf/%-VF.otf: %.glyphs
+	fontmake -g $< -o variable-cff2
+
 %.ttf: variable_ttf/%.ttf .last-commit
 	gftools fix-nonhinting $< $@
 	ttx -f -x "MVAR" $@
 	rm $@
 	ttx $(@:.ttf=.ttx)
+	$(normalizeVersion)
+
+%.otf: variable_otf/%.otf .last-commit
+	cp $< $@
 	$(normalizeVersion)
 
 instance_otf/$(FontBase)-%.otf: $(FontBase).glyphs
