@@ -48,13 +48,16 @@ FontBase = $(subst $(space),,$(FamilyName))
 FontStyles = $(subst $(FontBase)-,,$(basename $(wildcard $(FontBase)-*.ufo)))
 FontStyles += $(foreach GLYPHS,$(wildcard $(FontBase).glyphs),$(call glyphWeights,$(GLYPHS)))
 
-TARGETS = $(foreach BASE,$(FontBase),$(foreach STYLE,$(FontStyles),$(BASE)-$(STYLE)))
+INSTANCES = $(foreach BASE,$(FontBase),$(foreach STYLE,$(FontStyles),$(BASE)-$(STYLE)))
 
-OTFS = $(addsuffix .otf,$(TARGETS))
-TTFS = $(addsuffix .ttf,$(TARGETS))
-WOFFS = $(addsuffix .woff,$(TARGETS)) $(addsuffix -VF.woff,$(FontBase))
-WOFF2S = $(addsuffix .woff2,$(TARGETS)) $(addsuffix -VF.woff2,$(FontBase))
-VARIABLES = $(addsuffix -VF.ttf,$(FontBase))
+OTFS = $(addsuffix .otf,$(INSTANCES))
+TTFS = $(addsuffix .ttf,$(INSTANCES))
+WOFFS = $(addsuffix .woff,$(INSTANCES))
+WOFF2S = $(addsuffix .woff2,$(INSTANCES))
+VARIABLEOTFS = $(addsuffix -VF.otf,$(FontBase))
+VARIABLETTFS = $(addsuffix -VF.ttf,$(FontBase))
+VARIABLEWOFFS = $(addsuffix -VF.woff,$(FontBase))
+VARIABLEWOFF2S = $(addsuffix -VF.woff2,$(FontBase))
 
 .PHONY: default
 default: all
@@ -75,12 +78,15 @@ debug:
 	echo GitVersion: $(GitVersion)
 	echo isTagged: $(isTagged)
 	echo ----------------------------
-	echo TARGETS: $(TARGETS)
+	echo INSTANCES: $(INSTANCES)
 	echo OTFS: $(OTFS)
 	echo TTFS: $(TTFS)
 	echo WOFFS: $(WOFFS)
 	echo WOFF2S: $(WOFF2S)
-	echo VARIABLES: $(VARIABLES)
+	echo VARIABLESOTFS: $(VARIABLESOTFS)
+	echo VARIABLETTFS: $(VARIABLETTFS)
+	echo VARIABLEWOFFS: $(VARIABLEWOFFS)
+	echo VARIABLEWOFF2S: $(VARIABLEWOFF2S)
 
 .PHONY: all
 all: debug fonts
@@ -90,13 +96,16 @@ clean:
 	git clean -dxf
 
 .PHONY: glyphs
-glyphs: $$(addsuffix .glyphs,$$(TARGETS))
+glyphs: $$(addsuffix .glyphs,$$(INSTANCES))
 
 .PHONY: fontforge
-fontforge: $$(addsuffix .sfd,$$(TARGETS))
+fontforge: $$(addsuffix .sfd,$$(INSTANCES))
 
 .PHONY: fonts
-fonts: otf ttf variable woff woff2
+fonts: static variable
+
+.PHONY: static
+static: otf ttf woff woff2
 
 .PHONY: otf
 otf: $$(OTFS)
@@ -111,7 +120,19 @@ woff: $$(WOFFS)
 woff2: $$(WOFF2S)
 
 .PHONY: variable
-variable: $$(VARIABLES)
+variable: variable-otf variable-ttf variable-woff variable-woff2
+
+.PHONY: variable-otf
+variable-otf: $$(VARIABLEOTFS)
+
+.PHONY: variable-ttf
+variable-ttf: $$(VARIABLETTFS)
+
+.PHONY: variable-woff
+variable-woff: $$(VARIABLEWOFFS)
+
+.PHONY: variable-woff2
+variable-woff2: $$(VARIABLEWOFF2S)
 
 ifeq (glyphs,$(CANONICAL))
 
@@ -166,11 +187,18 @@ variable_ttf/%-VF.ttf: %.glyphs
 	fontmake -g $< -o variable
 	gftools fix-dsig --autofix $@
 
+variable_otf/%-VF.otf: %.glyphs
+	fontmake -g $< -o variable-cff2
+
 %.ttf: variable_ttf/%.ttf .last-commit
 	gftools fix-nonhinting $< $@
 	ttx -f -x "MVAR" $@
 	rm $@
 	ttx $(@:.ttf=.ttx)
+	$(normalizeVersion)
+
+%.otf: variable_otf/%.otf .last-commit
+	cp $< $@
 	$(normalizeVersion)
 
 instance_otf/$(FontBase)-%.otf: $(FontBase).glyphs
@@ -214,16 +242,24 @@ $(DISTDIR).tar.bz2 $(DISTDIR).zip: install-dist
 
 .PHONY: install-dist
 install-dist: fonts $(DISTDIR)
-	install -Dm644 -t "$(DISTDIR)/OTF/" $(OTFS)
-	install -Dm644 -t "$(DISTDIR)/TTF/" $(TTFS)
-	install -Dm644 -t "$(DISTDIR)/WOFF/" $(WOFFS)
-	install -Dm644 -t "$(DISTDIR)/WOFF2/" $(WOFF2S)
-	install -Dm644 -t "$(DISTDIR)/variable/" $(VARIABLES)
+	install -Dm644 -t "$(DISTDIR)/static/OTF/" $(OTFS)
+	install -Dm644 -t "$(DISTDIR)/static/TTF/" $(TTFS)
+	install -Dm644 -t "$(DISTDIR)/static/WOFF/" $(WOFFS)
+	install -Dm644 -t "$(DISTDIR)/static/WOFF2/" $(WOFF2S)
+	install -Dm644 -t "$(DISTDIR)/variable/OTF/" $(VARIABLEOTFS)
+	install -Dm644 -t "$(DISTDIR)/variable/TTF/" $(VARIABLETTFS)
+	install -Dm644 -t "$(DISTDIR)/variable/WOFF/" $(VARIABLEWOFFS)
+	install -Dm644 -t "$(DISTDIR)/variable/WOFF2/" $(VARIABLEWOFF2S)
 
-install-local: install-dist
-	install -Dm755 -t "$${HOME}/.local/share/fonts/OTF/" $(DISTDIR)/OTF/*.otf
-	install -Dm755 -t "$${HOME}/.local/share/fonts/TTF/" $(DISTDIR)/TTF/*.ttf
-	install -Dm755 -t "$${HOME}/.local/share/fonts/variable/" $(DISTDIR)/variable/*.ttf
+install-local: install-local-otf
+
+install-local-otf: otf variable-otf
+	install -Dm755 -t "$${HOME}/.local/share/fonts/OTF/" $(OTFS)
+	install -Dm755 -t "$${HOME}/.local/share/fonts/variable/" $(VARIABLEOTFS)
+
+install-local-ttf: ttf variable-ttf
+	install -Dm755 -t "$${HOME}/.local/share/fonts/TTF/" $(TTFS)
+	install -Dm755 -t "$${HOME}/.local/share/fonts/variable/" $(VARIABLETTFS)
 
 glyphWeights = $(shell python -c 'from glyphsLib import GSFont; list(map(lambda x: print(x.name), GSFont("$1").instances))')
 
