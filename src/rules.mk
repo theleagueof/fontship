@@ -88,6 +88,12 @@ debug:
 	echo WOFF2S: $(WOFF2S)
 	echo VARIABLES: $(VARIABLES)
 
+.PHONY: _gha
+_gha:
+	echo "::set-output name=family-name::$(FamilyName)"
+	echo "::set-output name=font-version::$(FontVersion)"
+	echo "::set-output name=DISTDIR::$(DISTDIR)"
+
 .PHONY: all
 all: debug fonts
 
