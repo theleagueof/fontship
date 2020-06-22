@@ -30,6 +30,8 @@ CANONICAL ?= $(shell git ls-files | grep -q '\.glyphs$'' && echo glyphs || echo 
 FONTV ?= font-v
 PYTHON ?= python3
 
+include $(FONTSHIPDIR)/functions.mk
+
 # Read font name from metadata file or guess from repository name
 FamilyName ?= $(shell $(CONTAINERIZED) || python -c 'print("$(PROJECT)".replace("-", " ").title())')
 
@@ -224,12 +226,6 @@ install-local: install-dist
 	install -Dm755 -t "$${HOME}/.local/share/fonts/OTF/" $(DISTDIR)/OTF/*.otf
 	install -Dm755 -t "$${HOME}/.local/share/fonts/TTF/" $(DISTDIR)/TTF/*.ttf
 	install -Dm755 -t "$${HOME}/.local/share/fonts/variable/" $(DISTDIR)/variable/*.ttf
-
-glyphWeights = $(shell python -c 'from glyphsLib import GSFont; list(map(lambda x: print(x.name), GSFont("$1").instances))')
-
-define normalizeVersion =
-	font-v write --ver=$(FontVersion) $(if $(isTagged),--rel,--dev --sha1) $@
-endef
 
 # Empty recipie to suppres makefile regeneration
 $(MAKEFILE_LIST):;
