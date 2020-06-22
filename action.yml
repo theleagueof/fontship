@@ -5,4 +5,4 @@ runs:
   image: Dockerfile
   args:
     - make
-    - all
+    - dist
