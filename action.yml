@@ -10,4 +10,4 @@ runs:
   args:
     - make
     - FamilyName='${{ inputs.family-name }}'
-    - debug
+    - all
