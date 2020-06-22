@@ -1,0 +1,8 @@
+name: Fontship
+description: A font development toolkit and collaborative work flow
+runs:
+  using: docker
+  image: Dockerfile
+  args:
+    - make
+    - debug
