@@ -1,8 +1,13 @@
 name: Fontship
 description: A font development toolkit and collaborative work flow
+inputs:
+  family-name:
+    description: Family Name
+    required: true
 runs:
   using: docker
   image: Dockerfile
   args:
     - make
+    - FamilyName='${{ inputs.family-name }}'
     - debug
