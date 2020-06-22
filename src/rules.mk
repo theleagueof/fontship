@@ -245,10 +245,15 @@ install-dist: fonts $(DISTDIR)
 	install -Dm644 -t "$(DISTDIR)/variable/WOFF/" $(VARIABLEWOFFS)
 	install -Dm644 -t "$(DISTDIR)/variable/WOFF2/" $(VARIABLEWOFF2S)
 
-install-local: fonts
+install-local: install-local-otf
+
+install-local-otf: otf variable-otf
 	install -Dm755 -t "$${HOME}/.local/share/fonts/OTF/" $(OTFS)
+	install -Dm755 -t "$${HOME}/.local/share/fonts/variable/" $(VARIABLEOTFS)
+
+install-local-ttf: ttf variable-ttf
 	install -Dm755 -t "$${HOME}/.local/share/fonts/TTF/" $(TTFS)
-	install -Dm755 -t "$${HOME}/.local/share/fonts/variable/" $(VARIABLES)
+	install -Dm755 -t "$${HOME}/.local/share/fonts/variable/" $(VARIABLETTFS)
 
 glyphWeights = $(shell python -c 'from glyphsLib import GSFont; list(map(lambda x: print(x.name), GSFont("$1").instances))')
 
