@@ -30,7 +30,13 @@ CANONICAL ?= $(shell git ls-files | grep -q '\.glyphs$'' && echo glyphs || echo 
 FONTV ?= font-v
 PYTHON ?= python3
 
+include $(FONTSHIPDIR)/functions.mk
+
 # Read font name from metadata file or guess from repository name
+ifeq ($(CANONICAL),glyphs)
+FamilyName = $(call familyName,$(firstword $(wildcard *.glyphs)))
+endif
+
 FamilyName ?= $(shell $(CONTAINERIZED) || python -c 'print("$(PROJECT)".replace("-", " ").title())')
 
 ifeq ($(FamilyName),)
@@ -88,6 +94,12 @@ debug:
 	echo VARIABLEWOFFS: $(VARIABLEWOFFS)
 	echo VARIABLEWOFF2S: $(VARIABLEWOFF2S)
 
+.PHONY: _gha
+_gha:
+	echo "::set-output name=family-name::$(FamilyName)"
+	echo "::set-output name=font-version::$(FontVersion)"
+	echo "::set-output name=DISTDIR::$(DISTDIR)"
+
 .PHONY: all
 all: debug fonts
 
@@ -134,7 +146,7 @@ variable-woff: $$(VARIABLEWOFFS)
 .PHONY: variable-woff2
 variable-woff2: $$(VARIABLEWOFF2S)
 
-ifeq (glyphs,$(CANONICAL))
+ifeq ($(CANONICAL),glyphs)
 
 %.glyphs: %.ufo
 	fontmake -u $< -o glyphs
@@ -147,7 +159,7 @@ ifeq (glyphs,$(CANONICAL))
 
 endif
 
-ifeq (ufo,$(CANONICAL))
+ifeq ($(CANONICAL),ufo)
 
 %.sfd: %.ufo
 	echo SDF: $@
@@ -260,12 +272,6 @@ install-local-otf: otf variable-otf
 install-local-ttf: ttf variable-ttf
 	install -Dm755 -t "$${HOME}/.local/share/fonts/TTF/" $(TTFS)
 	install -Dm755 -t "$${HOME}/.local/share/fonts/variable/" $(VARIABLETTFS)
-
-glyphWeights = $(shell python -c 'from glyphsLib import GSFont; list(map(lambda x: print(x.name), GSFont("$1").instances))')
-
-define normalizeVersion =
-	font-v write --ver=$(FontVersion) $(if $(isTagged),--rel,--dev --sha1) $@
-endef
 
 # Empty recipie to suppres makefile regeneration
 $(MAKEFILE_LIST):;

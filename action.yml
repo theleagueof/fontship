@@ -1,0 +1,16 @@
+name: Fontship
+description: A font development toolkit and collaborative work flow
+outputs:
+  family-name:
+    description: Font Family Name
+  font-version:
+    description: Font Version
+  DISTDIR:
+    description: Directory name with font family and detailed git version string
+runs:
+  using: docker
+  image: Dockerfile
+  args:
+    - make
+    - _gha
+    - dist

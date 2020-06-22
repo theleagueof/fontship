@@ -55,18 +55,20 @@ Add a Github Actions configuration file to your repository such as
 `.github/workflow/fontship.yml`:
 
 ``` yaml
-name: Fontship
 on: [push, pull_request]
 jobs:
   fontship:
     runs-on: ubuntu-latest
+    name: Fontship
     steps:
       - name: Checkout
-        uses: actions/checkout@master
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Fetch tags
+        run: git fetch --prune --tags
       - name: Fontship
         uses: theleagueof/fontship@master
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 ```
 
 ### Makefile Setup
