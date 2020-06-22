@@ -33,6 +33,10 @@ PYTHON ?= python3
 include $(FONTSHIPDIR)/functions.mk
 
 # Read font name from metadata file or guess from repository name
+ifeq ($(CANONICAL),glyphs)
+FamilyName = $(call familyName,$(firstword $(wildcard *.glyphs)))
+endif
+
 FamilyName ?= $(shell $(CONTAINERIZED) || python -c 'print("$(PROJECT)".replace("-", " ").title())')
 
 ifeq ($(FamilyName),)
@@ -115,7 +119,7 @@ woff2: $$(WOFF2S)
 .PHONY: variable
 variable: $$(VARIABLES)
 
-ifeq (glyphs,$(CANONICAL))
+ifeq ($(CANONICAL),glyphs)
 
 %.glyphs: %.ufo
 	fontmake -u $< -o glyphs
@@ -128,7 +132,7 @@ ifeq (glyphs,$(CANONICAL))
 
 endif
 
-ifeq (ufo,$(CANONICAL))
+ifeq ($(CANONICAL),ufo)
 
 %.sfd: %.ufo
 	echo SDF: $@
