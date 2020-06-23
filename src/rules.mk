@@ -66,6 +66,16 @@ VARIABLETTFS = $(addsuffix -VF.ttf,$(FontBase))
 VARIABLEWOFFS = $(addsuffix -VF.woff,$(FontBase))
 VARIABLEWOFF2S = $(addsuffix -VF.woff2,$(FontBase))
 
+ifeq ($(DEBUG)),true)
+FONTMAKEFLAGS = --verbose INFO
+else
+ifeq ($(VERBOSE)),true)
+FONTMAKEFLAGS = --verbose WARNING
+else
+FONTMAKEFLAGS = --verbose ERROR
+endif
+endif
+
 .PHONY: default
 default: all
 
@@ -150,10 +160,10 @@ variable-woff2: $$(VARIABLEWOFF2S)
 ifeq ($(CANONICAL),glyphs)
 
 %.glyphs: %.ufo
-	fontmake -u $< -o glyphs
+	fontmake $(FONTMAKEFLAGS) -u $< -o glyphs
 
 # %.ufo: %.glyphs
-#     fontmake -g $< -o ufo
+#     fontmake $(FONTMAKEFLAGS) -g $< -o ufo
 
 %.designspace: %.glyphs
 	echo MM $@
@@ -197,11 +207,11 @@ endif
 	$(normalizeVersion)
 
 variable_ttf/%-VF.ttf: %.glyphs
-	fontmake -g $< -o variable
+	fontmake $(FONTMAKEFLAGS) -g $< -o variable
 	gftools fix-dsig --autofix $@
 
 variable_otf/%-VF.otf: %.glyphs
-	fontmake -g $< -o variable-cff2
+	fontmake $(FONTMAKEFLAGS) -g $< -o variable-cff2
 
 %.ttf: variable_ttf/%.ttf .last-commit
 	gftools fix-nonhinting $< $@
@@ -215,14 +225,14 @@ variable_otf/%-VF.otf: %.glyphs
 	$(normalizeVersion)
 
 instance_otf/$(FontBase)-%.otf: $(FontBase).glyphs
-	fontmake --master-dir '{tmp}' -g $< -i "$(FamilyName) $*" -o otf
+	fontmake $(FONTMAKEFLAGS) --master-dir '{tmp}' -g $< -i "$(FamilyName) $*" -o otf
 
 %.otf: instance_otf/%.otf .last-commit
 	cp $< $@
 	$(normalizeVersion)
 
 instance_ttf/$(FontBase)-%.ttf: $(FontBase).glyphs
-	fontmake --master-dir '{tmp}' -g $< -i "$(FamilyName) $*" -o ttf
+	fontmake $(FONTMAKEFLAGS) --master-dir '{tmp}' -g $< -i "$(FamilyName) $*" -o ttf
 	gftools fix-dsig --autofix $@
 
 %.ttf: instance_ttf/%.ttf .last-commit
