@@ -28,7 +28,7 @@ def make(ctx, target):
     """Build specified target(s)."""
     args = ['make']
     args += ['-f', SRCDIR + 'rules.mk']
-    for fname in ['GNUmakefile', 'makefile', 'Makefile']:
+    for fname in ['GNUmakefile', 'makefile', 'Makefile', 'rules.mk']:
         if os.path.isfile(fname):
             args += ['-f', fname]
     process = subprocess.run(args + list(target), check=True)
