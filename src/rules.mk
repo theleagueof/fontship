@@ -252,8 +252,13 @@ dist: $(DISTDIR).zip $(DISTDIR).tar.bz2
 $(DISTDIR).tar.bz2 $(DISTDIR).zip: install-dist
 	bsdtar -acf $@ $(DISTDIR)
 
+dist_doc_DATA ?= $(wildcard $(foreach B,readme README,$(foreach E,md txt markdown,$(B).$(E))))
+dist_license_DATA ?= $(wildcard $(foreach B,ofl OFL ofl-faq OFL-FAQ license LICENSE copying COPYING,$(foreach E,md txt markdown,$(B).$(E))))
+
 .PHONY: install-dist
 install-dist: fonts $(DISTDIR)
+	install -Dm644 -t "$(DISTDIR)/" $(dist_doc_DATA)
+	install -Dm644 -t "$(DISTDIR)/" $(dist_license_DATA)
 	install -Dm644 -t "$(DISTDIR)/static/OTF/" $(OTFS)
 	install -Dm644 -t "$(DISTDIR)/static/TTF/" $(TTFS)
 	install -Dm644 -t "$(DISTDIR)/static/WOFF/" $(WOFFS)
