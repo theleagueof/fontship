@@ -51,8 +51,7 @@ To build a docker image locally, you'll want to clone this repository and run `.
 
 ### CI Setup
 
-Add a Github Actions configuration file to your repository such as
-`.github/workflow/fontship.yml`:
+For use in as o Github Action, add a configuration file to your repository such as `.github/workflow/fontship.yml`:
 
 ``` yaml
 on: [push, pull_request]
@@ -70,6 +69,10 @@ jobs:
       - name: Fontship
         uses: theleagueof/fontship@master
 ```
+
+Note at the current time Fontship only builds the fonts, it doesn't do anything with them. You'll need to post them as artifacts or publish them on releases as another step in the workflow. For a full working example see [League Spartan's workflow](https://github.com/theleagueof/league-spartan/blob/master/.github/workflow/fontship.yml).
+
+Other CI runners could easily be supported, see #32 for details.
 
 ### Makefile Setup
 
