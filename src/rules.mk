@@ -172,10 +172,10 @@ variable-woff2: $$(VARIABLEWOFF2S)
 ifeq ($(CANONICAL),glyphs)
 
 %.glyphs: %.ufo
-	$(FONTMAKE) $(FONTMAKEFLAGS) -u $< -o glyphs
+	$(FONTMAKE) -u $< -o glyphs
 
 # %.ufo: %.glyphs
-#     $(FONTMAKE) $(FONTMAKEFLAGS) -g $< -o ufo
+#     $(FONTMAKE) -g $< -o ufo $(FONTMAKEFLAGS)
 
 %.designspace: %.glyphs
 	echo MM $@
@@ -219,11 +219,11 @@ endif
 	$(normalizeVersion)
 
 variable_ttf/%-VF.ttf: %.glyphs
-	$(FONTMAKE) $(FONTMAKEFLAGS) -g $< -o variable
+	$(FONTMAKE) -g $< -o variable $(FONTMAKEFLAGS)
 	$(GFTOOLS) fix-dsig --autofix $@
 
 variable_otf/%-VF.otf: %.glyphs
-	$(FONTMAKE) $(FONTMAKEFLAGS) -g $< -o variable-cff2
+	$(FONTMAKE) -g $< -o variable-cff2 $(FONTMAKEFLAGS)
 
 %.ttf: variable_ttf/%.ttf .last-commit
 	$(GFTOOLS) fix-nonhinting $< $@
@@ -237,14 +237,14 @@ variable_otf/%-VF.otf: %.glyphs
 	$(normalizeVersion)
 
 instance_otf/$(FontBase)-%.otf: $(FontBase).glyphs
-	$(FONTMAKE) $(FONTMAKEFLAGS) --master-dir '{tmp}' -g $< -i "$(FamilyName) $*" -o otf
+	$(FONTMAKE) --master-dir '{tmp}' -g $< -i "$(FamilyName) $*" -o otf $(FONTMAKEFLAGS)
 
 %.otf: instance_otf/%.otf .last-commit
 	cp $< $@
 	$(normalizeVersion)
 
 instance_ttf/$(FontBase)-%.ttf: $(FontBase).glyphs
-	$(FONTMAKE) $(FONTMAKEFLAGS) --master-dir '{tmp}' -g $< -i "$(FamilyName) $*" -o ttf
+	$(FONTMAKE) --master-dir '{tmp}' -g $< -i "$(FamilyName) $*" -o ttf $(FONTMAKEFLAGS)
 	$(GFTOOLS) fix-dsig --autofix $@
 
 %.ttf: instance_ttf/%.ttf .last-commit
