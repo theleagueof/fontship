@@ -219,11 +219,11 @@ endif
 	$(normalizeVersion)
 
 variable_ttf/%-VF.ttf: %.glyphs
-	$(FONTMAKE) -g $< -o variable $(FONTMAKEFLAGS)
+	$(FONTMAKE) $(FONTMAKEFLAGS) --master-dir '{tmp}' -g $< -o variable
 	$(GFTOOLS) fix-dsig --autofix $@
 
 variable_otf/%-VF.otf: %.glyphs
-	$(FONTMAKE) -g $< -o variable-cff2 $(FONTMAKEFLAGS)
+	$(FONTMAKE) $(FONTMAKEFLAGS) --master-dir '{tmp}' -g $< -o variable-cff2
 
 %.ttf: variable_ttf/%.ttf .last-commit
 	$(GFTOOLS) fix-nonhinting $< $@
@@ -237,14 +237,14 @@ variable_otf/%-VF.otf: %.glyphs
 	$(normalizeVersion)
 
 instance_otf/$(FontBase)-%.otf: $(FontBase).glyphs
-	$(FONTMAKE) --master-dir '{tmp}' -g $< -i "$(FamilyName) $*" -o otf $(FONTMAKEFLAGS)
+	$(FONTMAKE) $(FONTMAKEFLAGS) --master-dir '{tmp}' -g $< -i "$(FamilyName) $*" -o otf
 
 %.otf: instance_otf/%.otf .last-commit
 	cp $< $@
 	$(normalizeVersion)
 
 instance_ttf/$(FontBase)-%.ttf: $(FontBase).glyphs
-	$(FONTMAKE) --master-dir '{tmp}' -g $< -i "$(FamilyName) $*" -o ttf $(FONTMAKEFLAGS)
+	$(FONTMAKE) $(FONTMAKEFLAGS) --master-dir '{tmp}' -g $< -i "$(FamilyName) $*" -o ttf
 	$(GFTOOLS) fix-dsig --autofix $@
 
 %.ttf: instance_ttf/%.ttf .last-commit
