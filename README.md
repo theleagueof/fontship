@@ -14,13 +14,13 @@ Fontship can be used in any of four different ways:
 1.  Directly on a local system that has all the required dependencies and fontship has been installed.
 2.  On a local system via a Docker image for low hastle setup.
 3.  Remotely via a CI runner.
-4.  By including fontship's rules into your project's Makefile.
+4.  By including fontship’s rules into your project’s Makefile.
 
 ### Local Setup
 
 If you use Arch Linux, you can install [this AUR package](https://aur.archlinux.org/packages/fontship) (prebuilt in [this repostiory](https://wiki.archlinux.org/index.php/Unofficial_user_repositories#alerque)).
 
-Otherwise to install and use locally from source, you'll need some dependencies:
+Otherwise to install and use locally from source, you’ll need some dependencies:
 
 * Git,
 * GNU core utilities plus `bsdtar`, `entr`, `zsh`,
@@ -44,7 +44,7 @@ Add an alias:
 
 You may substitute *latest*, which will always be the most recently released tagged version, with *master* to use the freshest unreleased build, with a tag name to explicitly use a specific version, or with *HEAD* to use an image build locally.
 
-To build a docker image locally, you'll want to clone this repository and run `./bootstrap.sh` or download and extract a tarball, then run:
+To build a docker image locally, you’ll want to clone this repository and run `./bootstrap.sh` or download and extract a tarball, then run:
 
     $ ./configure
     $ make docker
@@ -70,16 +70,16 @@ jobs:
         uses: theleagueof/fontship@master
 ```
 
-Note at the current time Fontship only builds the fonts, it doesn't do anything with them. You'll need to post them as artifacts or publish them on releases as another step in the workflow. For a full working example see [League Spartan's workflow](https://github.com/theleagueof/league-spartan/blob/master/.github/workflow/fontship.yml).
+Note at the current time Fontship only builds the fonts, it doesn’t do anything with them. You’ll need to post them as artifacts or publish them on releases as another step in the workflow. For a full working example see [League Spartan’s workflow](https://github.com/theleagueof/league-spartan/blob/master/.github/workflow/fontship.yml).
 
 Other CI runners could easily be supported, see #32 for details.
 
 ### Makefile Setup
 
-If ⓐ your system has all the dependencies and ⓑ your project already has a `Makefile`, you can extend your existing makefile with fontship's targets my including it:
+If ⓐ your system has all the dependencies and ⓑ your project already has a `Makefile`, you can extend your existing makefile with fontship’s targets my including it:
 
 ```makefile
 include path/to/fontship/src/rules.mk
 ```
 
-This may reference a path to fontship as a git submodule (useful for locking the fontship version to your project's build), or just a relative path to somewhere you have the fontship source.
+This may reference a path to fontship as a git submodule (useful for locking the fontship version to your project’s build), or just a relative path to somewhere you have the fontship source.
