@@ -68,11 +68,17 @@ VARIABLEWOFF2S = $(addsuffix -VF.woff2,$(FontBase))
 
 ifeq ($(DEBUG)),true)
 FONTMAKEFLAGS = --verbose INFO
+TTXFLAGS = -v
+TTFAUTOHINTFLAGS = -v --debug
 else
 ifeq ($(VERBOSE)),true)
 FONTMAKEFLAGS = --verbose WARNING
+TTXFLAGS = -v
+TTFAUTOHINTFLAGS = -v
 else
 FONTMAKEFLAGS = --verbose ERROR
+TTXFLAGS =
+TTFAUTOHINTFLAGS =
 endif
 endif
 
@@ -215,9 +221,9 @@ variable_otf/%-VF.otf: %.glyphs
 
 %.ttf: variable_ttf/%.ttf .last-commit
 	gftools fix-nonhinting $< $@
-	ttx -f -x "MVAR" $@
+	ttx $(TTXFLAGS) -f -x "MVAR" $@
 	rm $@
-	ttx $(@:.ttf=.ttx)
+	ttx $(TTXFLAGS) $(@:.ttf=.ttx)
 	$(normalizeVersion)
 
 %.otf: variable_otf/%.otf .last-commit
