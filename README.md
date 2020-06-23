@@ -7,7 +7,7 @@
 A font development toolkit and collaborative work flow developed by [The
 League of Moveable Type](https://www.theleagueofmoveabletype.com/).
 
-## Setup & Usage
+## Setup
 
 Fontship can be used in any of four different ways:
 
@@ -53,7 +53,7 @@ To build a docker image locally, you’ll want to clone this repository and run 
 
 For use in as o Github Action, add a configuration file to your repository such as `.github/workflow/fontship.yml`:
 
-``` yaml
+```yaml
 on: [push, pull_request]
 jobs:
   fontship:
@@ -72,7 +72,7 @@ jobs:
 
 Note at the current time Fontship only builds the fonts, it doesn’t do anything with them. You’ll need to post them as artifacts or publish them on releases as another step in the workflow. For a full working example see [League Spartan’s workflow](https://github.com/theleagueof/league-spartan/blob/master/.github/workflow/fontship.yml).
 
-Other CI runners could easily be supported, see #32 for details.
+Other CI runners could easily be supported, see [issue #32](https://github.com/theleagueof/fontship/issues/32) for details.
 
 ### Makefile Setup
 
@@ -83,3 +83,33 @@ include path/to/fontship/src/rules.mk
 ```
 
 This may reference a path to fontship as a git submodule (useful for locking the fontship version to your project’s build), or just a relative path to somewhere you have the fontship source.
+
+## Usage
+
+To build all the possible formats for your font project, run
+
+```sh
+$ fontship make all
+```
+
+To only generate a specific format, try:
+
+```sh
+# Just static OTF fonts
+$ fontship make otf
+
+# All static formats
+$ fontship make static
+
+# All variable formats
+$ fontship make variable
+
+# Just variable TTF format
+$ fontship make variable-ttf
+```
+
+When everything is ready or you want to actually ship a font (or send a sample to a friend), you'll want to build the distribution package:
+
+```sh
+$ fontship make dist
+```
