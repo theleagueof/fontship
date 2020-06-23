@@ -27,8 +27,14 @@ space := $() $()
 CANONICAL ?= $(shell git ls-files | grep -q '\.glyphs$'' && echo glyphs || echo ufo)
 
 # Allow overriding executables used
-FONTV ?= font-v
+FONTMAKE ?= fontmake
+FONT-V ?= font-v
+GFTOOLS ?= gftools
 PYTHON ?= python3
+SFNT2WOFF ?= sfnt2woff-zopfli
+TTFAUTOHINT ?= ttfautohint
+TTX ?= ttx
+WOFF2_COMPRESS ?= woff2_compress
 
 include $(FONTSHIPDIR)/functions.mk
 
@@ -37,7 +43,7 @@ ifeq ($(CANONICAL),glyphs)
 FamilyName = $(call familyName,$(firstword $(wildcard *.glyphs)))
 endif
 
-FamilyName ?= $(shell $(CONTAINERIZED) || python -c 'print("$(PROJECT)".replace("-", " ").title())')
+FamilyName ?= $(shell $(CONTAINERIZED) || $(PYTHON) -c 'print("$(PROJECT)".replace("-", " ").title())')
 
 ifeq ($(FamilyName),)
 $(error We cannot properly detect the font’s Family Name yet from inside Docker. Please manually specify it by adding FamilyName='Family Name' as an agument to your command invocation)
@@ -166,10 +172,10 @@ variable-woff2: $$(VARIABLEWOFF2S)
 ifeq ($(CANONICAL),glyphs)
 
 %.glyphs: %.ufo
-	fontmake $(FONTMAKEFLAGS) -u $< -o glyphs
+	$(FONTMAKE) $(FONTMAKEFLAGS) -u $< -o glyphs
 
 # %.ufo: %.glyphs
-#     fontmake $(FONTMAKEFLAGS) -g $< -o ufo
+#     $(FONTMAKE) $(FONTMAKEFLAGS) -g $< -o ufo
 
 %.designspace: %.glyphs
 	echo MM $@
@@ -213,17 +219,17 @@ endif
 	$(normalizeVersion)
 
 variable_ttf/%-VF.ttf: %.glyphs
-	fontmake $(FONTMAKEFLAGS) -g $< -o variable
-	gftools fix-dsig --autofix $@
+	$(FONTMAKE) $(FONTMAKEFLAGS) -g $< -o variable
+	$(GFTOOLS) fix-dsig --autofix $@
 
 variable_otf/%-VF.otf: %.glyphs
-	fontmake $(FONTMAKEFLAGS) -g $< -o variable-cff2
+	$(FONTMAKE) $(FONTMAKEFLAGS) -g $< -o variable-cff2
 
 %.ttf: variable_ttf/%.ttf .last-commit
-	gftools fix-nonhinting $< $@
-	ttx $(TTXFLAGS) -f -x "MVAR" $@
+	$(GFTOOLS) fix-nonhinting $< $@
+	$(TTX) $(TTXFLAGS) -f -x "MVAR" $@
 	rm $@
-	ttx $(TTXFLAGS) $(@:.ttf=.ttx)
+	$(TTX) $(TTXFLAGS) $(@:.ttf=.ttx)
 	$(normalizeVersion)
 
 %.otf: variable_otf/%.otf .last-commit
@@ -231,25 +237,25 @@ variable_otf/%-VF.otf: %.glyphs
 	$(normalizeVersion)
 
 instance_otf/$(FontBase)-%.otf: $(FontBase).glyphs
-	fontmake $(FONTMAKEFLAGS) --master-dir '{tmp}' -g $< -i "$(FamilyName) $*" -o otf
+	$(FONTMAKE) $(FONTMAKEFLAGS) --master-dir '{tmp}' -g $< -i "$(FamilyName) $*" -o otf
 
 %.otf: instance_otf/%.otf .last-commit
 	cp $< $@
 	$(normalizeVersion)
 
 instance_ttf/$(FontBase)-%.ttf: $(FontBase).glyphs
-	fontmake $(FONTMAKEFLAGS) --master-dir '{tmp}' -g $< -i "$(FamilyName) $*" -o ttf
-	gftools fix-dsig --autofix $@
+	$(FONTMAKE) $(FONTMAKEFLAGS) --master-dir '{tmp}' -g $< -i "$(FamilyName) $*" -o ttf
+	$(GFTOOLS) fix-dsig --autofix $@
 
 %.ttf: instance_ttf/%.ttf .last-commit
-	ttfautohint -n $< $@
+	$(TTFAUTOHINT) $(TTFAUTOHINTFLAGS) -n $< $@
 	$(normalizeVersion)
 
 %.woff: %.ttf
-	sfnt2woff-zopfli $<
+	$(SFNT2WOFF) $<
 
 %.woff2: %.ttf
-	woff2_compress $<
+	$(WOFF2_COMPRESS) $<
 
 .PHONY: .last-commit
 .last-commit:
