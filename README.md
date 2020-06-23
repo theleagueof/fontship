@@ -110,6 +110,12 @@ $ fontship make variable
 $ fontship make variable-ttf
 ```
 
+If you're only interested in one specific file (say, a static weight instance) you can specify the exact file name you expect to get the fastest possible rebuild of just that file:
+
+```sh
+$ fontship make FooBar-Black.otf
+```
+
 ### Publishing
 
 When everything is ready or you want to actually ship a font (or send a sample to a friend), you'll want to build the distribution package:
