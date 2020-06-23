@@ -43,10 +43,11 @@ ifeq ($(FamilyName),)
 $(error We cannot properly detect the font’s Family Name yet from inside Docker. Please manually specify it by adding FamilyName='Family Name' as an agument to your command invocation)
 endif
 
+GITVER = --tags --abbrev=6 --match='[0-9].[0-9][0-9][0-9]'
 # Determine font version automatically from repository git tags
-FontVersion ?= $(shell git describe --tags --abbrev=6 | sed 's/-.*//g')
-FontVersionMeta ?= $(shell git describe --tags --abbrev=6 --long | sed 's/-[0-9]\+/\\;/;s/-g/[/')]
-GitVersion ?= $(shell git describe --tags --abbrev=6 | sed 's/-/-r/')
+FontVersion ?= $(shell git describe $(GITVER) | sed 's/-.*//g')
+FontVersionMeta ?= $(shell git describe --long $(GITVER) | sed 's/-[0-9]\+/\\;/;s/-g/[/')]
+GitVersion ?= $(shell git describe $(GITVER) | sed 's/-/-r/')
 isTagged := $(if $(subst $(FontVersion),,$(GitVersion)),,true)
 
 # Look for what fonts & styles are in this repository that will need building
