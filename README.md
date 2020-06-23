@@ -88,6 +88,8 @@ This may reference a path to fontship as a git submodule (useful for locking the
 
 To build all the possible formats for your font project, run
 
+### Building
+
 ```sh
 $ fontship make all
 ```
@@ -108,8 +110,14 @@ $ fontship make variable
 $ fontship make variable-ttf
 ```
 
+### Publishing
+
 When everything is ready or you want to actually ship a font (or send a sample to a friend), you'll want to build the distribution package:
 
 ```sh
 $ fontship make dist
 ```
+
+### Versioning
+
+The font version setting in all generated fonts is determined by the tag on the git repository. Version tags should conform to the `MAJOR.MINOR` format descriped by [openfv](https://github.com/openfv/openfv#3-version-number-semantics).
