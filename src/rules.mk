@@ -242,7 +242,7 @@ instance_ttf/$(FontBase)-%.ttf: $(FontBase).glyphs
 	gftools fix-dsig --autofix $@
 
 %.ttf: instance_ttf/%.ttf .last-commit
-	ttfautohint $< $@
+	ttfautohint -n $< $@
 	$(normalizeVersion)
 
 %.woff: %.ttf
