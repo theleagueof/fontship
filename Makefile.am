@@ -5,7 +5,7 @@ bin_SCRIPTS = fontship
 python_PYTHON = fontship.py
 dist_doc_DATA = README.md
 dist_license_DATA = LICENSE
-dist_data_DATA = src/rules.mk src/functions.mk
+dist_data_DATA = src/rules.mk src/functions.mk src/pre-commit.py
 
 CLEANFILES = $(bin_SCRIPTS)
 
