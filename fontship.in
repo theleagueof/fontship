@@ -17,8 +17,14 @@ import os.path
 import subprocess
 
 @click.group()
+@click.option('-d', '--debug', is_flag=True, default=False,
+              help="Enable debug mode flags.")
+@click.option('-q', '--quiet', is_flag=True, default=False,
+              help="Discard all non-error output messages.")
+@click.option('-v', '--verbose', is_flag=True, default=False,
+              help="Enable extra verbose output from tooling.")
 @click.version_option(__version__)
-def cli():
+def cli(debug, quiet, verbose):
     """Execute any fontship supported subcommand COMMAND."""
 
 @click.command()
@@ -41,7 +47,7 @@ cli.add_command(make)
 @click.pass_context
 def setup(ctx):
     """Setup Fontship for use on a new Font project."""
-    click.echo("Anybody want a penut")
+    click.echo("Anybody want a peanut?")
 
 cli.add_command(setup)
 
