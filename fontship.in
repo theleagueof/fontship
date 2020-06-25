@@ -18,7 +18,7 @@ import subprocess
 
 @click.group()
 @click.version_option(__version__)
-def fontship():
+def cli():
     """Execute any fontship supported subcommand COMMAND."""
 
 @click.command()
@@ -35,7 +35,7 @@ def make(ctx, target):
     #, stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True)
     process
 
-fontship.add_command(make)
+cli.add_command(make)
 
 @click.command()
 @click.pass_context
@@ -43,17 +43,21 @@ def setup(ctx):
     """Setup Fontship for use on a new Font project."""
     click.echo("Anybody want a penut")
 
-fontship.add_command(setup)
+cli.add_command(setup)
 
 @click.command()
 @click.pass_context
 def status(ctx):
     """Show information about setup and build status."""
-    click.echo("No what?")
+    Fontship = fontship.Fontship()
+    repo = Fontship.open_repo()
+    if not repo:
+        click.echo("Not a repository!")
+    click.echo(repo)
 
-fontship.add_command(status)
+cli.add_command(status)
 
 if __name__ == '__main__':
-    fontship()
+    cli()
 
 # vim: ft=python
