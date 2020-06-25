@@ -41,7 +41,10 @@ fontship.add_command(make)
 @click.pass_context
 def setup(ctx):
     """Setup Fontship for use on a new Font project."""
-    click.echo("Anybody want a penut")
+    repo = fontship.Repo()
+    args = ['ln', '-sf', SRCDIR + 'pre-commit.py', repo.git.path + 'hooks/pre-commit']
+    process = subprocess.run(args, check=True)
+    process
 
 fontship.add_command(setup)
 
