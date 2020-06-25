@@ -12,6 +12,11 @@ SHELL := zsh
 .ONESHELL:
 .SECONDEXPANSION:
 
+# Don't drop intermediate artifacts (saves rebulid time and aids debugging)
+.SECONDARY:
+.PRECIOUS: %
+.DELETE_ON_ERROR:
+
 CONTAINERIZED != test -f /.dockerenv && echo true || echo false
 
 # Initial environment setup
@@ -63,26 +68,27 @@ FontStyles += $(foreach GLYPHS,$(wildcard $(FontBase).glyphs),$(call glyphWeight
 
 INSTANCES = $(foreach BASE,$(FontBase),$(foreach STYLE,$(FontStyles),$(BASE)-$(STYLE)))
 
-OTFS = $(addsuffix .otf,$(INSTANCES))
-TTFS = $(addsuffix .ttf,$(INSTANCES))
-WOFFS = $(addsuffix .woff,$(INSTANCES))
-WOFF2S = $(addsuffix .woff2,$(INSTANCES))
+STATICOTFS = $(addsuffix .otf,$(INSTANCES))
+STATICTTFS = $(addsuffix .ttf,$(INSTANCES))
+STATICWOFFS = $(addsuffix .woff,$(INSTANCES))
+STATICWOFF2S = $(addsuffix .woff2,$(INSTANCES))
 VARIABLEOTFS = $(addsuffix -VF.otf,$(FontBase))
 VARIABLETTFS = $(addsuffix -VF.ttf,$(FontBase))
 VARIABLEWOFFS = $(addsuffix -VF.woff,$(FontBase))
 VARIABLEWOFF2S = $(addsuffix -VF.woff2,$(FontBase))
 
+_FONTMAKEFLAGS = --master-dir '{tmp}' --instance-dir '{tmp}'
 ifeq ($(DEBUG)),true)
-FONTMAKEFLAGS = --verbose INFO
+FONTMAKEFLAGS ?= $(_FONTMAKEFLAGS) --verbose INFO
 TTXFLAGS = -v
 TTFAUTOHINTFLAGS = -v --debug
 else
 ifeq ($(VERBOSE)),true)
-FONTMAKEFLAGS = --verbose WARNING
+FONTMAKEFLAGS ?= $(_FONTMAKEFLAGS) --verbose WARNING
 TTXFLAGS = -v
 TTFAUTOHINTFLAGS = -v
 else
-FONTMAKEFLAGS ?= --verbose ERROR
+FONTMAKEFLAGS ?= $(_FONTMAKEFLAGS) --verbose ERROR
 TTXFLAGS ?=
 TTFAUTOHINTFLAGS ?=
 endif
@@ -108,11 +114,11 @@ debug:
 	echo isTagged: $(isTagged)
 	echo ----------------------------
 	echo INSTANCES: $(INSTANCES)
-	echo OTFS: $(OTFS)
-	echo TTFS: $(TTFS)
-	echo WOFFS: $(WOFFS)
-	echo WOFF2S: $(WOFF2S)
-	echo VARIABLESOTFS: $(VARIABLESOTFS)
+	echo STATICOTFS: $(STATICOTFS)
+	echo STATICTTFS: $(STATICTTFS)
+	echo STATICWOFFS: $(STATICWOFFS)
+	echo STATICWOFF2S: $(STATICWOFF2S)
+	echo VARIABLEOTFS: $(VARIABLEOTFS)
 	echo VARIABLETTFS: $(VARIABLETTFS)
 	echo VARIABLEWOFFS: $(VARIABLEWOFFS)
 	echo VARIABLEWOFF2S: $(VARIABLEWOFF2S)
@@ -140,22 +146,34 @@ fontforge: $$(addsuffix .sfd,$$(INSTANCES))
 fonts: static variable
 
 .PHONY: static
-static: otf ttf woff woff2
-
-.PHONY: otf
-otf: $$(OTFS)
-
-.PHONY: ttf
-ttf: $$(TTFS)
-
-.PHONY: woff
-woff: $$(WOFFS)
-
-.PHONY: woff2
-woff2: $$(WOFF2S)
+static: static-otf static-ttf static-woff static-woff2
 
 .PHONY: variable
 variable: variable-otf variable-ttf variable-woff variable-woff2
+
+.PHONY: otf
+otf: static-otf variable-otf
+
+.PHONY: ttf
+ttf: static-ttf variable-ttf
+
+.PHONY: woff
+woff: static-woff variable-woff
+
+.PHONY: woff2
+woff2: static-woff2 variable-woff2
+
+.PHONY: static-otf
+static-otf: $$(STATICOTFS)
+
+.PHONY: static-ttf
+static-ttf: $$(STATICTTFS)
+
+.PHONY: static-woff
+static-woff: $$(STATICWOFFS)
+
+.PHONY: static-woff2
+static-woff2: $$(STATICWOFF2S)
 
 .PHONY: variable-otf
 variable-otf: $$(VARIABLEOTFS)
@@ -169,10 +187,15 @@ variable-woff: $$(VARIABLEWOFFS)
 .PHONY: variable-woff2
 variable-woff2: $$(VARIABLEWOFF2S)
 
+BUILDDIR ?= .fontship
+
+$(BUILDDIR):
+	mkdir -p $@
+
 ifeq ($(CANONICAL),glyphs)
 
 %.glyphs: %.ufo
-	$(FONTMAKE) -u $< -o glyphs
+	$(FONTMAKE) $(FONTMAKEFLAGS) -u $< -o glyphs --output-path $@
 
 # %.ufo: %.glyphs
 #     $(FONTMAKE) -g $< -o ufo $(FONTMAKEFLAGS)
@@ -187,7 +210,9 @@ ifeq ($(CANONICAL),ufo)
 %.sfd: %.ufo
 	echo SDF: $@
 
-%.ufo: .last-commit
+# UFO normalize
+
+%.ufo: $(BUILDDIR)/last-commit
 	cat <<- EOF | $(PYTHON)
 		from defcon import Font, Info
 		ufo = Font('$@')
@@ -198,7 +223,9 @@ ifeq ($(CANONICAL),ufo)
 
 endif
 
-%.otf: %.ufo .last-commit
+# UFO -> OTF
+
+%.otf: %.ufo $(BUILDDIR)/last-commit
 	cat <<- EOF | $(PYTHON)
 		from ufo2ft import compileOTF
 		from defcon import Font
@@ -208,7 +235,9 @@ endif
 	EOF
 	$(normalizeVersion)
 
-%.ttf: %.ufo .last-commit
+# UFO -> TTF
+
+%.ttf: %.ufo $(BUILDDIR)/last-commit
 	cat <<- EOF | $(PYTHON)
 		from ufo2ft import compileTTF
 		from defcon import Font
@@ -218,38 +247,54 @@ endif
 	EOF
 	$(normalizeVersion)
 
-variable_ttf/%-VF.ttf: %.glyphs
-	$(FONTMAKE) $(FONTMAKEFLAGS) --master-dir '{tmp}' -g $< -o variable
+# Glyphs -> Varibale OTF
+
+$(BUILDDIR)/%-VF-variable.otf: %.glyphs | $(BUILDDIR)
+	$(FONTMAKE) $(FONTMAKEFLAGS) -g $< -o variable-cff2 --output-path $@
+
+$(VARIABLEOTFS): %.otf: $(BUILDDIR)/%-variable.otf $(BUILDDIR)/last-commit
+	cp $< $@
+	$(normalizeVersion)
+
+# Glyphs -> Varibale TTF
+
+$(BUILDDIR)/%-VF-variable.ttf: %.glyphs | $(BUILDDIR)
+	$(FONTMAKE) $(FONTMAKEFLAGS) -g $< -o variable --output-path $@
 	$(GFTOOLS) fix-dsig --autofix $@
 
-variable_otf/%-VF.otf: %.glyphs
-	$(FONTMAKE) $(FONTMAKEFLAGS) --master-dir '{tmp}' -g $< -o variable-cff2
-
-%.ttf: variable_ttf/%.ttf .last-commit
+$(BUILDDIR)/%-unhinted.ttf: $(BUILDDIR)/%-variable.ttf
 	$(GFTOOLS) fix-nonhinting $< $@
-	$(TTX) $(TTXFLAGS) -f -x "MVAR" $@
-	rm $@
-	$(TTX) $(TTXFLAGS) $(@:.ttf=.ttx)
-	$(normalizeVersion)
 
-%.otf: variable_otf/%.otf .last-commit
+$(BUILDDIR)/%-nomvar.ttx: $(BUILDDIR)/%.ttf
+	$(TTX) $(TTXFLAGS) -o $@ -f -x "MVAR" $<
+
+$(BUILDDIR)/%.ttf: $(BUILDDIR)/%.ttx
+	$(TTX) $(TTXFLAGS) -o $@ $<
+
+$(VARIABLETTFS): %.ttf: $(BUILDDIR)/%-unhinted-nomvar.ttf $(BUILDDIR)/last-commit
 	cp $< $@
 	$(normalizeVersion)
 
-instance_otf/$(FontBase)-%.otf: $(FontBase).glyphs
-	$(FONTMAKE) $(FONTMAKEFLAGS) --master-dir '{tmp}' -g $< -i "$(FamilyName) $*" -o otf
+# Glyphs -> Static OTF
 
-%.otf: instance_otf/%.otf .last-commit
+$(BUILDDIR)/$(FontBase)-%-instance.otf: $(FontBase).glyphs | $(BUILDDIR)
+	$(FONTMAKE) $(FONTMAKEFLAGS) -g $< -i "$(FamilyName) $*" -o otf --output-path $@
+
+$(STATICOTFS): %.otf: $(BUILDDIR)/%-instance.otf $(BUILDDIR)/last-commit
 	cp $< $@
 	$(normalizeVersion)
 
-instance_ttf/$(FontBase)-%.ttf: $(FontBase).glyphs
-	$(FONTMAKE) $(FONTMAKEFLAGS) --master-dir '{tmp}' -g $< -i "$(FamilyName) $*" -o ttf
+# Glyphs -> Static TTF
+
+$(BUILDDIR)/$(FontBase)-%-instance.ttf: $(FontBase).glyphs | $(BUILDDIR)
+	$(FONTMAKE) $(FONTMAKEFLAGS) -g $< -i "$(FamilyName) $*" -o ttf --output-path $@
 	$(GFTOOLS) fix-dsig --autofix $@
 
-%.ttf: instance_ttf/%.ttf .last-commit
+$(STATICTTFS): %.ttf: $(BUILDDIR)/%-instance.ttf $(BUILDDIR)/last-commit
 	$(TTFAUTOHINT) $(TTFAUTOHINTFLAGS) -n $< $@
 	$(normalizeVersion)
+
+# Webfont compressions
 
 %.woff: %.ttf
 	$(SFNT2WOFF) $<
@@ -257,8 +302,10 @@ instance_ttf/$(FontBase)-%.ttf: $(FontBase).glyphs
 %.woff2: %.ttf
 	$(WOFF2_COMPRESS) $<
 
-.PHONY: .last-commit
-.last-commit:
+# Utility stuff
+
+.PHONY: $(BUILDDIR)/last-commit
+$(BUILDDIR)/last-commit: | $(BUILDDIR)
 	git update-index --refresh --ignore-submodules ||:
 	git diff-index --quiet --cached HEAD -- *.ufo
 	ts=$$(git log -n1 --pretty=format:%cI HEAD)
@@ -279,13 +326,13 @@ dist_doc_DATA ?= $(wildcard $(foreach B,readme README,$(foreach E,md txt markdow
 dist_license_DATA ?= $(wildcard $(foreach B,ofl OFL ofl-faq OFL-FAQ license LICENSE copying COPYING,$(foreach E,md txt markdown,$(B).$(E))))
 
 .PHONY: install-dist
-install-dist: fonts $(DISTDIR)
+install-dist: fonts | $(DISTDIR)
 	install -Dm644 -t "$(DISTDIR)/" $(dist_doc_DATA)
 	install -Dm644 -t "$(DISTDIR)/" $(dist_license_DATA)
-	install -Dm644 -t "$(DISTDIR)/static/OTF/" $(OTFS)
-	install -Dm644 -t "$(DISTDIR)/static/TTF/" $(TTFS)
-	install -Dm644 -t "$(DISTDIR)/static/WOFF/" $(WOFFS)
-	install -Dm644 -t "$(DISTDIR)/static/WOFF2/" $(WOFF2S)
+	install -Dm644 -t "$(DISTDIR)/static/OTF/" $(STATICOTFS)
+	install -Dm644 -t "$(DISTDIR)/static/TTF/" $(STATICTTFS)
+	install -Dm644 -t "$(DISTDIR)/static/WOFF/" $(STATICWOFFS)
+	install -Dm644 -t "$(DISTDIR)/static/WOFF2/" $(STATICWOFF2S)
 	install -Dm644 -t "$(DISTDIR)/variable/OTF/" $(VARIABLEOTFS)
 	install -Dm644 -t "$(DISTDIR)/variable/TTF/" $(VARIABLETTFS)
 	install -Dm644 -t "$(DISTDIR)/variable/WOFF/" $(VARIABLEWOFFS)
@@ -294,11 +341,11 @@ install-dist: fonts $(DISTDIR)
 install-local: install-local-otf
 
 install-local-otf: otf variable-otf
-	install -Dm755 -t "$${HOME}/.local/share/fonts/OTF/" $(OTFS)
+	install -Dm755 -t "$${HOME}/.local/share/fonts/OTF/" $(STATICOTFS)
 	install -Dm755 -t "$${HOME}/.local/share/fonts/variable/" $(VARIABLEOTFS)
 
 install-local-ttf: ttf variable-ttf
-	install -Dm755 -t "$${HOME}/.local/share/fonts/TTF/" $(TTFS)
+	install -Dm755 -t "$${HOME}/.local/share/fonts/TTF/" $(STATICTTFS)
 	install -Dm755 -t "$${HOME}/.local/share/fonts/variable/" $(VARIABLETTFS)
 
 # Empty recipie to suppres makefile regeneration
