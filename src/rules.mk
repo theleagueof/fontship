@@ -63,10 +63,10 @@ FontStyles += $(foreach GLYPHS,$(wildcard $(FontBase).glyphs),$(call glyphWeight
 
 INSTANCES = $(foreach BASE,$(FontBase),$(foreach STYLE,$(FontStyles),$(BASE)-$(STYLE)))
 
-OTFS = $(addsuffix .otf,$(INSTANCES))
-TTFS = $(addsuffix .ttf,$(INSTANCES))
-WOFFS = $(addsuffix .woff,$(INSTANCES))
-WOFF2S = $(addsuffix .woff2,$(INSTANCES))
+STATICOTFS = $(addsuffix .otf,$(INSTANCES))
+STATICTTFS = $(addsuffix .ttf,$(INSTANCES))
+STATICWOFFS = $(addsuffix .woff,$(INSTANCES))
+STATICWOFF2S = $(addsuffix .woff2,$(INSTANCES))
 VARIABLEOTFS = $(addsuffix -VF.otf,$(FontBase))
 VARIABLETTFS = $(addsuffix -VF.ttf,$(FontBase))
 VARIABLEWOFFS = $(addsuffix -VF.woff,$(FontBase))
@@ -109,11 +109,11 @@ debug:
 	echo isTagged: $(isTagged)
 	echo ----------------------------
 	echo INSTANCES: $(INSTANCES)
-	echo OTFS: $(OTFS)
-	echo TTFS: $(TTFS)
-	echo WOFFS: $(WOFFS)
-	echo WOFF2S: $(WOFF2S)
-	echo VARIABLESOTFS: $(VARIABLESOTFS)
+	echo STATICOTFS: $(STATICOTFS)
+	echo STATICTTFS: $(STATICTTFS)
+	echo STATICWOFFS: $(STATICWOFFS)
+	echo STATICWOFF2S: $(STATICWOFF2S)
+	echo VARIABLEOTFS: $(VARIABLEOTFS)
 	echo VARIABLETTFS: $(VARIABLETTFS)
 	echo VARIABLEWOFFS: $(VARIABLEWOFFS)
 	echo VARIABLEWOFF2S: $(VARIABLEWOFF2S)
@@ -141,22 +141,34 @@ fontforge: $$(addsuffix .sfd,$$(INSTANCES))
 fonts: static variable
 
 .PHONY: static
-static: otf ttf woff woff2
-
-.PHONY: otf
-otf: $$(OTFS)
-
-.PHONY: ttf
-ttf: $$(TTFS)
-
-.PHONY: woff
-woff: $$(WOFFS)
-
-.PHONY: woff2
-woff2: $$(WOFF2S)
+static: static-otf static-ttf static-woff static-woff2
 
 .PHONY: variable
 variable: variable-otf variable-ttf variable-woff variable-woff2
+
+.PHONY: otf
+otf: static-otf variable-otf
+
+.PHONY: ttf
+ttf: static-ttf variable-ttf
+
+.PHONY: woff
+woff: static-woff variable-woff
+
+.PHONY: woff2
+woff2: static-woff2 variable-woff2
+
+.PHONY: static-otf
+static-otf: $$(STATICOTFS)
+
+.PHONY: static-ttf
+static-ttf: $$(STATICTTFS)
+
+.PHONY: static-woff
+static-woff: $$(STATICWOFFS)
+
+.PHONY: static-woff2
+static-woff2: $$(STATICWOFF2S)
 
 .PHONY: variable-otf
 variable-otf: $$(VARIABLEOTFS)
@@ -173,7 +185,7 @@ variable-woff2: $$(VARIABLEWOFF2S)
 ifeq ($(CANONICAL),glyphs)
 
 %.glyphs: %.ufo
-	$(FONTMAKE) -u $< -o glyphs
+	$(FONTMAKE) $(FONTMAKEFLAGS) -u $< -o glyphs --output-path $@
 
 # %.ufo: %.glyphs
 #     $(FONTMAKE) -g $< -o ufo $(FONTMAKEFLAGS)
@@ -188,6 +200,8 @@ ifeq ($(CANONICAL),ufo)
 %.sfd: %.ufo
 	echo SDF: $@
 
+# UFO normalize
+
 %.ufo: .last-commit
 	cat <<- EOF | $(PYTHON)
 		from defcon import Font, Info
@@ -199,6 +213,8 @@ ifeq ($(CANONICAL),ufo)
 
 endif
 
+# UFO -> OTF
+
 %.otf: %.ufo .last-commit
 	cat <<- EOF | $(PYTHON)
 		from ufo2ft import compileOTF
@@ -208,6 +224,8 @@ endif
 		otf.save('$@')
 	EOF
 	$(normalizeVersion)
+
+# UFO -> TTF
 
 %.ttf: %.ufo .last-commit
 	cat <<- EOF | $(PYTHON)
@@ -219,44 +237,62 @@ endif
 	EOF
 	$(normalizeVersion)
 
-variable_ttf/%-VF.ttf: %.glyphs
-	$(FONTMAKE) $(FONTMAKEFLAGS) -g $< -o variable
+# Glyphs -> Varibale OTF
+
+%-VF-variable.otf: %.glyphs
+	$(FONTMAKE) $(FONTMAKEFLAGS) -g $< -o variable-cff2 --output-path $@
+
+$(VARIABLEOTFS): %.otf: %-variable.otf .last-commit
+	cp $< $@
+	$(normalizeVersion)
+
+# Glyphs -> Varibale TTF
+
+%-VF-variable.ttf: %.glyphs
+	$(FONTMAKE) $(FONTMAKEFLAGS) -g $< -o variable --output-path $@
 	$(GFTOOLS) fix-dsig --autofix $@
 
-variable_otf/%-VF.otf: %.glyphs
-	$(FONTMAKE) $(FONTMAKEFLAGS) -g $< -o variable-cff2
-
-%.ttf: variable_ttf/%.ttf .last-commit
+%-unhinted.ttf: %-variable.ttf
 	$(GFTOOLS) fix-nonhinting $< $@
-	$(TTX) $(TTXFLAGS) -f -x "MVAR" $@
-	rm $@
-	$(TTX) $(TTXFLAGS) $(@:.ttf=.ttx)
-	$(normalizeVersion)
 
-%.otf: variable_otf/%.otf .last-commit
+%-nomvar.ttx: %.ttf
+	$(TTX) $(TTXFLAGS) -o $@ -f -x "MVAR" $<
+
+%.ttf: %.ttx
+	$(TTX) $(TTXFLAGS) -o $@ $<
+
+$(VARIABLETTFS): %.ttf: %-unhinted-nomvar.ttf .last-commit
 	cp $< $@
 	$(normalizeVersion)
 
-instance_otf/$(FontBase)-%.otf: $(FontBase).glyphs
-	$(FONTMAKE) $(FONTMAKEFLAGS) -g $< -i "$(FamilyName) $*" -o otf
+# Glyphs -> Static OTF
 
-%.otf: instance_otf/%.otf .last-commit
+$(FontBase)-%-instance.otf: $(FontBase).glyphs
+	$(FONTMAKE) $(FONTMAKEFLAGS) -g $< -i "$(FamilyName) $*" -o otf --output-path $@
+
+$(STATICOTFS): %.otf: %-instance.otf .last-commit
 	cp $< $@
 	$(normalizeVersion)
 
-instance_ttf/$(FontBase)-%.ttf: $(FontBase).glyphs
-	$(FONTMAKE) $(FONTMAKEFLAGS) -g $< -i "$(FamilyName) $*" -o ttf
+# Glyphs -> Static TTF
+
+$(FontBase)-%-instance.ttf: $(FontBase).glyphs
+	$(FONTMAKE) $(FONTMAKEFLAGS) -g $< -i "$(FamilyName) $*" -o ttf --output-path $@
 	$(GFTOOLS) fix-dsig --autofix $@
 
-%.ttf: instance_ttf/%.ttf .last-commit
+$(STATICTTFS): %.ttf: %-instance.ttf .last-commit
 	$(TTFAUTOHINT) $(TTFAUTOHINTFLAGS) -n $< $@
 	$(normalizeVersion)
+
+# Webfont compressions
 
 %.woff: %.ttf
 	$(SFNT2WOFF) $<
 
 %.woff2: %.ttf
 	$(WOFF2_COMPRESS) $<
+
+# Utility stuff
 
 .PHONY: .last-commit
 .last-commit:
@@ -283,10 +319,10 @@ dist_license_DATA ?= $(wildcard $(foreach B,ofl OFL ofl-faq OFL-FAQ license LICE
 install-dist: fonts $(DISTDIR)
 	install -Dm644 -t "$(DISTDIR)/" $(dist_doc_DATA)
 	install -Dm644 -t "$(DISTDIR)/" $(dist_license_DATA)
-	install -Dm644 -t "$(DISTDIR)/static/OTF/" $(OTFS)
-	install -Dm644 -t "$(DISTDIR)/static/TTF/" $(TTFS)
-	install -Dm644 -t "$(DISTDIR)/static/WOFF/" $(WOFFS)
-	install -Dm644 -t "$(DISTDIR)/static/WOFF2/" $(WOFF2S)
+	install -Dm644 -t "$(DISTDIR)/static/OTF/" $(STATICOTFS)
+	install -Dm644 -t "$(DISTDIR)/static/TTF/" $(STATICTTFS)
+	install -Dm644 -t "$(DISTDIR)/static/WOFF/" $(STATICWOFFS)
+	install -Dm644 -t "$(DISTDIR)/static/WOFF2/" $(STATICWOFF2S)
 	install -Dm644 -t "$(DISTDIR)/variable/OTF/" $(VARIABLEOTFS)
 	install -Dm644 -t "$(DISTDIR)/variable/TTF/" $(VARIABLETTFS)
 	install -Dm644 -t "$(DISTDIR)/variable/WOFF/" $(VARIABLEWOFFS)
@@ -295,11 +331,11 @@ install-dist: fonts $(DISTDIR)
 install-local: install-local-otf
 
 install-local-otf: otf variable-otf
-	install -Dm755 -t "$${HOME}/.local/share/fonts/OTF/" $(OTFS)
+	install -Dm755 -t "$${HOME}/.local/share/fonts/OTF/" $(STATICOTFS)
 	install -Dm755 -t "$${HOME}/.local/share/fonts/variable/" $(VARIABLEOTFS)
 
 install-local-ttf: ttf variable-ttf
-	install -Dm755 -t "$${HOME}/.local/share/fonts/TTF/" $(TTFS)
+	install -Dm755 -t "$${HOME}/.local/share/fonts/TTF/" $(STATICTTFS)
 	install -Dm755 -t "$${HOME}/.local/share/fonts/variable/" $(VARIABLETTFS)
 
 # Empty recipie to suppres makefile regeneration
