@@ -182,6 +182,11 @@ variable-woff: $$(VARIABLEWOFFS)
 .PHONY: variable-woff2
 variable-woff2: $$(VARIABLEWOFF2S)
 
+BUILDDIR ?= .fontship
+
+$(BUILDDIR):
+	mkdir -p $@
+
 ifeq ($(CANONICAL),glyphs)
 
 %.glyphs: %.ufo
@@ -239,48 +244,48 @@ endif
 
 # Glyphs -> Varibale OTF
 
-%-VF-variable.otf: %.glyphs
+$(BUILDDIR)/%-VF-variable.otf: %.glyphs | $(BUILDDIR)
 	$(FONTMAKE) $(FONTMAKEFLAGS) -g $< -o variable-cff2 --output-path $@
 
-$(VARIABLEOTFS): %.otf: %-variable.otf .last-commit
+$(VARIABLEOTFS): %.otf: $(BUILDDIR)/%-variable.otf .last-commit
 	cp $< $@
 	$(normalizeVersion)
 
 # Glyphs -> Varibale TTF
 
-%-VF-variable.ttf: %.glyphs
+$(BUILDDIR)/%-VF-variable.ttf: %.glyphs | $(BUILDDIR)
 	$(FONTMAKE) $(FONTMAKEFLAGS) -g $< -o variable --output-path $@
 	$(GFTOOLS) fix-dsig --autofix $@
 
-%-unhinted.ttf: %-variable.ttf
+$(BUILDDIR)/%-unhinted.ttf: $(BUILDDIR)/%-variable.ttf
 	$(GFTOOLS) fix-nonhinting $< $@
 
-%-nomvar.ttx: %.ttf
+$(BUILDDIR)/%-nomvar.ttx: $(BUILDDIR)/%.ttf
 	$(TTX) $(TTXFLAGS) -o $@ -f -x "MVAR" $<
 
-%.ttf: %.ttx
+$(BUILDDIR)/%.ttf: $(BUILDDIR)/%.ttx
 	$(TTX) $(TTXFLAGS) -o $@ $<
 
-$(VARIABLETTFS): %.ttf: %-unhinted-nomvar.ttf .last-commit
+$(VARIABLETTFS): %.ttf: $(BUILDDIR)/%-unhinted-nomvar.ttf .last-commit
 	cp $< $@
 	$(normalizeVersion)
 
 # Glyphs -> Static OTF
 
-$(FontBase)-%-instance.otf: $(FontBase).glyphs
+$(BUILDDIR)/$(FontBase)-%-instance.otf: $(FontBase).glyphs | $(BUILDDIR)
 	$(FONTMAKE) $(FONTMAKEFLAGS) -g $< -i "$(FamilyName) $*" -o otf --output-path $@
 
-$(STATICOTFS): %.otf: %-instance.otf .last-commit
+$(STATICOTFS): %.otf: $(BUILDDIR)/%-instance.otf .last-commit
 	cp $< $@
 	$(normalizeVersion)
 
 # Glyphs -> Static TTF
 
-$(FontBase)-%-instance.ttf: $(FontBase).glyphs
+$(BUILDDIR)/$(FontBase)-%-instance.ttf: $(FontBase).glyphs | $(BUILDDIR)
 	$(FONTMAKE) $(FONTMAKEFLAGS) -g $< -i "$(FamilyName) $*" -o ttf --output-path $@
 	$(GFTOOLS) fix-dsig --autofix $@
 
-$(STATICTTFS): %.ttf: %-instance.ttf .last-commit
+$(STATICTTFS): %.ttf: $(BUILDDIR)/%-instance.ttf .last-commit
 	$(TTFAUTOHINT) $(TTFAUTOHINTFLAGS) -n $< $@
 	$(normalizeVersion)
 
@@ -316,7 +321,7 @@ dist_doc_DATA ?= $(wildcard $(foreach B,readme README,$(foreach E,md txt markdow
 dist_license_DATA ?= $(wildcard $(foreach B,ofl OFL ofl-faq OFL-FAQ license LICENSE copying COPYING,$(foreach E,md txt markdown,$(B).$(E))))
 
 .PHONY: install-dist
-install-dist: fonts $(DISTDIR)
+install-dist: fonts | $(DISTDIR)
 	install -Dm644 -t "$(DISTDIR)/" $(dist_doc_DATA)
 	install -Dm644 -t "$(DISTDIR)/" $(dist_license_DATA)
 	install -Dm644 -t "$(DISTDIR)/static/OTF/" $(STATICOTFS)
