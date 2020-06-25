@@ -49,11 +49,8 @@ cli.add_command(setup)
 @click.pass_context
 def status(ctx):
     """Show information about setup and build status."""
-    Fontship = fontship.Fontship()
-    repo = Fontship.open_repo()
-    if not repo:
-        click.echo("Not a repository!")
-    click.echo(repo)
+    repo = fontship.Repo()
+    click.echo("Repository: " + repo.path)
 
 cli.add_command(status)
 
