@@ -68,6 +68,7 @@ Otherwise to install and use locally from source, you’ll need some dependencie
 * GNU core utilities plus `bsdtar`, `entr`, `zsh`,
 * GNU `make` (4.2+) with corresponding autoconf tools,
 * Python 3 plus assorted modules, see *requirements.txt* file.
+* A handfull of other font related CLI utilities, namely: `sfn2woff-zopfli`,`ttfautohint`, and `woff2_compress`.
 
 To install the software to your computer, either clone this repository and run `./bootstrap.sh` or [download and extract the latest release](https://github.com/theleagueof/fontship/releases), then run:
 
