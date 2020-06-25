@@ -11,47 +11,16 @@ League of Moveable Type](https://www.theleagueofmoveabletype.com/).
 
 Fontship can be used in any of four different ways:
 
-1.  Directly on a local system that has all the required dependencies and fontship has been installed.
+1.  Remotely via a CI runner.
 2.  On a local system via a Docker image for low hastle setup.
-3.  Remotely via a CI runner.
-4.  By including fontship’s rules into your project’s Makefile.
-
-### Local Setup
-
-If you use Arch Linux, you can install [this AUR package](https://aur.archlinux.org/packages/fontship) (prebuilt in [this repostiory](https://wiki.archlinux.org/index.php/Unofficial_user_repositories#alerque)).
-
-Otherwise to install and use locally from source, you’ll need some dependencies:
-
-* Git,
-* GNU core utilities plus `bsdtar`, `entr`, `zsh`,
-* GNU `make` (4.2+) with corresponding autoconf tools,
-* Python 3 plus assorted modules, see *requirements.txt* file.
-
-Install the software to your computer. Either clone this repository and
-run `./bootstrap.sh` or [download and extract the latest release](https://github.com/theleagueof/fontship/releases), then run:
-
-    $ ./configure
-    $ make
-    $ sudo make install
-
-### Docker Setup
-
-Docker images are available from Docker Hub or you can build them yourself.
-
-Add an alias:
-
-    $ alias fontship='docker run -it --volume "$(pwd):/data" --user "$(id -u):$(id -g)" theleagueof/fontship:latest'
-
-You may substitute *latest*, which will always be the most recently released tagged version, with *master* to use the freshest unreleased build, with a tag name to explicitly use a specific version, or with *HEAD* to use an image build locally.
-
-To build a docker image locally, you’ll want to clone this repository and run `./bootstrap.sh` or download and extract a tarball, then run:
-
-    $ ./configure
-    $ make docker
+3.  On a local system that has all the required dependencies and fontship directly installed.
+4.  By including Fontship’s rules into your project’s Makefile.
 
 ### CI Setup
 
-For use in as o Github Action, add a configuration file to your repository such as `.github/workflow/fontship.yml`:
+Build your fonts without installing or running anything! Just push your sources to a repmote Git repository and let Fontship do the rest.
+
+For use with Github Actions, add a configuration file to your repository such as `.github/workflow/fontship.yml`:
 
 ```yaml
 on: [push, pull_request]
@@ -70,9 +39,41 @@ jobs:
         uses: theleagueof/fontship@master
 ```
 
-Note at the current time Fontship only builds the fonts, it doesn’t do anything with them. You’ll need to post them as artifacts or publish them on releases as another step in the workflow. For a full working example see [League Spartan’s workflow](https://github.com/theleagueof/league-spartan/blob/master/.github/workflow/fontship.yml).
+At the current time Fontship only builds the fonts, it doesn’t do anything with them. You’ll need to post them as artifacts or publish them on releases as another step in the workflow. For a full working example see [League Spartan’s workflow](https://github.com/theleagueof/league-spartan/blob/master/.github/workflow/fontship.yml).
 
 Other CI runners could easily be supported, see [issue #32](https://github.com/theleagueof/fontship/issues/32) for details.
+
+### Docker Setup
+
+Docker images are available from Docker Hub or you can build them yourself.
+
+Add an alias:
+
+    $ alias fontship='docker run -it --volume "$(pwd):/data" --user "$(id -u):$(id -g)" theleagueof/fontship:latest'
+
+You may substitute *latest*, which will always be the most recently released tagged version, with *master* to use the freshest unreleased build, with a tag name to explicitly use a specific version, or with *HEAD* to use an image build locally.
+
+To build a docker image locally, you’ll want to clone this repository and run `./bootstrap.sh` or download and extract a tarball, then run:
+
+    $ ./configure
+    $ make docker
+
+### System Setup
+
+If you use Arch Linux, you can install [this AUR package](https://aur.archlinux.org/packages/fontship) (prebuilt in [this repostiory](https://wiki.archlinux.org/index.php/Unofficial_user_repositories#alerque)).
+
+Otherwise to install and use locally from source, you’ll need some dependencies:
+
+* Git,
+* GNU core utilities plus `bsdtar`, `entr`, `zsh`,
+* GNU `make` (4.2+) with corresponding autoconf tools,
+* Python 3 plus assorted modules, see *requirements.txt* file.
+
+To install the software to your computer, either clone this repository and run `./bootstrap.sh` or [download and extract the latest release](https://github.com/theleagueof/fontship/releases), then run:
+
+    $ ./configure
+    $ make
+    $ sudo make install
 
 ### Makefile Setup
 
