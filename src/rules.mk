@@ -72,17 +72,18 @@ VARIABLETTFS = $(addsuffix -VF.ttf,$(FontBase))
 VARIABLEWOFFS = $(addsuffix -VF.woff,$(FontBase))
 VARIABLEWOFF2S = $(addsuffix -VF.woff2,$(FontBase))
 
+_FONTMAKEFLAGS = --master-dir '{tmp}' --instance-dir '{tmp}'
 ifeq ($(DEBUG)),true)
-FONTMAKEFLAGS = --verbose INFO
+FONTMAKEFLAGS ?= $(_FONTMAKEFLAGS) --verbose INFO
 TTXFLAGS = -v
 TTFAUTOHINTFLAGS = -v --debug
 else
 ifeq ($(VERBOSE)),true)
-FONTMAKEFLAGS = --verbose WARNING
+FONTMAKEFLAGS ?= $(_FONTMAKEFLAGS) --verbose WARNING
 TTXFLAGS = -v
 TTFAUTOHINTFLAGS = -v
 else
-FONTMAKEFLAGS ?= --verbose ERROR
+FONTMAKEFLAGS ?= $(_FONTMAKEFLAGS) --verbose ERROR
 TTXFLAGS ?=
 TTFAUTOHINTFLAGS ?=
 endif
@@ -219,11 +220,11 @@ endif
 	$(normalizeVersion)
 
 variable_ttf/%-VF.ttf: %.glyphs
-	$(FONTMAKE) $(FONTMAKEFLAGS) --master-dir '{tmp}' -g $< -o variable
+	$(FONTMAKE) $(FONTMAKEFLAGS) -g $< -o variable
 	$(GFTOOLS) fix-dsig --autofix $@
 
 variable_otf/%-VF.otf: %.glyphs
-	$(FONTMAKE) $(FONTMAKEFLAGS) --master-dir '{tmp}' -g $< -o variable-cff2
+	$(FONTMAKE) $(FONTMAKEFLAGS) -g $< -o variable-cff2
 
 %.ttf: variable_ttf/%.ttf .last-commit
 	$(GFTOOLS) fix-nonhinting $< $@
@@ -237,14 +238,14 @@ variable_otf/%-VF.otf: %.glyphs
 	$(normalizeVersion)
 
 instance_otf/$(FontBase)-%.otf: $(FontBase).glyphs
-	$(FONTMAKE) $(FONTMAKEFLAGS) --master-dir '{tmp}' -g $< -i "$(FamilyName) $*" -o otf
+	$(FONTMAKE) $(FONTMAKEFLAGS) -g $< -i "$(FamilyName) $*" -o otf
 
 %.otf: instance_otf/%.otf .last-commit
 	cp $< $@
 	$(normalizeVersion)
 
 instance_ttf/$(FontBase)-%.ttf: $(FontBase).glyphs
-	$(FONTMAKE) $(FONTMAKEFLAGS) --master-dir '{tmp}' -g $< -i "$(FamilyName) $*" -o ttf
+	$(FONTMAKE) $(FONTMAKEFLAGS) -g $< -i "$(FamilyName) $*" -o ttf
 	$(GFTOOLS) fix-dsig --autofix $@
 
 %.ttf: instance_ttf/%.ttf .last-commit
