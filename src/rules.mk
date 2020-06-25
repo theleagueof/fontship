@@ -212,7 +212,7 @@ ifeq ($(CANONICAL),ufo)
 
 # UFO normalize
 
-%.ufo: .last-commit
+%.ufo: $(BUILDDIR)/last-commit
 	cat <<- EOF | $(PYTHON)
 		from defcon import Font, Info
 		ufo = Font('$@')
@@ -225,7 +225,7 @@ endif
 
 # UFO -> OTF
 
-%.otf: %.ufo .last-commit
+%.otf: %.ufo $(BUILDDIR)/last-commit
 	cat <<- EOF | $(PYTHON)
 		from ufo2ft import compileOTF
 		from defcon import Font
@@ -237,7 +237,7 @@ endif
 
 # UFO -> TTF
 
-%.ttf: %.ufo .last-commit
+%.ttf: %.ufo $(BUILDDIR)/last-commit
 	cat <<- EOF | $(PYTHON)
 		from ufo2ft import compileTTF
 		from defcon import Font
@@ -252,7 +252,7 @@ endif
 $(BUILDDIR)/%-VF-variable.otf: %.glyphs | $(BUILDDIR)
 	$(FONTMAKE) $(FONTMAKEFLAGS) -g $< -o variable-cff2 --output-path $@
 
-$(VARIABLEOTFS): %.otf: $(BUILDDIR)/%-variable.otf .last-commit
+$(VARIABLEOTFS): %.otf: $(BUILDDIR)/%-variable.otf $(BUILDDIR)/last-commit
 	cp $< $@
 	$(normalizeVersion)
 
@@ -271,7 +271,7 @@ $(BUILDDIR)/%-nomvar.ttx: $(BUILDDIR)/%.ttf
 $(BUILDDIR)/%.ttf: $(BUILDDIR)/%.ttx
 	$(TTX) $(TTXFLAGS) -o $@ $<
 
-$(VARIABLETTFS): %.ttf: $(BUILDDIR)/%-unhinted-nomvar.ttf .last-commit
+$(VARIABLETTFS): %.ttf: $(BUILDDIR)/%-unhinted-nomvar.ttf $(BUILDDIR)/last-commit
 	cp $< $@
 	$(normalizeVersion)
 
@@ -280,7 +280,7 @@ $(VARIABLETTFS): %.ttf: $(BUILDDIR)/%-unhinted-nomvar.ttf .last-commit
 $(BUILDDIR)/$(FontBase)-%-instance.otf: $(FontBase).glyphs | $(BUILDDIR)
 	$(FONTMAKE) $(FONTMAKEFLAGS) -g $< -i "$(FamilyName) $*" -o otf --output-path $@
 
-$(STATICOTFS): %.otf: $(BUILDDIR)/%-instance.otf .last-commit
+$(STATICOTFS): %.otf: $(BUILDDIR)/%-instance.otf $(BUILDDIR)/last-commit
 	cp $< $@
 	$(normalizeVersion)
 
@@ -290,7 +290,7 @@ $(BUILDDIR)/$(FontBase)-%-instance.ttf: $(FontBase).glyphs | $(BUILDDIR)
 	$(FONTMAKE) $(FONTMAKEFLAGS) -g $< -i "$(FamilyName) $*" -o ttf --output-path $@
 	$(GFTOOLS) fix-dsig --autofix $@
 
-$(STATICTTFS): %.ttf: $(BUILDDIR)/%-instance.ttf .last-commit
+$(STATICTTFS): %.ttf: $(BUILDDIR)/%-instance.ttf $(BUILDDIR)/last-commit
 	$(TTFAUTOHINT) $(TTFAUTOHINTFLAGS) -n $< $@
 	$(normalizeVersion)
 
@@ -304,8 +304,8 @@ $(STATICTTFS): %.ttf: $(BUILDDIR)/%-instance.ttf .last-commit
 
 # Utility stuff
 
-.PHONY: .last-commit
-.last-commit:
+.PHONY: $(BUILDDIR)/last-commit
+$(BUILDDIR)/last-commit: | $(BUILDDIR)
 	git update-index --refresh --ignore-submodules ||:
 	git diff-index --quiet --cached HEAD -- *.ufo
 	ts=$$(git log -n1 --pretty=format:%cI HEAD)
