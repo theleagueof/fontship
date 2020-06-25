@@ -12,6 +12,11 @@ SHELL := zsh
 .ONESHELL:
 .SECONDEXPANSION:
 
+# Don't drop intermediate artifacts (saves rebulid time and aids debugging)
+.SECONDARY:
+.PRECIOUS: %
+.DELETE_ON_ERROR:
+
 CONTAINERIZED != test -f /.dockerenv && echo true || echo false
 
 # Initial environment setup
