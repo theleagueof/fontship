@@ -10,7 +10,7 @@ dist_data_DATA = src/rules.mk src/functions.mk
 CLEANFILES = $(bin_SCRIPTS)
 
 .PHONY: docker
-docker: Dockerfile build-aux/docker-entrypoint.sh
+docker: Dockerfile
 	docker build \
 		--build-arg VCS_REF="$(VERSION)" \
 		--tag theleagueof/fontship:HEAD \
