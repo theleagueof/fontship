@@ -20,5 +20,6 @@ AM_PATH_PYTHON([3.6])
 
 AC_CONFIG_FILES([Makefile])
 AC_CONFIG_FILES([fontship], [chmod +x fontship])
+AC_CONFIG_FILES([src/pre-commit.py], [chmod +x src/pre-commit.py])
 
 AC_OUTPUT
