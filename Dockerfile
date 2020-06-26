@@ -42,9 +42,7 @@ FROM fontship-base AS fontship
 LABEL maintainer="Caleb Maclennan <caleb@alerque.com>"
 LABEL version="$VCS_REF"
 
-COPY build-aux/docker-entrypoint.sh /usr/local/bin
-
 COPY --from=fontship-builder /pkgdir /
 
 WORKDIR /data
-ENTRYPOINT ["docker-entrypoint.sh"]
+ENTRYPOINT ["fontship"]
