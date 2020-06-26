@@ -5,6 +5,7 @@ font-v==1.0.2
 fontmake==2.2.0
 fonttools[lxml,ufo,unicode,woff]==4.12.1
 gftools==0.3.13
+pygit2==1.2.1
 skia-pathops==0.4.1
 ufo2ft[cffsubr]==2.15.0
 #afdko==3.2.1

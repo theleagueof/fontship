@@ -7,11 +7,26 @@ AM_SILENT_RULES([yes])
 AC_CHECK_PROG(GFTOOLS, gftools, yes)
 test "x$GFTOOLS" == "xyes" || AC_MSG_ERROR([gftools is required])
 
+AC_CHECK_PROG(FONT_V, font-v, yes)
+test "x$FONT_V" == "xyes" || AC_MSG_ERROR([font-v is required])
+
+AC_CHECK_PROG(FONTMAKE, fontmake, yes)
+test "x$FONTMAKE" == "xyes" || AC_MSG_ERROR([fontmake is required])
+
+AC_CHECK_PROG(SFNT2WOFFZOPFLI, sfnt2woff-zopfli, yes)
+test "x$SFNT2WOFFZOPFLI" == "xyes" || AC_MSG_ERROR([sfnt2woff-zopfli is required])
+
 AC_CHECK_PROG(SFNT2WOFFZOPFLI, sfnt2woff-zopfli, yes)
 test "x$SFNT2WOFFZOPFLI" == "xyes" || AC_MSG_ERROR([sfnt2woff-zopfli is required])
 
 AC_CHECK_PROG(TTFAUTOHINT, ttfautohint, yes)
 test "x$TTFAUTOHINT" == "xyes" || AC_MSG_ERROR([ttfautohint is required])
+
+AC_CHECK_PROG(TTX, ttx, yes)
+test "x$TTX" == "xyes" || AC_MSG_ERROR([ttx is required])
+
+AC_CHECK_PROG(WOFF2_COMPRESS, woff2_compress, yes)
+test "x$WOFF2_COMPRESS" == "xyes" || AC_MSG_ERROR([woff2_compress is required])
 
 AC_CHECK_PROG(ZSH, zsh, yes)
 test "x$ZSH" == "xyes" || AC_MSG_ERROR([zsh is required])

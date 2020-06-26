@@ -1,5 +1,7 @@
 #!/usr/bin/env @PYTHON@
 
+flags = {}
+
 __version__ = "@VERSION@"
 
 # This is inscruitable, but basically allows us to take advantage of automake
@@ -17,9 +19,18 @@ import os.path
 import subprocess
 
 @click.group()
+@click.option('-d', '--debug', is_flag=True, default=False,
+              help="Enable debug mode flags.")
+@click.option('-q', '--quiet', is_flag=True, default=False,
+              help="Discard all non-error output messages.")
+@click.option('-v', '--verbose', is_flag=True, default=False,
+              help="Enable extra verbose output from tooling.")
 @click.version_option(__version__)
-def fontship():
+def cli(debug, quiet, verbose):
     """Execute any fontship supported subcommand COMMAND."""
+    flags["DEBUG"] = debug
+    flags["QUIET"] = quiet
+    flags["VERBOSE"] = verbose
 
 @click.command()
 @click.pass_context
@@ -31,29 +42,33 @@ def make(ctx, target):
     for fname in ['GNUmakefile', 'makefile', 'Makefile', 'rules.mk']:
         if os.path.isfile(fname):
             args += ['-f', fname]
+    for flag in flags:
+        if flags[flag]:
+            args += [ flag + "=true" ]
     process = subprocess.run(args + list(target), check=True)
     #, stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True)
     process
 
-fontship.add_command(make)
+cli.add_command(make)
 
 @click.command()
 @click.pass_context
 def setup(ctx):
     """Setup Fontship for use on a new Font project."""
-    click.echo("Anybody want a penut")
+    click.echo("Anybody want a peanut?")
 
-fontship.add_command(setup)
+cli.add_command(setup)
 
 @click.command()
 @click.pass_context
 def status(ctx):
     """Show information about setup and build status."""
-    click.echo("No what?")
+    repo = fontship.Repo()
+    click.echo("Repository: " + repo.path)
 
-fontship.add_command(status)
+cli.add_command(status)
 
 if __name__ == '__main__':
-    fontship()
+    cli()
 
 # vim: ft=python
