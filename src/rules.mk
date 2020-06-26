@@ -33,13 +33,13 @@ CANONICAL ?= $(shell git ls-files | grep -q '\.glyphs$'' && echo glyphs || echo 
 
 # Allow overriding executables used
 FONTMAKE ?= fontmake
-FONT-V ?= font-v
+FONTV ?= font-v
 GFTOOLS ?= gftools
 PYTHON ?= python3
 SFNT2WOFF ?= sfnt2woff-zopfli
 TTFAUTOHINT ?= ttfautohint
 TTX ?= ttx
-WOFF2_COMPRESS ?= woff2_compress
+WOFF2COMPRESS ?= woff2_compress
 
 include $(FONTSHIPDIR)/functions.mk
 
@@ -48,7 +48,7 @@ ifeq ($(CANONICAL),glyphs)
 FamilyName = $(call familyName,$(firstword $(wildcard *.glyphs)))
 endif
 
-FamilyName ?= $(shell $(CONTAINERIZED) || $(PYTHON) -c 'print("$(PROJECT)".replace("-", " ").title())')
+FamilyName ?= $(shell $(CONTAINERIZED) || $(PYTHON) $(PYTHONFLAGS) -c 'print("$(PROJECT)".replace("-", " ").title())')
 
 ifeq ($(FamilyName),)
 $(error We cannot properly detect the font’s Family Name yet from inside Docker. Please manually specify it by adding FamilyName='Family Name' as an agument to your command invocation)
@@ -79,18 +79,44 @@ VARIABLEWOFF2S = $(addsuffix -VF.woff2,$(FontBase))
 
 _FONTMAKEFLAGS = --master-dir '{tmp}' --instance-dir '{tmp}'
 ifeq ($(DEBUG)),true)
-FONTMAKEFLAGS ?= $(_FONTMAKEFLAGS) --verbose INFO
-TTXFLAGS = -v
-TTFAUTOHINTFLAGS = -v --debug
+FONTMAKEFLAGS ?= $(_FONTMAKEFLAGS) --verbose DEBUG
+FONTVFLAGS ?=
+TTFAUTOHINTFLAGS ?= -v --debug
+TTXFLAGS ?= -v
+WOFF2COMPRESSFLAGS ?=
+GFTOOLSFLAGS ?=
+PYTHONFLAGS ?= -d
+SFNT2WOFFFLAGS ?=
 else
 ifeq ($(VERBOSE)),true)
-FONTMAKEFLAGS ?= $(_FONTMAKEFLAGS) --verbose WARNING
-TTXFLAGS = -v
-TTFAUTOHINTFLAGS = -v
+FONTMAKEFLAGS ?= $(_FONTMAKEFLAGS) --verbose INFO
+FONTVFLAGS ?=
+GFTOOLSFLAGS ?=
+PYTHONFLAGS ?= -v
+SFNT2WOFFFLAGS ?=
+TTFAUTOHINTFLAGS ?= -v
+TTXFLAGS ?= -v
+WOFF2COMPRESSFLAGS ?=
 else
-FONTMAKEFLAGS ?= $(_FONTMAKEFLAGS) --verbose ERROR
-TTXFLAGS ?=
+ifeq ($(QUIET)),true)
+FONTMAKEFLAGS ?= $(_FONTMAKEFLAGS) --verbose ERROR 2> /dev/null
+FONTVFLAGS ?= 2> /dev/null
+GFTOOLSFLAGS ?= 2> /dev/null
+PYTHONFLAGS ?= 2> /dev/null
+SFNT2WOFFFLAGS ?= 2> /dev/null
+TTFAUTOHINTFLAGS ?= 2> /dev/null
+TTXFLAGS ?= 2> /dev/null
+WOFF2COMPRESSFLAGS ?= 2> /dev/null
+else
+FONTMAKEFLAGS ?= $(_FONTMAKEFLAGS) --verbose WARNING
+FONTVFLAGS ?=
+GFTOOLSFLAGS ?=
+PYTHONFLAGS ?=
+SFNT2WOFFFLAGS ?=
 TTFAUTOHINTFLAGS ?=
+TTXFLAGS ?=
+WOFF2COMPRESSFLAGS ?=
+endif
 endif
 endif
 
@@ -198,7 +224,7 @@ ifeq ($(CANONICAL),glyphs)
 	$(FONTMAKE) $(FONTMAKEFLAGS) -u $< -o glyphs --output-path $@
 
 # %.ufo: %.glyphs
-#     $(FONTMAKE) -g $< -o ufo $(FONTMAKEFLAGS)
+#     $(FONTMAKE) $(FONTMAKEFLAGS) -g $< -o ufo
 
 %.designspace: %.glyphs
 	echo MM $@
@@ -213,7 +239,7 @@ ifeq ($(CANONICAL),ufo)
 # UFO normalize
 
 %.ufo: $(BUILDDIR)/last-commit
-	cat <<- EOF | $(PYTHON)
+	cat <<- EOF | $(PYTHON) $(PYTHONFLAGS)
 		from defcon import Font, Info
 		ufo = Font('$@')
 		major, minor = "$(FontVersion)".split(".")
@@ -226,7 +252,7 @@ endif
 # UFO -> OTF
 
 %.otf: %.ufo $(BUILDDIR)/last-commit
-	cat <<- EOF | $(PYTHON)
+	cat <<- EOF | $(PYTHON) $(PYTHONFLAGS)
 		from ufo2ft import compileOTF
 		from defcon import Font
 		ufo = Font('$<')
@@ -238,7 +264,7 @@ endif
 # UFO -> TTF
 
 %.ttf: %.ufo $(BUILDDIR)/last-commit
-	cat <<- EOF | $(PYTHON)
+	cat <<- EOF | $(PYTHON) $(PYTHONFLAGS)
 		from ufo2ft import compileTTF
 		from defcon import Font
 		ufo = Font('$<')
@@ -260,10 +286,10 @@ $(VARIABLEOTFS): %.otf: $(BUILDDIR)/%-variable.otf $(BUILDDIR)/last-commit
 
 $(BUILDDIR)/%-VF-variable.ttf: %.glyphs | $(BUILDDIR)
 	$(FONTMAKE) $(FONTMAKEFLAGS) -g $< -o variable --output-path $@
-	$(GFTOOLS) fix-dsig --autofix $@
+	$(GFTOOLS) $(GFTOOLSFLAGS) fix-dsig --autofix $@
 
 $(BUILDDIR)/%-unhinted.ttf: $(BUILDDIR)/%-variable.ttf
-	$(GFTOOLS) fix-nonhinting $< $@
+	$(GFTOOLS) $(GFTOOLSFLAGS) fix-nonhinting $< $@
 
 $(BUILDDIR)/%-nomvar.ttx: $(BUILDDIR)/%.ttf
 	$(TTX) $(TTXFLAGS) -o $@ -f -x "MVAR" $<
@@ -288,7 +314,7 @@ $(STATICOTFS): %.otf: $(BUILDDIR)/%-instance.otf $(BUILDDIR)/last-commit
 
 $(BUILDDIR)/$(FontBase)-%-instance.ttf: $(FontBase).glyphs | $(BUILDDIR)
 	$(FONTMAKE) $(FONTMAKEFLAGS) -g $< -i "$(FamilyName) $*" -o ttf --output-path $@
-	$(GFTOOLS) fix-dsig --autofix $@
+	$(GFTOOLS) $(GFTOOLSFLAGS) fix-dsig --autofix $@
 
 $(STATICTTFS): %.ttf: $(BUILDDIR)/%-instance.ttf $(BUILDDIR)/last-commit
 	$(TTFAUTOHINT) $(TTFAUTOHINTFLAGS) -n $< $@
@@ -297,10 +323,10 @@ $(STATICTTFS): %.ttf: $(BUILDDIR)/%-instance.ttf $(BUILDDIR)/last-commit
 # Webfont compressions
 
 %.woff: %.ttf
-	$(SFNT2WOFF) $<
+	$(SFNT2WOFF) $(SFNT2WOFFFLAGS) $<
 
 %.woff2: %.ttf
-	$(WOFF2_COMPRESS) $<
+	$(WOFF2COMPRESS) $(WOFF2COMPRESSFLAGS) $<
 
 # Utility stuff
 
