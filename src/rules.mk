@@ -61,9 +61,16 @@ endif
 GITVER = --tags --abbrev=6 --match='[0-9].[0-9][0-9][0-9]'
 # Determine font version automatically from repository git tags
 FontVersion ?= $(shell git describe $(GITVER) | sed 's/-.*//g')
-FontVersionMeta ?= $(shell git describe --long $(GITVER) | sed 's/-[0-9]\+/\\;/;s/-g/[/')]
+ifneq ($(FontVersion),)
+FontVersionMeta ?= $(shell git describe --always --long $(GITVER) | sed 's/-[0-9]\+/\\;/;s/-g/[/')]
 GitVersion ?= $(shell git describe $(GITVER) | sed 's/-/-r/')
 isTagged := $(if $(subst $(FontVersion),,$(GitVersion)),,true)
+else
+FontVersion = 0.000
+FontVersionMeta ?= $(FontVersion)\;[$(shell git rev-parse --short=6 HEAD)]
+GitVersion ?= $(FontVersion)-r$(shell git rev-list --count HEAD)-g$(shell git rev-parse --short=6 HEAD)
+isTagged :=
+endif
 
 # Look for what fonts & styles are in this repository that will need building
 FontBase = $(subst $(space),,$(FamilyName))
