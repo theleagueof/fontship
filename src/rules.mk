@@ -72,10 +72,12 @@ STATICOTFS = $(addsuffix .otf,$(INSTANCES))
 STATICTTFS = $(addsuffix .ttf,$(INSTANCES))
 STATICWOFFS = $(addsuffix .woff,$(INSTANCES))
 STATICWOFF2S = $(addsuffix .woff2,$(INSTANCES))
+ifeq ($(CANONICAL),glyphs)
 VARIABLEOTFS = $(addsuffix -VF.otf,$(FontBase))
 VARIABLETTFS = $(addsuffix -VF.ttf,$(FontBase))
 VARIABLEWOFFS = $(addsuffix -VF.woff,$(FontBase))
 VARIABLEWOFF2S = $(addsuffix -VF.woff2,$(FontBase))
+endif
 
 _FONTMAKEFLAGS = --master-dir '{tmp}' --instance-dir '{tmp}'
 ifeq ($(DEBUG)),true)
