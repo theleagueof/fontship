@@ -234,23 +234,13 @@ BUILDDIR ?= .fontship
 $(BUILDDIR):
 	mkdir -p $@
 
-ifeq ($(CANONICAL),glyphs)
-
-%.glyphs: %.ufo
-	$(FONTMAKE) $(FONTMAKEFLAGS) -u $< -o glyphs --output-path $@
-
-# %.ufo: %.glyphs
-#     $(FONTMAKE) $(FONTMAKEFLAGS) -g $< -o ufo
-
-%.designspace: %.glyphs
-	echo MM $@
-
-endif
-
-ifeq ($(CANONICAL),ufo)
+ifeq ($(CANONICAL),sfd)
 
 %.sfd: %.ufo
 	echo SDF: $@
+
+endif
+ifeq ($(CANONICAL),ufo)
 
 # UFO normalize
 
@@ -262,8 +252,6 @@ ifeq ($(CANONICAL),ufo)
 		ufo.info.versionMajor, ufo.info.versionMinor = int(major), int(minor) + 7
 		ufo.save('$@')
 	EOF
-
-endif
 
 # UFO -> OTF
 
@@ -288,6 +276,18 @@ endif
 		ttf.save('$@')
 	EOF
 	$(normalizeVersion)
+
+endif
+ifeq ($(CANONICAL),glyphs)
+
+%.glyphs: %.ufo
+	$(FONTMAKE) $(FONTMAKEFLAGS) -u $< -o glyphs --output-path $@
+
+# %.ufo: %.glyphs
+#     $(FONTMAKE) $(FONTMAKEFLAGS) -g $< -o ufo
+
+%.designspace: %.glyphs
+	echo MM $@
 
 # Glyphs -> Varibale OTF
 
@@ -335,6 +335,8 @@ $(BUILDDIR)/$(FontBase)-%-instance.ttf: $(FontBase).glyphs | $(BUILDDIR)
 $(STATICTTFS): %.ttf: $(BUILDDIR)/%-instance.ttf $(BUILDDIR)/last-commit
 	$(TTFAUTOHINT) $(TTFAUTOHINTFLAGS) -n $< $@
 	$(normalizeVersion)
+
+endif
 
 # Webfont compressions
 
