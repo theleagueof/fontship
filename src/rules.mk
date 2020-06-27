@@ -45,7 +45,11 @@ include $(FONTSHIPDIR)/functions.mk
 
 # Read font name from metadata file or guess from repository name
 ifeq ($(CANONICAL),glyphs)
-FamilyName = $(call familyName,$(firstword $(wildcard *.glyphs)))
+FamilyName = $(call glyphsFamilyName,$(firstword $(wildcard *.glyphs)))
+endif
+
+ifeq ($(CANONICAL),ufo)
+FamilyName = $(call ufoFamilyName,$(firstword $(wildcard *.ufo)))
 endif
 
 FamilyName ?= $(shell $(CONTAINERIZED) || $(PYTHON) $(PYTHONFLAGS) -c 'print("$(PROJECT)".replace("-", " ").title())')
@@ -57,14 +61,23 @@ endif
 GITVER = --tags --abbrev=6 --match='[0-9].[0-9][0-9][0-9]'
 # Determine font version automatically from repository git tags
 FontVersion ?= $(shell git describe $(GITVER) | sed 's/-.*//g')
-FontVersionMeta ?= $(shell git describe --long $(GITVER) | sed 's/-[0-9]\+/\\;/;s/-g/[/')]
+ifneq ($(FontVersion),)
+FontVersionMeta ?= $(shell git describe --always --long $(GITVER) | sed 's/-[0-9]\+/\\;/;s/-g/[/')]
 GitVersion ?= $(shell git describe $(GITVER) | sed 's/-/-r/')
 isTagged := $(if $(subst $(FontVersion),,$(GitVersion)),,true)
+else
+FontVersion = 0.000
+FontVersionMeta ?= $(FontVersion)\;[$(shell git rev-parse --short=6 HEAD)]
+GitVersion ?= $(FontVersion)-r$(shell git rev-list --count HEAD)-g$(shell git rev-parse --short=6 HEAD)
+isTagged :=
+endif
 
 # Look for what fonts & styles are in this repository that will need building
 FontBase = $(subst $(space),,$(FamilyName))
-FontStyles = $(subst $(FontBase)-,,$(basename $(wildcard $(FontBase)-*.ufo)))
-FontStyles += $(foreach GLYPHS,$(wildcard $(FontBase).glyphs),$(call glyphWeights,$(GLYPHS)))
+
+# FontStyles = $(subst $(FontBase)-,,$(basename $(wildcard $(FontBase)-*.ufo)))
+FontStyles += $(foreach UFO,$(wildcard *.ufo),$(call ufoInstances,$(UFO)))
+FontStyles += $(foreach GLYPHS,$(wildcard *.glyphs),$(call glyphInstances$(GLYPHS)))
 
 INSTANCES = $(foreach BASE,$(FontBase),$(foreach STYLE,$(FontStyles),$(BASE)-$(STYLE)))
 
@@ -72,10 +85,12 @@ STATICOTFS = $(addsuffix .otf,$(INSTANCES))
 STATICTTFS = $(addsuffix .ttf,$(INSTANCES))
 STATICWOFFS = $(addsuffix .woff,$(INSTANCES))
 STATICWOFF2S = $(addsuffix .woff2,$(INSTANCES))
+ifeq ($(CANONICAL),glyphs)
 VARIABLEOTFS = $(addsuffix -VF.otf,$(FontBase))
 VARIABLETTFS = $(addsuffix -VF.ttf,$(FontBase))
 VARIABLEWOFFS = $(addsuffix -VF.woff,$(FontBase))
 VARIABLEWOFF2S = $(addsuffix -VF.woff2,$(FontBase))
+endif
 
 _FONTMAKEFLAGS = --master-dir '{tmp}' --instance-dir '{tmp}'
 ifeq ($(DEBUG)),true)
@@ -132,22 +147,23 @@ debug:
 	echo PUBDIR = $(PUBDIR)
 	echo ----------------------------
 	echo FamilyName = $(FamilyName)
-	echo FontBase: $(FontBase)
-	echo FontStyles: $(FontStyles)
-	echo FontVersion: $(FontVersion)
-	echo FontVersionMeta: $(FontVersionMeta)
-	echo GitVersion: $(GitVersion)
-	echo isTagged: $(isTagged)
+	echo FontBase = $(FontBase)
+	echo FontStyles = $(FontStyles)
+	echo FontVersion = $(FontVersion)
+	echo FontVersionMeta = $(FontVersionMeta)
+	echo GitVersion = $(GitVersion)
+	echo isTagged = $(isTagged)
 	echo ----------------------------
-	echo INSTANCES: $(INSTANCES)
-	echo STATICOTFS: $(STATICOTFS)
-	echo STATICTTFS: $(STATICTTFS)
-	echo STATICWOFFS: $(STATICWOFFS)
-	echo STATICWOFF2S: $(STATICWOFF2S)
-	echo VARIABLEOTFS: $(VARIABLEOTFS)
-	echo VARIABLETTFS: $(VARIABLETTFS)
-	echo VARIABLEWOFFS: $(VARIABLEWOFFS)
-	echo VARIABLEWOFF2S: $(VARIABLEWOFF2S)
+	echo CANONICAL = $(CANONICAL)
+	echo INSTANCES = $(INSTANCES)
+	echo STATICOTFS = $(STATICOTFS)
+	echo STATICTTFS = $(STATICTTFS)
+	echo STATICWOFFS = $(STATICWOFFS)
+	echo STATICWOFF2S = $(STATICWOFF2S)
+	echo VARIABLEOTFS = $(VARIABLEOTFS)
+	echo VARIABLETTFS = $(VARIABLETTFS)
+	echo VARIABLEWOFFS = $(VARIABLEWOFFS)
+	echo VARIABLEWOFF2S = $(VARIABLEWOFF2S)
 
 .PHONY: _gha
 _gha:
@@ -218,23 +234,13 @@ BUILDDIR ?= .fontship
 $(BUILDDIR):
 	mkdir -p $@
 
-ifeq ($(CANONICAL),glyphs)
-
-%.glyphs: %.ufo
-	$(FONTMAKE) $(FONTMAKEFLAGS) -u $< -o glyphs --output-path $@
-
-# %.ufo: %.glyphs
-#     $(FONTMAKE) $(FONTMAKEFLAGS) -g $< -o ufo
-
-%.designspace: %.glyphs
-	echo MM $@
-
-endif
-
-ifeq ($(CANONICAL),ufo)
+ifeq ($(CANONICAL),sfd)
 
 %.sfd: %.ufo
 	echo SDF: $@
+
+endif
+ifeq ($(CANONICAL),ufo)
 
 # UFO normalize
 
@@ -246,8 +252,6 @@ ifeq ($(CANONICAL),ufo)
 		ufo.info.versionMajor, ufo.info.versionMinor = int(major), int(minor) + 7
 		ufo.save('$@')
 	EOF
-
-endif
 
 # UFO -> OTF
 
@@ -272,6 +276,18 @@ endif
 		ttf.save('$@')
 	EOF
 	$(normalizeVersion)
+
+endif
+ifeq ($(CANONICAL),glyphs)
+
+%.glyphs: %.ufo
+	$(FONTMAKE) $(FONTMAKEFLAGS) -u $< -o glyphs --output-path $@
+
+# %.ufo: %.glyphs
+#     $(FONTMAKE) $(FONTMAKEFLAGS) -g $< -o ufo
+
+%.designspace: %.glyphs
+	echo MM $@
 
 # Glyphs -> Varibale OTF
 
@@ -319,6 +335,8 @@ $(BUILDDIR)/$(FontBase)-%-instance.ttf: $(FontBase).glyphs | $(BUILDDIR)
 $(STATICTTFS): %.ttf: $(BUILDDIR)/%-instance.ttf $(BUILDDIR)/last-commit
 	$(TTFAUTOHINT) $(TTFAUTOHINTFLAGS) -n $< $@
 	$(normalizeVersion)
+
+endif
 
 # Webfont compressions
 
