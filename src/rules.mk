@@ -377,20 +377,26 @@ install-dist: fonts | $(DISTDIR)
 	install -Dm644 -t "$(DISTDIR)/static/TTF/" $(STATICTTFS)
 	install -Dm644 -t "$(DISTDIR)/static/WOFF/" $(STATICWOFFS)
 	install -Dm644 -t "$(DISTDIR)/static/WOFF2/" $(STATICWOFF2S)
+ifeq ($(CANONICAL),glyphs)
 	install -Dm644 -t "$(DISTDIR)/variable/OTF/" $(VARIABLEOTFS)
 	install -Dm644 -t "$(DISTDIR)/variable/TTF/" $(VARIABLETTFS)
 	install -Dm644 -t "$(DISTDIR)/variable/WOFF/" $(VARIABLEWOFFS)
 	install -Dm644 -t "$(DISTDIR)/variable/WOFF2/" $(VARIABLEWOFF2S)
+endif
 
 install-local: install-local-otf
 
 install-local-otf: otf variable-otf
 	install -Dm755 -t "$${HOME}/.local/share/fonts/OTF/" $(STATICOTFS)
+ifeq ($(CANONICAL),glyphs)
 	install -Dm755 -t "$${HOME}/.local/share/fonts/variable/" $(VARIABLEOTFS)
+endif
 
 install-local-ttf: ttf variable-ttf
 	install -Dm755 -t "$${HOME}/.local/share/fonts/TTF/" $(STATICTTFS)
+ifeq ($(CANONICAL),glyphs)
 	install -Dm755 -t "$${HOME}/.local/share/fonts/variable/" $(VARIABLETTFS)
+endif
 
 # Empty recipie to suppres makefile regeneration
 $(MAKEFILE_LIST):;
