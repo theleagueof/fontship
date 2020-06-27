@@ -387,15 +387,15 @@ endif
 install-local: install-local-otf
 
 install-local-otf: otf variable-otf
-	install -Dm755 -t "$${HOME}/.local/share/fonts/OTF/" $(STATICOTFS)
+	install -Dm644 -t "$${HOME}/.local/share/fonts/OTF/" $(STATICOTFS)
 ifeq ($(CANONICAL),glyphs)
-	install -Dm755 -t "$${HOME}/.local/share/fonts/variable/" $(VARIABLEOTFS)
+	install -Dm644 -t "$${HOME}/.local/share/fonts/variable/" $(VARIABLEOTFS)
 endif
 
 install-local-ttf: ttf variable-ttf
-	install -Dm755 -t "$${HOME}/.local/share/fonts/TTF/" $(STATICTTFS)
+	install -Dm644 -t "$${HOME}/.local/share/fonts/TTF/" $(STATICTTFS)
 ifeq ($(CANONICAL),glyphs)
-	install -Dm755 -t "$${HOME}/.local/share/fonts/variable/" $(VARIABLETTFS)
+	install -Dm644 -t "$${HOME}/.local/share/fonts/variable/" $(VARIABLETTFS)
 endif
 
 # Empty recipie to suppres makefile regeneration
