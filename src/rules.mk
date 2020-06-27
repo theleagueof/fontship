@@ -45,7 +45,11 @@ include $(FONTSHIPDIR)/functions.mk
 
 # Read font name from metadata file or guess from repository name
 ifeq ($(CANONICAL),glyphs)
-FamilyName = $(call familyName,$(firstword $(wildcard *.glyphs)))
+FamilyName = $(call glyphsFamilyName,$(firstword $(wildcard *.glyphs)))
+endif
+
+ifeq ($(CANONICAL),ufo)
+FamilyName = $(call ufoFamilyName,$(firstword $(wildcard *.ufo)))
 endif
 
 FamilyName ?= $(shell $(CONTAINERIZED) || $(PYTHON) $(PYTHONFLAGS) -c 'print("$(PROJECT)".replace("-", " ").title())')
@@ -63,8 +67,9 @@ isTagged := $(if $(subst $(FontVersion),,$(GitVersion)),,true)
 
 # Look for what fonts & styles are in this repository that will need building
 FontBase = $(subst $(space),,$(FamilyName))
+
 FontStyles = $(subst $(FontBase)-,,$(basename $(wildcard $(FontBase)-*.ufo)))
-FontStyles += $(foreach GLYPHS,$(wildcard $(FontBase).glyphs),$(call glyphWeights,$(GLYPHS)))
+FontStyles += $(foreach GLYPHS,$(wildcard $(FontBase).glyphs),$(call glyphInstances$(GLYPHS)))
 
 INSTANCES = $(foreach BASE,$(FontBase),$(foreach STYLE,$(FontStyles),$(BASE)-$(STYLE)))
 
