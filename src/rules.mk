@@ -371,8 +371,8 @@ dist_license_DATA ?= $(wildcard $(foreach B,ofl OFL ofl-faq OFL-FAQ license LICE
 
 .PHONY: install-dist
 install-dist: fonts | $(DISTDIR)
-	install -Dm644 -t "$(DISTDIR)/" $(dist_doc_DATA)
-	install -Dm644 -t "$(DISTDIR)/" $(dist_license_DATA)
+	$(and $(dist_doc_DATA),install -Dm644 -t "$(DISTDIR)/" $(dist_doc_DATA))
+	$(and $(dist_license_DATA),install -Dm644 -t "$(DISTDIR)/" $(dist_license_DATA))
 	install -Dm644 -t "$(DISTDIR)/static/OTF/" $(STATICOTFS)
 	install -Dm644 -t "$(DISTDIR)/static/TTF/" $(STATICTTFS)
 	install -Dm644 -t "$(DISTDIR)/static/WOFF/" $(STATICWOFFS)
