@@ -266,14 +266,12 @@ ifeq ($(CANONICAL),ufo)
 
 # UFO -> TTF
 
-%.ttf: %.ufo $(BUILDDIR)/last-commit
-	cat <<- EOF | $(PYTHON) $(PYTHONFLAGS)
-		from ufo2ft import compileTTF
-		from defcon import Font
-		ufo = Font('$<')
-		ttf = compileTTF(ufo)
-		ttf.save('$@')
-	EOF
+$(BUILDDIR)/%-instance.ttf: %.ufo $(BUILDDIR)/last-commit | $(BUILDDIR)
+	$(FONTMAKE) $(FONTMAKEFLAGS) -u $< -o ttf --output-path $@
+	$(GFTOOLS) $(GFTOOLSFLAGS) fix-dsig --autofix $@
+
+$(STATICTTFS): %.ttf: $(BUILDDIR)/%-instance.ttf $(BUILDDIR)/last-commit
+	$(TTFAUTOHINT) $(TTFAUTOHINTFLAGS) -n $< $@
 	$(normalizeVersion)
 
 endif
