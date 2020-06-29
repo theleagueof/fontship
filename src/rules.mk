@@ -257,19 +257,16 @@ ifeq ($(CANONICAL),ufo)
 
 # UFO -> OTF
 
-%.otf: %.ufo $(BUILDDIR)/last-commit
-	cat <<- EOF | $(PYTHON) $(PYTHONFLAGS)
-		from ufo2ft import compileOTF
-		from defcon import Font
-		ufo = Font('$<')
-		otf = compileOTF(ufo)
-		otf.save('$@')
-	EOF
+$(BUILDDIR)/%-instance.otf: %.ufo | $(BUILDDIR)
+	$(FONTMAKE) $(FONTMAKEFLAGS) -u $< -o otf --output-path $@
+
+$(STATICOTFS): %.otf: $(BUILDDIR)/%-instance.otf $(BUILDDIR)/last-commit
+	cp $< $@
 	$(normalizeVersion)
 
 # UFO -> TTF
 
-$(BUILDDIR)/%-instance.ttf: %.ufo $(BUILDDIR)/last-commit | $(BUILDDIR)
+$(BUILDDIR)/%-instance.ttf: %.ufo | $(BUILDDIR)
 	$(FONTMAKE) $(FONTMAKEFLAGS) -u $< -o ttf --output-path $@
 	$(GFTOOLS) $(GFTOOLSFLAGS) fix-dsig --autofix $@
 
