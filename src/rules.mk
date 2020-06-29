@@ -174,7 +174,7 @@ _gha:
 	echo "::set-output name=DISTDIR::$(DISTDIR)"
 
 .PHONY: all
-all: debug fonts
+all: fonts $(and $(DEBUG),debug)
 
 .PHONY: clean
 clean:
