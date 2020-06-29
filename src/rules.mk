@@ -61,7 +61,7 @@ endif
 
 GITVER = --tags --abbrev=6 --match='[0-9].[0-9][0-9][0-9]'
 # Determine font version automatically from repository git tags
-FontVersion ?= $(shell git describe $(GITVER) | sed 's/-.*//g')
+FontVersion ?= $(shell git describe $(GITVER) 2> /dev/null | sed 's/-.*//g')
 ifneq ($(FontVersion),)
 FontVersionMeta ?= $(shell git describe --always --long $(GITVER) | sed 's/-[0-9]\+/\\;/;s/-g/[/')]
 GitVersion ?= $(shell git describe $(GITVER) | sed 's/-/-r/')
