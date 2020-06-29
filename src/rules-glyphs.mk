@@ -22,18 +22,18 @@ $(VARIABLEOTFS): %.otf: $(BUILDDIR)/%-variable.otf $(BUILDDIR)/last-commit
 
 $(BUILDDIR)/%-VF-variable.ttf: %.glyphs | $(BUILDDIR)
 	$(FONTMAKE) $(FONTMAKEFLAGS) -g $< -o variable --output-path $@
+	$(GFTOOLS) $(GFTOOLSFLAGS) fix-vf-meta $@ ||:
+	$(GFTOOLS) $(GFTOOLSFLAGS) fix-unwanted-tables --tables MVAR $@ ||:
 	$(GFTOOLS) $(GFTOOLSFLAGS) fix-dsig -f $@
 
-$(BUILDDIR)/%-unhinted.ttf: $(BUILDDIR)/%-variable.ttf
-	$(GFTOOLS) $(GFTOOLSFLAGS) fix-nonhinting $< $@
+$(BUILDDIR)/%-hinted.ttf: $(BUILDDIR)/%.ttf
+	$(TTFAUTOHINT) $(TTFAUTOHINTFLAGS) -n $< $@
 
-$(BUILDDIR)/%-nomvar.ttx: $(BUILDDIR)/%.ttf
-	$(TTX) $(TTXFLAGS) -o $@ -f -x "MVAR" $<
+$(BUILDDIR)/%-hinted.ttf.fix: $(BUILDDIR)/%-hinted.ttf
+	$(GFTOOLS) $(GFTOOLSFLAGS) fix-hinting $<
+	$(GFTOOLS) $(GFTOOLSFLAGS) fix-gasp $@
 
-$(BUILDDIR)/%.ttf: $(BUILDDIR)/%.ttx
-	$(TTX) $(TTXFLAGS) -o $@ $<
-
-$(VARIABLETTFS): %.ttf: $(BUILDDIR)/%-unhinted-nomvar.ttf $(BUILDDIR)/last-commit
+$(VARIABLETTFS): %.ttf: $(BUILDDIR)/%-variable-hinted.ttf.fix $(BUILDDIR)/last-commit
 	cp $< $@
 	$(normalizeVersion)
 
