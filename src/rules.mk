@@ -45,12 +45,12 @@ include $(FONTSHIPDIR)/functions.mk
 
 # Read font name from metadata file or guess from repository name
 ifeq ($(CANONICAL),glyphs)
-FamilyName = $(call glyphsFamilyName,$(firstword $(wildcard *.glyphs)))
+FamilyName ?= $(call glyphsFamilyName,$(firstword $(wildcard *.glyphs)))
 isVariable ?= true
 endif
 
 ifeq ($(CANONICAL),ufo)
-FamilyName = $(call ufoFamilyName,$(firstword $(wildcard *.ufo)))
+FamilyName ?= $(call ufoFamilyName,$(firstword $(wildcard *.ufo)))
 endif
 
 FamilyName ?= $(shell $(CONTAINERIZED) || $(PYTHON) $(PYTHONFLAGS) -c 'print("$(PROJECT)".replace("-", " ").title())')
