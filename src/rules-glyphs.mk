@@ -22,7 +22,7 @@ $(VARIABLEOTFS): %.otf: $(BUILDDIR)/%-variable.otf $(BUILDDIR)/last-commit
 
 $(BUILDDIR)/%-VF-variable.ttf: %.glyphs | $(BUILDDIR)
 	$(FONTMAKE) $(FONTMAKEFLAGS) -g $< -o variable --output-path $@
-	$(GFTOOLS) $(GFTOOLSFLAGS) fix-dsig --autofix $@
+	$(GFTOOLS) $(GFTOOLSFLAGS) fix-dsig -f $@
 
 $(BUILDDIR)/%-unhinted.ttf: $(BUILDDIR)/%-variable.ttf
 	$(GFTOOLS) $(GFTOOLSFLAGS) fix-nonhinting $< $@
@@ -50,7 +50,7 @@ $(STATICOTFS): %.otf: $(BUILDDIR)/%-instance.otf $(BUILDDIR)/last-commit
 
 $(BUILDDIR)/$(FontBase)-%-instance.ttf: $(FontBase).glyphs | $(BUILDDIR)
 	$(FONTMAKE) $(FONTMAKEFLAGS) -g $< -i "$(FamilyName) $*" -o ttf --output-path $@
-	$(GFTOOLS) $(GFTOOLSFLAGS) fix-dsig --autofix $@
+	$(GFTOOLS) $(GFTOOLSFLAGS) fix-dsig -f $@
 
 $(STATICTTFS): %.ttf: $(BUILDDIR)/%-instance.ttf $(BUILDDIR)/last-commit
 	$(TTFAUTOHINT) $(TTFAUTOHINTFLAGS) -n $< $@
