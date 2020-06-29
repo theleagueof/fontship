@@ -92,7 +92,9 @@ VARIABLEWOFFS = $(addsuffix -VF.woff,$(FontBase))
 VARIABLEWOFF2S = $(addsuffix -VF.woff2,$(FontBase))
 endif
 
-ifeq ($(DEBUG)),true)
+ifeq ($(DEBUG),true)
+.SHELLFLAGS += +x
+MAKEFLAGS += --no-silent
 FONTMAKEFLAGS ?= --verbose DEBUG
 FONTVFLAGS ?=
 TTFAUTOHINTFLAGS ?= -v --debug
@@ -102,7 +104,8 @@ GFTOOLSFLAGS ?=
 PYTHONFLAGS ?= -d
 SFNT2WOFFFLAGS ?=
 else
-ifeq ($(VERBOSE)),true)
+ifeq ($(VERBOSE),true)
+MAKEFLAGS += --no-silent
 FONTMAKEFLAGS ?= --verbose INFO
 FONTVFLAGS ?=
 GFTOOLSFLAGS ?=
@@ -112,7 +115,7 @@ TTFAUTOHINTFLAGS ?= -v
 TTXFLAGS ?= -v
 WOFF2COMPRESSFLAGS ?=
 else
-ifeq ($(QUIET)),true)
+ifeq ($(QUIET),true)
 FONTMAKEFLAGS ?= --verbose ERROR 2> /dev/null
 FONTVFLAGS ?= 2> /dev/null
 GFTOOLSFLAGS ?= 2> /dev/null
