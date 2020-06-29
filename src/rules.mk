@@ -78,7 +78,7 @@ FontBase = $(subst $(space),,$(FamilyName))
 
 # FontStyles = $(subst $(FontBase)-,,$(basename $(wildcard $(FontBase)-*.ufo)))
 FontStyles += $(foreach UFO,$(wildcard *.ufo),$(call ufoInstances,$(UFO)))
-FontStyles += $(foreach GLYPHS,$(wildcard *.glyphs),$(call glyphInstances$(GLYPHS)))
+FontStyles += $(foreach GLYPHS,$(wildcard *.glyphs),$(call glyphInstances,$(GLYPHS)))
 
 INSTANCES = $(foreach BASE,$(FontBase),$(foreach STYLE,$(FontStyles),$(BASE)-$(STYLE)))
 
