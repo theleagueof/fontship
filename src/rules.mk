@@ -46,6 +46,7 @@ include $(FONTSHIPDIR)/functions.mk
 # Read font name from metadata file or guess from repository name
 ifeq ($(CANONICAL),glyphs)
 FamilyName = $(call glyphsFamilyName,$(firstword $(wildcard *.glyphs)))
+isVariable ?= true
 endif
 
 ifeq ($(CANONICAL),ufo)
@@ -85,7 +86,7 @@ STATICOTFS = $(addsuffix .otf,$(INSTANCES))
 STATICTTFS = $(addsuffix .ttf,$(INSTANCES))
 STATICWOFFS = $(addsuffix .woff,$(INSTANCES))
 STATICWOFF2S = $(addsuffix .woff2,$(INSTANCES))
-ifeq ($(CANONICAL),glyphs)
+ifeq ($(isVariable),true)
 VARIABLEOTFS = $(addsuffix -VF.otf,$(FontBase))
 VARIABLETTFS = $(addsuffix -VF.ttf,$(FontBase))
 VARIABLEWOFFS = $(addsuffix -VF.woff,$(FontBase))
