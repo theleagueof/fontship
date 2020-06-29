@@ -119,7 +119,7 @@ else
 ifeq ($(QUIET),true)
 FONTMAKEFLAGS ?= --verbose ERROR 2> /dev/null
 FONTVFLAGS ?= 2> /dev/null
-GFTOOLSFLAGS ?= 2> /dev/null
+GFTOOLSFLAGS ?= > /dev/null
 PYTHONFLAGS ?= 2> /dev/null
 SFNT2WOFFFLAGS ?= 2> /dev/null
 TTFAUTOHINTFLAGS ?= 2> /dev/null

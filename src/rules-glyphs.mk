@@ -52,6 +52,12 @@ $(BUILDDIR)/$(FontBase)-%-instance.ttf: $(FontBase).glyphs | $(BUILDDIR)
 	$(FONTMAKE) $(FONTMAKEFLAGS) -g $< -i "$(FamilyName) $*" -o ttf --output-path $@
 	$(GFTOOLS) $(GFTOOLSFLAGS) fix-dsig -f $@
 
-$(STATICTTFS): %.ttf: $(BUILDDIR)/%-instance.ttf $(BUILDDIR)/last-commit
+$(BUILDDIR)/%-hinted.ttf: $(BUILDDIR)/%-instance.ttf
 	$(TTFAUTOHINT) $(TTFAUTOHINTFLAGS) -n $< $@
+
+$(BUILDDIR)/%-hinted.ttf.fix: $(BUILDDIR)/%-hinted.ttf
+	$(GFTOOLS) $(GFTOOLSFLAGS) fix-hinting $<
+
+$(STATICTTFS): %.ttf: $(BUILDDIR)/%-hinted.ttf.fix $(BUILDDIR)/last-commit
+	cp $< $@
 	$(normalizeVersion)
