@@ -41,6 +41,7 @@ $(VARIABLETTFS): %.ttf: $(BUILDDIR)/%-unhinted-nomvar.ttf $(BUILDDIR)/last-commi
 
 $(BUILDDIR)/$(FontBase)-%-instance.otf: $(FontBase).glyphs | $(BUILDDIR)
 	$(FONTMAKE) $(FONTMAKEFLAGS) -g $< -i "$(FamilyName) $*" -o otf --output-path $@
+	$(GFTOOLS) $(GFTOOLSFLAGS) fix-dsig -f $@
 
 $(STATICOTFS): %.otf: $(BUILDDIR)/%-instance.otf $(BUILDDIR)/last-commit
 	cp $< $@
