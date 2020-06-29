@@ -45,11 +45,12 @@ include $(FONTSHIPDIR)/functions.mk
 
 # Read font name from metadata file or guess from repository name
 ifeq ($(CANONICAL),glyphs)
-FamilyName = $(call glyphsFamilyName,$(firstword $(wildcard *.glyphs)))
+FamilyName ?= $(call glyphsFamilyName,$(firstword $(wildcard *.glyphs)))
+isVariable ?= true
 endif
 
 ifeq ($(CANONICAL),ufo)
-FamilyName = $(call ufoFamilyName,$(firstword $(wildcard *.ufo)))
+FamilyName ?= $(call ufoFamilyName,$(firstword $(wildcard *.ufo)))
 endif
 
 FamilyName ?= $(shell $(CONTAINERIZED) || $(PYTHON) $(PYTHONFLAGS) -c 'print("$(PROJECT)".replace("-", " ").title())')
@@ -85,16 +86,17 @@ STATICOTFS = $(addsuffix .otf,$(INSTANCES))
 STATICTTFS = $(addsuffix .ttf,$(INSTANCES))
 STATICWOFFS = $(addsuffix .woff,$(INSTANCES))
 STATICWOFF2S = $(addsuffix .woff2,$(INSTANCES))
-ifeq ($(CANONICAL),glyphs)
+ifeq ($(isVariable),true)
 VARIABLEOTFS = $(addsuffix -VF.otf,$(FontBase))
 VARIABLETTFS = $(addsuffix -VF.ttf,$(FontBase))
 VARIABLEWOFFS = $(addsuffix -VF.woff,$(FontBase))
 VARIABLEWOFF2S = $(addsuffix -VF.woff2,$(FontBase))
 endif
 
-_FONTMAKEFLAGS = --master-dir '{tmp}' --instance-dir '{tmp}'
-ifeq ($(DEBUG)),true)
-FONTMAKEFLAGS ?= $(_FONTMAKEFLAGS) --verbose DEBUG
+ifeq ($(DEBUG),true)
+.SHELLFLAGS += +x
+MAKEFLAGS += --no-silent
+FONTMAKEFLAGS ?= --verbose DEBUG
 FONTVFLAGS ?=
 TTFAUTOHINTFLAGS ?= -v --debug
 TTXFLAGS ?= -v
@@ -103,8 +105,9 @@ GFTOOLSFLAGS ?=
 PYTHONFLAGS ?= -d
 SFNT2WOFFFLAGS ?=
 else
-ifeq ($(VERBOSE)),true)
-FONTMAKEFLAGS ?= $(_FONTMAKEFLAGS) --verbose INFO
+ifeq ($(VERBOSE),true)
+MAKEFLAGS += --no-silent
+FONTMAKEFLAGS ?= --verbose INFO
 FONTVFLAGS ?=
 GFTOOLSFLAGS ?=
 PYTHONFLAGS ?= -v
@@ -113,8 +116,8 @@ TTFAUTOHINTFLAGS ?= -v
 TTXFLAGS ?= -v
 WOFF2COMPRESSFLAGS ?=
 else
-ifeq ($(QUIET)),true)
-FONTMAKEFLAGS ?= $(_FONTMAKEFLAGS) --verbose ERROR 2> /dev/null
+ifeq ($(QUIET),true)
+FONTMAKEFLAGS ?= --verbose ERROR 2> /dev/null
 FONTVFLAGS ?= 2> /dev/null
 GFTOOLSFLAGS ?= 2> /dev/null
 PYTHONFLAGS ?= 2> /dev/null
@@ -123,7 +126,7 @@ TTFAUTOHINTFLAGS ?= 2> /dev/null
 TTXFLAGS ?= 2> /dev/null
 WOFF2COMPRESSFLAGS ?= 2> /dev/null
 else
-FONTMAKEFLAGS ?= $(_FONTMAKEFLAGS) --verbose WARNING
+FONTMAKEFLAGS ?= --verbose WARNING
 FONTVFLAGS ?=
 GFTOOLSFLAGS ?=
 PYTHONFLAGS ?=
@@ -172,7 +175,7 @@ _gha:
 	echo "::set-output name=DISTDIR::$(DISTDIR)"
 
 .PHONY: all
-all: debug fonts
+all: fonts $(and $(DEBUG),debug)
 
 .PHONY: clean
 clean:
@@ -234,109 +237,7 @@ BUILDDIR ?= .fontship
 $(BUILDDIR):
 	mkdir -p $@
 
-ifeq ($(CANONICAL),sfd)
-
-%.sfd: %.ufo
-	echo SDF: $@
-
-endif
-ifeq ($(CANONICAL),ufo)
-
-# UFO normalize
-
-%.ufo: $(BUILDDIR)/last-commit
-	cat <<- EOF | $(PYTHON) $(PYTHONFLAGS)
-		from defcon import Font, Info
-		ufo = Font('$@')
-		major, minor = "$(FontVersion)".split(".")
-		ufo.info.versionMajor, ufo.info.versionMinor = int(major), int(minor) + 7
-		ufo.save('$@')
-	EOF
-
-# UFO -> OTF
-
-%.otf: %.ufo $(BUILDDIR)/last-commit
-	cat <<- EOF | $(PYTHON) $(PYTHONFLAGS)
-		from ufo2ft import compileOTF
-		from defcon import Font
-		ufo = Font('$<')
-		otf = compileOTF(ufo)
-		otf.save('$@')
-	EOF
-	$(normalizeVersion)
-
-# UFO -> TTF
-
-%.ttf: %.ufo $(BUILDDIR)/last-commit
-	cat <<- EOF | $(PYTHON) $(PYTHONFLAGS)
-		from ufo2ft import compileTTF
-		from defcon import Font
-		ufo = Font('$<')
-		ttf = compileTTF(ufo)
-		ttf.save('$@')
-	EOF
-	$(normalizeVersion)
-
-endif
-ifeq ($(CANONICAL),glyphs)
-
-%.glyphs: %.ufo
-	$(FONTMAKE) $(FONTMAKEFLAGS) -u $< -o glyphs --output-path $@
-
-# %.ufo: %.glyphs
-#     $(FONTMAKE) $(FONTMAKEFLAGS) -g $< -o ufo
-
-%.designspace: %.glyphs
-	echo MM $@
-
-# Glyphs -> Varibale OTF
-
-$(BUILDDIR)/%-VF-variable.otf: %.glyphs | $(BUILDDIR)
-	$(FONTMAKE) $(FONTMAKEFLAGS) -g $< -o variable-cff2 --output-path $@
-
-$(VARIABLEOTFS): %.otf: $(BUILDDIR)/%-variable.otf $(BUILDDIR)/last-commit
-	cp $< $@
-	$(normalizeVersion)
-
-# Glyphs -> Varibale TTF
-
-$(BUILDDIR)/%-VF-variable.ttf: %.glyphs | $(BUILDDIR)
-	$(FONTMAKE) $(FONTMAKEFLAGS) -g $< -o variable --output-path $@
-	$(GFTOOLS) $(GFTOOLSFLAGS) fix-dsig --autofix $@
-
-$(BUILDDIR)/%-unhinted.ttf: $(BUILDDIR)/%-variable.ttf
-	$(GFTOOLS) $(GFTOOLSFLAGS) fix-nonhinting $< $@
-
-$(BUILDDIR)/%-nomvar.ttx: $(BUILDDIR)/%.ttf
-	$(TTX) $(TTXFLAGS) -o $@ -f -x "MVAR" $<
-
-$(BUILDDIR)/%.ttf: $(BUILDDIR)/%.ttx
-	$(TTX) $(TTXFLAGS) -o $@ $<
-
-$(VARIABLETTFS): %.ttf: $(BUILDDIR)/%-unhinted-nomvar.ttf $(BUILDDIR)/last-commit
-	cp $< $@
-	$(normalizeVersion)
-
-# Glyphs -> Static OTF
-
-$(BUILDDIR)/$(FontBase)-%-instance.otf: $(FontBase).glyphs | $(BUILDDIR)
-	$(FONTMAKE) $(FONTMAKEFLAGS) -g $< -i "$(FamilyName) $*" -o otf --output-path $@
-
-$(STATICOTFS): %.otf: $(BUILDDIR)/%-instance.otf $(BUILDDIR)/last-commit
-	cp $< $@
-	$(normalizeVersion)
-
-# Glyphs -> Static TTF
-
-$(BUILDDIR)/$(FontBase)-%-instance.ttf: $(FontBase).glyphs | $(BUILDDIR)
-	$(FONTMAKE) $(FONTMAKEFLAGS) -g $< -i "$(FamilyName) $*" -o ttf --output-path $@
-	$(GFTOOLS) $(GFTOOLSFLAGS) fix-dsig --autofix $@
-
-$(STATICTTFS): %.ttf: $(BUILDDIR)/%-instance.ttf $(BUILDDIR)/last-commit
-	$(TTFAUTOHINT) $(TTFAUTOHINTFLAGS) -n $< $@
-	$(normalizeVersion)
-
-endif
+include $(FONTSHIPDIR)/rules-$(CANONICAL).mk
 
 # Webfont compressions
 
