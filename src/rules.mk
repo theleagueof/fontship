@@ -92,9 +92,8 @@ VARIABLEWOFFS = $(addsuffix -VF.woff,$(FontBase))
 VARIABLEWOFF2S = $(addsuffix -VF.woff2,$(FontBase))
 endif
 
-_FONTMAKEFLAGS = --master-dir '{tmp}' --instance-dir '{tmp}'
 ifeq ($(DEBUG)),true)
-FONTMAKEFLAGS ?= $(_FONTMAKEFLAGS) --verbose DEBUG
+FONTMAKEFLAGS ?= --verbose DEBUG
 FONTVFLAGS ?=
 TTFAUTOHINTFLAGS ?= -v --debug
 TTXFLAGS ?= -v
@@ -104,7 +103,7 @@ PYTHONFLAGS ?= -d
 SFNT2WOFFFLAGS ?=
 else
 ifeq ($(VERBOSE)),true)
-FONTMAKEFLAGS ?= $(_FONTMAKEFLAGS) --verbose INFO
+FONTMAKEFLAGS ?= --verbose INFO
 FONTVFLAGS ?=
 GFTOOLSFLAGS ?=
 PYTHONFLAGS ?= -v
@@ -114,7 +113,7 @@ TTXFLAGS ?= -v
 WOFF2COMPRESSFLAGS ?=
 else
 ifeq ($(QUIET)),true)
-FONTMAKEFLAGS ?= $(_FONTMAKEFLAGS) --verbose ERROR 2> /dev/null
+FONTMAKEFLAGS ?= --verbose ERROR 2> /dev/null
 FONTVFLAGS ?= 2> /dev/null
 GFTOOLSFLAGS ?= 2> /dev/null
 PYTHONFLAGS ?= 2> /dev/null
@@ -123,7 +122,7 @@ TTFAUTOHINTFLAGS ?= 2> /dev/null
 TTXFLAGS ?= 2> /dev/null
 WOFF2COMPRESSFLAGS ?= 2> /dev/null
 else
-FONTMAKEFLAGS ?= $(_FONTMAKEFLAGS) --verbose WARNING
+FONTMAKEFLAGS ?= --verbose WARNING
 FONTVFLAGS ?=
 GFTOOLSFLAGS ?=
 PYTHONFLAGS ?=
@@ -279,6 +278,8 @@ ifeq ($(CANONICAL),ufo)
 
 endif
 ifeq ($(CANONICAL),glyphs)
+
+FONTMAKEFLAGS += --master-dir '{tmp}' --instance-dir '{tmp}'
 
 %.glyphs: %.ufo
 	$(FONTMAKE) $(FONTMAKEFLAGS) -u $< -o glyphs --output-path $@
