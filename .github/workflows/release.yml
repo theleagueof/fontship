@@ -16,20 +16,22 @@ jobs:
       - name: Fetch Tags
         run: git fetch --prune --tags
       - name: Setup system dependencies
-        run: sudo apt-get install sfnt2woff-zopfli ttfautohint zsh
+        run: sudo apt-get install sfnt2woff-zopfli ttfautohint woff2 zsh
       - name: Setup Python
         uses: actions/setup-python@v2
       - name: Setup Python dependencies
         run: pip install -r requirements.txt
-      - name: Build Source
+      - name: Configure
         run: |
           ./bootstrap.sh
           ./configure
+      - name: Build
+        run: |
           make dist
       - name: Get Build Info
         run: |
           echo ::set-env name=VERSION::$(./build-aux/git-version-gen .tarball-version)
-      - name: Release
+      - name: Publish Release
         uses: softprops/action-gh-release@v1
         with:
           files: |

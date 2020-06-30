@@ -18,10 +18,12 @@ jobs:
         uses: actions/setup-python@v2
       - name: Setup Python dependencies
         run: pip install -r requirements.txt
-      - name: Build
+      - name: Configure
         run: |
           ./bootstrap.sh
           ./configure
+      - name: Build
+        run: |
           make
           make distdir
       - name: Get Build Info
