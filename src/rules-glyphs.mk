@@ -13,7 +13,7 @@ FONTMAKEFLAGS += --master-dir '{tmp}' --instance-dir '{tmp}'
 
 $(BUILDDIR)/%-VF-variable.otf: %.glyphs | $(BUILDDIR)
 	$(FONTMAKE) $(FONTMAKEFLAGS) -g $< -o variable-cff2 --output-path $@
-	$(GFTOOLS) $(GFTOOLSFLAGS) fix-vf-meta $@ ||:
+	$(GFTOOLS) $(GFTOOLSFLAGS) fix-vf-meta $@
 	$(GFTOOLS) $(GFTOOLSFLAGS) fix-unwanted-tables --tables MVAR $@ ||:
 	$(GFTOOLS) $(GFTOOLSFLAGS) fix-dsig -f $@
 
@@ -25,7 +25,7 @@ $(VARIABLEOTFS): %.otf: $(BUILDDIR)/%-variable.otf $(BUILDDIR)/last-commit
 
 $(BUILDDIR)/%-VF-variable.ttf: %.glyphs | $(BUILDDIR)
 	$(FONTMAKE) $(FONTMAKEFLAGS) -g $< -o variable --output-path $@
-	$(GFTOOLS) $(GFTOOLSFLAGS) fix-vf-meta $@ ||:
+	$(GFTOOLS) $(GFTOOLSFLAGS) fix-vf-meta $@
 	$(GFTOOLS) $(GFTOOLSFLAGS) fix-unwanted-tables --tables MVAR $@ ||:
 	$(GFTOOLS) $(GFTOOLSFLAGS) fix-dsig -f $@
 
