@@ -13,6 +13,9 @@ FONTMAKEFLAGS += --master-dir '{tmp}' --instance-dir '{tmp}'
 
 $(BUILDDIR)/%-VF-variable.otf: %.glyphs | $(BUILDDIR)
 	$(FONTMAKE) $(FONTMAKEFLAGS) -g $< -o variable-cff2 --output-path $@
+	$(GFTOOLS) $(GFTOOLSFLAGS) fix-vf-meta $@
+	$(GFTOOLS) $(GFTOOLSFLAGS) fix-unwanted-tables --tables MVAR $@ ||:
+	$(GFTOOLS) $(GFTOOLSFLAGS) fix-dsig -f $@
 
 $(VARIABLEOTFS): %.otf: $(BUILDDIR)/%-variable.otf $(BUILDDIR)/last-commit
 	cp $< $@
@@ -22,18 +25,18 @@ $(VARIABLEOTFS): %.otf: $(BUILDDIR)/%-variable.otf $(BUILDDIR)/last-commit
 
 $(BUILDDIR)/%-VF-variable.ttf: %.glyphs | $(BUILDDIR)
 	$(FONTMAKE) $(FONTMAKEFLAGS) -g $< -o variable --output-path $@
-	$(GFTOOLS) $(GFTOOLSFLAGS) fix-dsig --autofix $@
+	$(GFTOOLS) $(GFTOOLSFLAGS) fix-vf-meta $@
+	$(GFTOOLS) $(GFTOOLSFLAGS) fix-unwanted-tables --tables MVAR $@ ||:
+	$(GFTOOLS) $(GFTOOLSFLAGS) fix-dsig -f $@
 
-$(BUILDDIR)/%-unhinted.ttf: $(BUILDDIR)/%-variable.ttf
-	$(GFTOOLS) $(GFTOOLSFLAGS) fix-nonhinting $< $@
+$(BUILDDIR)/%-hinted.ttf: $(BUILDDIR)/%.ttf
+	$(TTFAUTOHINT) $(TTFAUTOHINTFLAGS) -n $< $@
 
-$(BUILDDIR)/%-nomvar.ttx: $(BUILDDIR)/%.ttf
-	$(TTX) $(TTXFLAGS) -o $@ -f -x "MVAR" $<
+$(BUILDDIR)/%-hinted.ttf.fix: $(BUILDDIR)/%-hinted.ttf
+	$(GFTOOLS) $(GFTOOLSFLAGS) fix-hinting $<
+	$(GFTOOLS) $(GFTOOLSFLAGS) fix-gasp $@
 
-$(BUILDDIR)/%.ttf: $(BUILDDIR)/%.ttx
-	$(TTX) $(TTXFLAGS) -o $@ $<
-
-$(VARIABLETTFS): %.ttf: $(BUILDDIR)/%-unhinted-nomvar.ttf $(BUILDDIR)/last-commit
+$(VARIABLETTFS): %.ttf: $(BUILDDIR)/%-variable-hinted.ttf.fix $(BUILDDIR)/last-commit
 	cp $< $@
 	$(normalizeVersion)
 
@@ -41,6 +44,7 @@ $(VARIABLETTFS): %.ttf: $(BUILDDIR)/%-unhinted-nomvar.ttf $(BUILDDIR)/last-commi
 
 $(BUILDDIR)/$(FontBase)-%-instance.otf: $(FontBase).glyphs | $(BUILDDIR)
 	$(FONTMAKE) $(FONTMAKEFLAGS) -g $< -i "$(FamilyName) $*" -o otf --output-path $@
+	$(GFTOOLS) $(GFTOOLSFLAGS) fix-dsig -f $@
 
 $(STATICOTFS): %.otf: $(BUILDDIR)/%-instance.otf $(BUILDDIR)/last-commit
 	cp $< $@
@@ -50,8 +54,14 @@ $(STATICOTFS): %.otf: $(BUILDDIR)/%-instance.otf $(BUILDDIR)/last-commit
 
 $(BUILDDIR)/$(FontBase)-%-instance.ttf: $(FontBase).glyphs | $(BUILDDIR)
 	$(FONTMAKE) $(FONTMAKEFLAGS) -g $< -i "$(FamilyName) $*" -o ttf --output-path $@
-	$(GFTOOLS) $(GFTOOLSFLAGS) fix-dsig --autofix $@
+	$(GFTOOLS) $(GFTOOLSFLAGS) fix-dsig -f $@
 
-$(STATICTTFS): %.ttf: $(BUILDDIR)/%-instance.ttf $(BUILDDIR)/last-commit
+$(BUILDDIR)/%-hinted.ttf: $(BUILDDIR)/%-instance.ttf
 	$(TTFAUTOHINT) $(TTFAUTOHINTFLAGS) -n $< $@
+
+$(BUILDDIR)/%-hinted.ttf.fix: $(BUILDDIR)/%-hinted.ttf
+	$(GFTOOLS) $(GFTOOLSFLAGS) fix-hinting $<
+
+$(STATICTTFS): %.ttf: $(BUILDDIR)/%-hinted.ttf.fix $(BUILDDIR)/last-commit
+	cp $< $@
 	$(normalizeVersion)
