@@ -9,6 +9,9 @@ dist_data_DATA = src/rules.mk src/functions.mk src/rules-glyphs.mk src/rules-sfd
 
 CLEANFILES = $(bin_SCRIPTS)
 
+dist-hook:
+	echo $(VERSION) > $(distdir)/.tarball-version
+
 .PHONY: docker
 docker: Dockerfile
 	docker build \
