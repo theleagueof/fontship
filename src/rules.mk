@@ -194,10 +194,10 @@ fonts: static variable
 static: static-otf static-ttf static-woff static-woff2
 
 .PHONY: variable
-variable: variable-otf variable-ttf variable-woff variable-woff2
+variable: variable-ttf variable-woff variable-woff2 # variable-otf
 
 .PHONY: otf
-otf: static-otf variable-otf
+otf: static-otf # variable-otf
 
 .PHONY: ttf
 ttf: static-ttf variable-ttf
@@ -287,7 +287,7 @@ endif
 
 install-local: install-local-otf
 
-install-local-otf: otf variable-otf
+install-local-otf: otf # variable-otf
 	install -Dm644 -t "$${HOME}/.local/share/fonts/OTF/" $(STATICOTFS)
 ifeq ($(CANONICAL),glyphs)
 	install -Dm644 -t "$${HOME}/.local/share/fonts/variable/" $(VARIABLEOTFS)
