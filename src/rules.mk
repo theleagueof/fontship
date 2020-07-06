@@ -33,6 +33,16 @@ CANONICAL ?= $(or $(shell git ls-files | grep -q '\.glyphs$$' && echo glyphs),\
 			      $(shell git ls-files | grep -q '\.sfd$$' && echo sfd),\
 			      $(shell git ls-files | grep -q '\.ufo$$' && echo ufo))
 
+# Output format selectors
+STATICOTF ?= true
+STATICTTF ?= true
+STATICWOFF ?= true
+STATICWOFF2 ?= true
+VARIABLEOTF ?=
+VARIABLETTF ?= true
+VARIABLEWOFF ?= true
+VARIABLEWOFF2 ?= true
+
 # Allow overriding executables used
 FONTMAKE ?= fontmake
 FONTV ?= font-v
@@ -84,15 +94,15 @@ FontStyles += $(foreach GLYPHS,$(wildcard *.glyphs),$(call glyphInstances,$(GLYP
 
 INSTANCES = $(foreach BASE,$(FontBase),$(foreach STYLE,$(FontStyles),$(BASE)-$(STYLE)))
 
-STATICOTFS = $(addsuffix .otf,$(INSTANCES))
-STATICTTFS = $(addsuffix .ttf,$(INSTANCES))
-STATICWOFFS = $(addsuffix .woff,$(INSTANCES))
-STATICWOFF2S = $(addsuffix .woff2,$(INSTANCES))
+STATICOTFS = $(and $(STATICOTF),$(addsuffix .otf,$(INSTANCES)))
+STATICTTFS = $(and $(STATICTTF),$(addsuffix .ttf,$(INSTANCES)))
+STATICWOFFS = $(and $(STATICWOFF),$(addsuffix .woff,$(INSTANCES)))
+STATICWOFF2S = $(and $(STATICWOFF2),$(addsuffix .woff2,$(INSTANCES)))
 ifeq ($(isVariable),true)
-VARIABLEOTFS = $(addsuffix -VF.otf,$(FontBase))
-VARIABLETTFS = $(addsuffix -VF.ttf,$(FontBase))
-VARIABLEWOFFS = $(addsuffix -VF.woff,$(FontBase))
-VARIABLEWOFF2S = $(addsuffix -VF.woff2,$(FontBase))
+VARIABLEOTFS = $(and $(VARIABLEOTF),$(addsuffix -VF.otf,$(FamilyNames)))
+VARIABLETTFS = $(and $(VARIABLETTF),$(addsuffix -VF.ttf,$(FamilyNames)))
+VARIABLEWOFFS = $(and $(VARIABLEWOFF),$(addsuffix -VF.woff,$(FamilyNames)))
+VARIABLEWOFF2S = $(and $(VARIABLEWOFF2),$(addsuffix -VF.woff2,$(FamilyNames)))
 endif
 
 ifeq ($(DEBUG),true)
@@ -196,10 +206,10 @@ fonts: static variable
 static: static-otf static-ttf static-woff static-woff2
 
 .PHONY: variable
-variable: variable-ttf variable-woff variable-woff2 # variable-otf
+variable: variable-otf variable-ttf variable-woff variable-woff2
 
 .PHONY: otf
-otf: static-otf # variable-otf
+otf: static-otf variable-otf
 
 .PHONY: ttf
 ttf: static-ttf variable-ttf
@@ -276,30 +286,24 @@ dist_license_DATA ?= $(wildcard $(foreach B,ofl OFL ofl-faq OFL-FAQ license LICE
 install-dist: fonts | $(DISTDIR)
 	$(and $(dist_doc_DATA),install -Dm644 -t "$(DISTDIR)/" $(dist_doc_DATA))
 	$(and $(dist_license_DATA),install -Dm644 -t "$(DISTDIR)/" $(dist_license_DATA))
-	install -Dm644 -t "$(DISTDIR)/static/OTF/" $(STATICOTFS)
-	install -Dm644 -t "$(DISTDIR)/static/TTF/" $(STATICTTFS)
-	install -Dm644 -t "$(DISTDIR)/static/WOFF/" $(STATICWOFFS)
-	install -Dm644 -t "$(DISTDIR)/static/WOFF2/" $(STATICWOFF2S)
-ifeq ($(CANONICAL),glyphs)
-	$(and $(wildcard $(VARIABLEOTFS)),install -Dm644 -t "$(DISTDIR)/variable/OTF/" $(VARIABLEOTFS))
-	install -Dm644 -t "$(DISTDIR)/variable/TTF/" $(VARIABLETTFS)
-	install -Dm644 -t "$(DISTDIR)/variable/WOFF/" $(VARIABLEWOFFS)
-	install -Dm644 -t "$(DISTDIR)/variable/WOFF2/" $(VARIABLEWOFF2S)
-endif
+	$(and $(STATICOTFS),install -Dm644 -t "$(DISTDIR)/static/OTF/" $(STATICOTFS))
+	$(and $(STATICTTFS),install -Dm644 -t "$(DISTDIR)/static/TTF/" $(STATICTTFS))
+	$(and $(STATICWOFFS),install -Dm644 -t "$(DISTDIR)/static/WOFF/" $(STATICWOFFS))
+	$(and $(STATICWOFF2S),install -Dm644 -t "$(DISTDIR)/static/WOFF2/" $(STATICWOFF2S))
+	$(and $(VARIABLEOTFS),install -Dm644 -t "$(DISTDIR)/variable/OTF/" $(VARIABLEOTFS))
+	$(and $(VARIABLETTFS),install -Dm644 -t "$(DISTDIR)/variable/TTF/" $(VARIABLETTFS))
+	$(and $(VARIABLEWOFFS),install -Dm644 -t "$(DISTDIR)/variable/WOFF/" $(VARIABLEWOFFS))
+	$(and $(VARIABLEWOFF2S),install -Dm644 -t "$(DISTDIR)/variable/WOFF2/" $(VARIABLEWOFF2S))
 
 install-local: install-local-otf
 
-install-local-otf: otf # variable-otf
-	install -Dm644 -t "$${HOME}/.local/share/fonts/OTF/" $(STATICOTFS)
-ifeq ($(CANONICAL),glyphs)
-	$(and $(wildcard $(VARIABLEOTFS)),install -Dm644 -t "$${HOME}/.local/share/fonts/variable/" $(VARIABLEOTFS))
-endif
+install-local-otf: otf
+	$(and $(STATICOTFS),install -Dm644 -t "$${HOME}/.local/share/fonts/OTF/" $(STATICOTFS))
+	$(and $(VARIABLEOTFS),install -Dm644 -t "$${HOME}/.local/share/fonts/variable/" $(VARIABLEOTFS))
 
-install-local-ttf: ttf variable-ttf
-	install -Dm644 -t "$${HOME}/.local/share/fonts/TTF/" $(STATICTTFS)
-ifeq ($(CANONICAL),glyphs)
-	install -Dm644 -t "$${HOME}/.local/share/fonts/variable/" $(VARIABLETTFS)
-endif
+install-local-ttf: ttf
+	$(and $(STATICTTFS),install -Dm644 -t "$${HOME}/.local/share/fonts/TTF/" $(STATICTTFS))
+	$(and $(VARIABLETTFS),install -Dm644 -t "$${HOME}/.local/share/fonts/variable/" $(VARIABLETTFS))
 
 # Empty recipie to suppres makefile regeneration
 $(MAKEFILE_LIST):;
