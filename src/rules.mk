@@ -29,7 +29,9 @@ PUBDIR ?= $(PROJECTDIR)/pub
 # Some Makefile shinanigans to avoid aggressive trimming
 space := $() $()
 
-CANONICAL ?= $(shell git ls-files | grep -q '\.glyphs$'' && echo glyphs || echo ufo)
+CANONICAL ?= $(or $(shell git ls-files | grep -q '\.glyphs$$' && echo glyphs),\
+			      $(shell git ls-files | grep -q '\.sfd$$' && echo sfd),\
+			      $(shell git ls-files | grep -q '\.ufo$$' && echo ufo))
 
 # Allow overriding executables used
 FONTMAKE ?= fontmake
