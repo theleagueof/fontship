@@ -22,7 +22,7 @@ CONTAINERIZED != test -f /.dockerenv && echo true || echo false
 # Initial environment setup
 FONTSHIPDIR != cd "$(shell dirname $(lastword $(MAKEFILE_LIST)))/" && pwd
 GITNAME := $(notdir $(shell git worktree list | head -n1 | awk '{print $$1}'))
-PROJECT ?= $(GITNAME)
+PROJECT ?= $(shell $(CONTAINERIZED) || $(PYTHON) $(PYTHONFLAGS) -c 'print("$(GITNAME)".replace(" ", "").title())')
 _PROJECTDIR != cd "$(shell dirname $(firstword $(MAKEFILE_LIST)))/" && pwd
 PROJECTDIR ?= $(_PROJECTDIR)
 PUBDIR ?= $(PROJECTDIR)/pub
@@ -66,10 +66,6 @@ FamilyName ?= $(call ufoFamilyName,$(firstword $(wildcard *.ufo)))
 endif
 
 FamilyName ?= $(shell $(CONTAINERIZED) || $(PYTHON) $(PYTHONFLAGS) -c 'print("$(PROJECT)".replace("-", " ").title())')
-
-ifeq ($(FamilyName),)
-$(error We cannot properly detect the font’s Family Name yet from inside Docker. Please manually specify it by adding FamilyName='Family Name' as an agument to your command invocation)
-endif
 
 GITVER = --tags --abbrev=6 --match='[0-9].[0-9][0-9][0-9]'
 # Determine font version automatically from repository git tags
@@ -182,7 +178,7 @@ debug:
 
 .PHONY: _gha
 _gha:
-	echo "::set-output name=family-name::$(FamilyName)"
+	echo "::set-output name=PROJECT::$(PROJECT)"
 	echo "::set-output name=font-version::$(FontVersion)"
 	echo "::set-output name=DISTDIR::$(DISTDIR)"
 
@@ -249,7 +245,9 @@ BUILDDIR ?= .fontship
 $(BUILDDIR):
 	mkdir -p $@
 
-include $(FONTSHIPDIR)/rules-$(CANONICAL).mk
+ifeq ($(PROJECT),data)
+$(warning We cannot read the Project’s name inside Docker. Please manually specify it by adding PROOJECT='Name' as an agument to your command invocation)
+endif
 
 # Webfont compressions
 
@@ -268,7 +266,7 @@ $(BUILDDIR)/last-commit: | $(BUILDDIR)
 	ts=$$(git log -n1 --pretty=format:%cI HEAD)
 	touch -d "$$ts" -- $@
 
-DISTDIR = $(FontBase)-$(GitVersion)
+DISTDIR = $(PROJECT)-$(GitVersion)
 
 $(DISTDIR):
 	mkdir -p $@
