@@ -53,6 +53,7 @@ GFTOOLS ?= gftools
 PYTHON ?= python3
 SFNT2WOFF ?= sfnt2woff-zopfli
 TTFAUTOHINT ?= ttfautohint
+PSAUTOHINT ?= psautohint
 TTX ?= ttx
 WOFF2COMPRESS ?= woff2_compress
 
@@ -101,6 +102,7 @@ ifeq ($(DEBUG),true)
 MAKEFLAGS += --no-silent
 FONTMAKEFLAGS ?= --verbose DEBUG
 FONTVFLAGS ?=
+PSAUTOHINTFLAGS ?= -vv --traceback
 TTFAUTOHINTFLAGS ?= -v --debug
 TTXFLAGS ?= -v
 WOFF2COMPRESSFLAGS ?=
@@ -113,6 +115,7 @@ MAKEFLAGS += --no-silent
 FONTMAKEFLAGS ?= --verbose INFO
 FONTVFLAGS ?=
 GFTOOLSFLAGS ?=
+PSAUTOHINTFLAGS ?= -vv
 PYTHONFLAGS ?= -v
 SFNT2WOFFFLAGS ?=
 TTFAUTOHINTFLAGS ?= -v
@@ -123,6 +126,7 @@ ifeq ($(QUIET),true)
 FONTMAKEFLAGS ?= --verbose ERROR 2> /dev/null
 FONTVFLAGS ?= 2> /dev/null
 GFTOOLSFLAGS ?= > /dev/null
+PSAUTOHINTFLAGS ?= 2> /dev/null
 PYTHONFLAGS ?= 2> /dev/null
 SFNT2WOFFFLAGS ?= 2> /dev/null
 TTFAUTOHINTFLAGS ?= 2> /dev/null
@@ -132,6 +136,7 @@ else
 FONTMAKEFLAGS ?= --verbose WARNING
 FONTVFLAGS ?=
 GFTOOLSFLAGS ?=
+PSAUTOHINTFLAGS ?= -v
 PYTHONFLAGS ?=
 SFNT2WOFFFLAGS ?=
 TTFAUTOHINTFLAGS ?=
