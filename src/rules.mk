@@ -84,6 +84,9 @@ GitVersion ?= $(FontVersion)-r$(shell git rev-list --count HEAD)-g$(shell git re
 isTagged :=
 endif
 
+.PHONY: default
+default: all
+
 # Look for what fonts & styles are in this repository that will need building
 FontBase = $(subst $(space),,$(FamilyName))
 
@@ -148,9 +151,6 @@ WOFF2COMPRESSFLAGS ?=
 endif
 endif
 endif
-
-.PHONY: default
-default: all
 
 .PHONY: debug
 debug:
