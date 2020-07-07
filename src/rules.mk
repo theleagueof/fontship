@@ -60,15 +60,24 @@ include $(FONTSHIPDIR)/functions.mk
 
 # Read font name from metadata file or guess from repository name
 ifeq ($(CANONICAL),glyphs)
-FamilyName ?= $(call glyphsFamilyName,$(firstword $(filter %.glyphs,$(SOURCES))))
+FamilyNames ?= $(foreach SOURCE,$(filter %.glyphs,$(SOURCES)),$(call glyphsFamilyNames,$(SOURCE)))
+FontStyles ?= $(foreach SOURCE,$(filter %.glyphs),$(SOURCES)),$(call glyphsInstances,$(SOURCE)))
 isVariable ?= true
 endif
 
+ifeq ($(CANONICAL),sfd)
+FamilyNames ?= $(foreach SOURCE,$(filter %.sfd,$(SOURCES)),$(call sfdFamilyNames,$(SOURCE)))
+# FontStyles = $(subst $(FontBase)-,,$(basename $(wildcard $(FontBase)-*.ufo)))
+endif
+
 ifeq ($(CANONICAL),ufo)
-FamilyName ?= $(call ufoFamilyName,$(firstword $(filter %.ufo,$(SOURCES))))
+FamilyNames ?= $(foreach SOURCE,$(filter %.ufo,$(SOURCES)),$(call ufoFamilyNames,$(SOURCE)))
+FontStyles ?= $(foreach SOURCE,$(filter %.ufo,$(SOURCES))),$(call ufoInstances,$(SOURCE)))
 endif
 
 FamilyName ?= $(shell $(CONTAINERIZED) || $(PYTHON) $(PYTHONFLAGS) -c 'print("$(PROJECT)".replace("-", " ").title())')
+
+INSTANCES ?= $(foreach FamilyName,$(FamilyNames),$(foreach STYLE,$(FontStyles),$(BASE)-$(STYLE)))
 
 GITVER = --tags --abbrev=6 --match='[0-9].[0-9][0-9][0-9]'
 # Determine font version automatically from repository git tags
@@ -86,26 +95,6 @@ endif
 
 .PHONY: default
 default: all
-
-# Look for what fonts & styles are in this repository that will need building
-FontBase = $(subst $(space),,$(FamilyName))
-
-FontStyles = $(subst $(FontBase)-,,$(basename $(filter %.ufo,$(SOURCES))))
-FontStyles += $(foreach UFO,$(filter %.ufo,$(SOURCES)),$(call ufoInstances,$(UFO)))
-FontStyles += $(foreach GLYPHS,$(filter %.glyphs,$(SOURCES)),$(call glyphInstances,$(GLYPHS)))
-
-INSTANCES = $(foreach BASE,$(FontBase),$(foreach STYLE,$(FontStyles),$(BASE)-$(STYLE)))
-
-STATICOTFS = $(and $(STATICOTF),$(addsuffix .otf,$(INSTANCES)))
-STATICTTFS = $(and $(STATICTTF),$(addsuffix .ttf,$(INSTANCES)))
-STATICWOFFS = $(and $(STATICWOFF),$(addsuffix .woff,$(INSTANCES)))
-STATICWOFF2S = $(and $(STATICWOFF2),$(addsuffix .woff2,$(INSTANCES)))
-ifeq ($(isVariable),true)
-VARIABLEOTFS = $(and $(VARIABLEOTF),$(addsuffix -VF.otf,$(FamilyNames)))
-VARIABLETTFS = $(and $(VARIABLETTF),$(addsuffix -VF.ttf,$(FamilyNames)))
-VARIABLEWOFFS = $(and $(VARIABLEWOFF),$(addsuffix -VF.woff,$(FamilyNames)))
-VARIABLEWOFF2S = $(and $(VARIABLEWOFF2),$(addsuffix -VF.woff2,$(FamilyNames)))
-endif
 
 ifeq ($(DEBUG),true)
 .SHELLFLAGS += +x
@@ -152,6 +141,17 @@ endif
 endif
 endif
 
+STATICOTFS = $(and $(STATICOTF),$(addsuffix .otf,$(INSTANCES)))
+STATICTTFS = $(and $(STATICTTF),$(addsuffix .ttf,$(INSTANCES)))
+STATICWOFFS = $(and $(STATICWOFF),$(addsuffix .woff,$(INSTANCES)))
+STATICWOFF2S = $(and $(STATICWOFF2),$(addsuffix .woff2,$(INSTANCES)))
+ifeq ($(isVariable),true)
+VARIABLEOTFS = $(and $(VARIABLEOTF),$(addsuffix -VF.otf,$(FamilyNames)))
+VARIABLETTFS = $(and $(VARIABLETTF),$(addsuffix -VF.ttf,$(FamilyNames)))
+VARIABLEWOFFS = $(and $(VARIABLEWOFF),$(addsuffix -VF.woff,$(FamilyNames)))
+VARIABLEWOFF2S = $(and $(VARIABLEWOFF2),$(addsuffix -VF.woff2,$(FamilyNames)))
+endif
+
 .PHONY: debug
 debug:
 	echo FONTSHIPDIR = $(FONTSHIPDIR)
@@ -161,8 +161,7 @@ debug:
 	echo PUBDIR = $(PUBDIR)
 	echo SOURCEDIR = $(SOURCEDIR)
 	echo ----------------------------
-	echo FamilyName = $(FamilyName)
-	echo FontBase = $(FontBase)
+	echo FamilyNames = $(FamilyNames)
 	echo FontStyles = $(FontStyles)
 	echo FontVersion = $(FontVersion)
 	echo FontVersionMeta = $(FontVersionMeta)
@@ -253,6 +252,8 @@ $(BUILDDIR):
 ifeq ($(PROJECT),data)
 $(warning We cannot read the Project’s name inside Docker. Please manually specify it by adding PROOJECT='Name' as an agument to your command invocation)
 endif
+
+-include $(FONTSHIPDIR)/rules-$(CANONICAL).mk
 
 # Webfont compressions
 
