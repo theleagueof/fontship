@@ -1,2 +1,0 @@
-%.sfd: %.ufo
-	echo SDF: $@

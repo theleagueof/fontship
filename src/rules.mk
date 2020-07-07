@@ -255,6 +255,28 @@ endif
 
 -include $(FONTSHIPDIR)/rules-$(CANONICAL).mk
 
+$(foreach FamilyName,$(FamilyNames),$(eval $(call otf_instance_template,$(FamilyName))))
+$(foreach FamilyName,$(FamilyNames),$(eval $(call ttf_instance_template,$(FamilyName))))
+
+# Final steps common to all input formats
+
+$(BUILDDIR)/%-hinted.ttf: $(BUILDDIR)/%-instance.ttf
+	$(TTFAUTOHINT) $(TTFAUTOHINTFLAGS) -n $< $@
+
+$(BUILDDIR)/%-hinted.ttf.fix: $(BUILDDIR)/%-hinted.ttf
+	$(GFTOOLS) $(GFTOOLSFLAGS) fix-hinting $<
+
+$(STATICTTFS): %.ttf: $(BUILDDIR)/%-hinted.ttf.fix $(BUILDDIR)/last-commit
+	cp $< $@
+	$(normalizeVersion)
+
+$(BUILDDIR)/%-hinted.otf: $(BUILDDIR)/%-instance.otf
+	$(PSAUTOHINT) $(PSAUTOHINTFLAGS) $< -o $@ --log $@.log
+
+$(STATICOTFS): %.otf: $(BUILDDIR)/%-hinted.otf $(BUILDDIR)/last-commit
+	cp $< $@
+	$(normalizeVersion)
+
 # Webfont compressions
 
 %.woff: %.ttf
