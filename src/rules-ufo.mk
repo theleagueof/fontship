@@ -9,7 +9,7 @@
 
 # UFO -> OTF
 
-$(BUILDDIR)/%-instance.otf: %.ufo | $(BUILDDIR)
+$(BUILDDIR)/%-instance.otf: $(SOURCEDIR)/%.ufo | $(BUILDDIR)
 	$(FONTMAKE) $(FONTMAKEFLAGS) -u $< -o otf --output-path $@
 
 $(STATICOTFS): %.otf: $(BUILDDIR)/%-instance.otf $(BUILDDIR)/last-commit
@@ -18,7 +18,7 @@ $(STATICOTFS): %.otf: $(BUILDDIR)/%-instance.otf $(BUILDDIR)/last-commit
 
 # UFO -> TTF
 
-$(BUILDDIR)/%-instance.ttf: %.ufo | $(BUILDDIR)
+$(BUILDDIR)/%-instance.ttf: $(SOURCEDIR)/%.ufo | $(BUILDDIR)
 	$(FONTMAKE) $(FONTMAKEFLAGS) -u $< -o ttf --output-path $@
 	$(GFTOOLS) $(GFTOOLSFLAGS) fix-dsig --autofix $@
 

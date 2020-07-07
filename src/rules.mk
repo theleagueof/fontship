@@ -26,6 +26,8 @@ PROJECT ?= $(shell $(CONTAINERIZED) || $(PYTHON) $(PYTHONFLAGS) -c 'print("$(GIT
 _PROJECTDIR != cd "$(shell dirname $(firstword $(MAKEFILE_LIST)))/" && pwd
 PROJECTDIR ?= $(_PROJECTDIR)
 PUBDIR ?= $(PROJECTDIR)/pub
+SOURCEDIR ?= sources
+
 # Some Makefile shinanigans to avoid aggressive trimming
 space := $() $()
 
@@ -57,12 +59,12 @@ include $(FONTSHIPDIR)/functions.mk
 
 # Read font name from metadata file or guess from repository name
 ifeq ($(CANONICAL),glyphs)
-FamilyName ?= $(call glyphsFamilyName,$(firstword $(wildcard *.glyphs)))
+FamilyName ?= $(call glyphsFamilyName,$(firstword $(wildcard $(SOURCEDIR)/*.glyphs)))
 isVariable ?= true
 endif
 
 ifeq ($(CANONICAL),ufo)
-FamilyName ?= $(call ufoFamilyName,$(firstword $(wildcard *.ufo)))
+FamilyName ?= $(call ufoFamilyName,$(firstword $(wildcard $(SOURCEDIR)/*.ufo)))
 endif
 
 FamilyName ?= $(shell $(CONTAINERIZED) || $(PYTHON) $(PYTHONFLAGS) -c 'print("$(PROJECT)".replace("-", " ").title())')
@@ -84,9 +86,9 @@ endif
 # Look for what fonts & styles are in this repository that will need building
 FontBase = $(subst $(space),,$(FamilyName))
 
-# FontStyles = $(subst $(FontBase)-,,$(basename $(wildcard $(FontBase)-*.ufo)))
-FontStyles += $(foreach UFO,$(wildcard *.ufo),$(call ufoInstances,$(UFO)))
-FontStyles += $(foreach GLYPHS,$(wildcard *.glyphs),$(call glyphInstances,$(GLYPHS)))
+# FontStyles = $(subst $(FontBase)-,,$(basename $(wildcard $(SOURCEDIR)/$(FontBase)-*.ufo)))
+FontStyles += $(foreach UFO,$(wildcard $(SOURCEDIR)/*.ufo),$(call ufoInstances,$(UFO)))
+FontStyles += $(foreach GLYPHS,$(wildcard $(SOURCEDIR)/*.glyphs),$(call glyphInstances,$(GLYPHS)))
 
 INSTANCES = $(foreach BASE,$(FontBase),$(foreach STYLE,$(FontStyles),$(BASE)-$(STYLE)))
 
