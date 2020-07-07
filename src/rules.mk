@@ -31,9 +31,10 @@ SOURCEDIR ?= sources
 # Some Makefile shinanigans to avoid aggressive trimming
 space := $() $()
 
-CANONICAL ?= $(or $(shell git ls-files | grep -q '\.glyphs$$' && echo glyphs),\
-			      $(shell git ls-files | grep -q '\.sfd$$' && echo sfd),\
-			      $(shell git ls-files | grep -q '\.ufo$$' && echo ufo))
+SOURCES ?= $(shell git ls-files '$(SOURCEDIR)/*.glyphs' '$(SOURCEDIR)/*.sfd' '$(SOURCEDIR)/*.ufo')
+CANONICAL ?= $(or $(and $(filter %.glyphs,$(SOURCES)),glyphs),\
+			      $(and $(filter %.sfd,$(SOURCES)),sfd),\
+			      $(and $(filter %.ufo,$(SOURCES)),ufo))
 
 # Output format selectors
 STATICOTF ?= true
@@ -59,12 +60,12 @@ include $(FONTSHIPDIR)/functions.mk
 
 # Read font name from metadata file or guess from repository name
 ifeq ($(CANONICAL),glyphs)
-FamilyName ?= $(call glyphsFamilyName,$(firstword $(wildcard $(SOURCEDIR)/*.glyphs)))
+FamilyName ?= $(call glyphsFamilyName,$(firstword $(filter %.glyphs,$(SOURCES))))
 isVariable ?= true
 endif
 
 ifeq ($(CANONICAL),ufo)
-FamilyName ?= $(call ufoFamilyName,$(firstword $(wildcard $(SOURCEDIR)/*.ufo)))
+FamilyName ?= $(call ufoFamilyName,$(firstword $(filter %.ufo,$(SOURCES))))
 endif
 
 FamilyName ?= $(shell $(CONTAINERIZED) || $(PYTHON) $(PYTHONFLAGS) -c 'print("$(PROJECT)".replace("-", " ").title())')
@@ -86,9 +87,9 @@ endif
 # Look for what fonts & styles are in this repository that will need building
 FontBase = $(subst $(space),,$(FamilyName))
 
-# FontStyles = $(subst $(FontBase)-,,$(basename $(wildcard $(SOURCEDIR)/$(FontBase)-*.ufo)))
-FontStyles += $(foreach UFO,$(wildcard $(SOURCEDIR)/*.ufo),$(call ufoInstances,$(UFO)))
-FontStyles += $(foreach GLYPHS,$(wildcard $(SOURCEDIR)/*.glyphs),$(call glyphInstances,$(GLYPHS)))
+FontStyles = $(subst $(FontBase)-,,$(basename $(filter %.ufo,$(SOURCES))))
+FontStyles += $(foreach UFO,$(filter %.ufo,$(SOURCES)),$(call ufoInstances,$(UFO)))
+FontStyles += $(foreach GLYPHS,$(filter %.glyphs,$(SOURCES)),$(call glyphInstances,$(GLYPHS)))
 
 INSTANCES = $(foreach BASE,$(FontBase),$(foreach STYLE,$(FontStyles),$(BASE)-$(STYLE)))
 
@@ -158,6 +159,7 @@ debug:
 	echo PROJECT = $(PROJECT)
 	echo PROJECTDIR = $(PROJECTDIR)
 	echo PUBDIR = $(PUBDIR)
+	echo SOURCEDIR = $(SOURCEDIR)
 	echo ----------------------------
 	echo FamilyName = $(FamilyName)
 	echo FontBase = $(FontBase)
@@ -168,6 +170,7 @@ debug:
 	echo isTagged = $(isTagged)
 	echo ----------------------------
 	echo CANONICAL = $(CANONICAL)
+	echo SOURCES = $(SOURCES)
 	echo INSTANCES = $(INSTANCES)
 	echo STATICOTFS = $(STATICOTFS)
 	echo STATICTTFS = $(STATICTTFS)
@@ -264,7 +267,7 @@ endif
 .PHONY: $(BUILDDIR)/last-commit
 $(BUILDDIR)/last-commit: | $(BUILDDIR)
 	git update-index --refresh --ignore-submodules ||:
-	git diff-index --quiet --cached HEAD -- *.ufo
+	git diff-index --quiet --cached HEAD -- $(SOURCES)
 	ts=$$(git log -n1 --pretty=format:%cI HEAD)
 	touch -d "$$ts" -- $@
 
