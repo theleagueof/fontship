@@ -33,6 +33,13 @@ test "x$ZSH" == "xyes" || AC_MSG_ERROR([zsh is required])
 
 AM_PATH_PYTHON([3.6])
 
+if [[ -d .git ]]; then
+    MAN_DATE=$(git log -1 --format="%cd" --date=format:"%d %B %Y" -- fontship.1.in)
+else
+    MAN_DATE=$(date "+%d %B %Y")
+fi
+AC_SUBST([MAN_DATE])
+
 AC_CONFIG_FILES([Makefile])
 AC_CONFIG_FILES([fontship], [chmod +x fontship])
 
