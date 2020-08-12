@@ -39,6 +39,18 @@ jobs:
         uses: theleagueof/fontship@master
 ```
 
+Because Github rebuilds the container image used in Actions on each run you can save some time if you use their Docker image cache instead of referencing the repository directly. Substitute:
+
+```yaml
+        uses: actions/checkout@v2
+```
+
+With:
+
+```yaml
+        uses: docker://docker.pkg.github.com/theleagueof/fontship/fontship:v0.2.1
+```
+
 At the current time Fontship only builds the fonts, it doesn’t do anything with them. You’ll need to post them as artifacts or publish them on releases as another step in the workflow. For a full working example see [League Spartan’s workflow](https://github.com/theleagueof/league-spartan/blob/master/.github/workflow/fontship.yml).
 
 Other CI runners could easily be supported, see [issue #32](https://github.com/theleagueof/fontship/issues/32) for details.
