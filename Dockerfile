@@ -1,6 +1,9 @@
-FROM archlinux:20200306 AS fontship-base
+FROM docker.io/library/archlinux as fontship-base
 
+# Downgrade coreutils to avoid filesystem bug on DockerHub host kernels
+RUN pacman --noconfirm -U https://archive.archlinux.org/packages/c/coreutils/coreutils-8.31-3-x86_64.pkg.tar.xz
 RUN sed -i -e '/IgnorePkg *=/s/^.*$/IgnorePkg = coreutils/' /etc/pacman.conf
+
 # Setup Caleb's hosted Arch repository with prebuilt dependencies
 RUN pacman-key --init && pacman-key --populate
 RUN sed -i  /etc/pacman.conf -e \
