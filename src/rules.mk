@@ -22,14 +22,29 @@ CONTAINERIZED != test -f /.dockerenv && echo true || echo false
 # Initial environment setup
 FONTSHIPDIR != cd "$(shell dirname $(lastword $(MAKEFILE_LIST)))/" && pwd
 GITNAME := $(notdir $(shell git worktree list | head -n1 | awk '{print $$1}'))
-PROJECT ?= $(GITNAME)
+PROJECT ?= $(shell $(CONTAINERIZED) || $(PYTHON) $(PYTHONFLAGS) -c 'print("$(GITNAME)".replace(" ", "").title())')
 _PROJECTDIR != cd "$(shell dirname $(firstword $(MAKEFILE_LIST)))/" && pwd
 PROJECTDIR ?= $(_PROJECTDIR)
 PUBDIR ?= $(PROJECTDIR)/pub
+SOURCEDIR ?= sources
+
 # Some Makefile shinanigans to avoid aggressive trimming
 space := $() $()
 
-CANONICAL ?= $(shell git ls-files | grep -q '\.glyphs$'' && echo glyphs || echo ufo)
+SOURCES ?= $(shell git ls-files '$(SOURCEDIR)/*.glyphs' '$(SOURCEDIR)/*.sfd' '$(SOURCEDIR)/*.ufo')
+CANONICAL ?= $(or $(and $(filter %.glyphs,$(SOURCES)),glyphs),\
+			      $(and $(filter %.sfd,$(SOURCES)),sfd),\
+			      $(and $(filter %.ufo,$(SOURCES)),ufo))
+
+# Output format selectors
+STATICOTF ?= true
+STATICTTF ?= true
+STATICWOFF ?= true
+STATICWOFF2 ?= true
+VARIABLEOTF ?=
+VARIABLETTF ?= true
+VARIABLEWOFF ?= true
+VARIABLEWOFF2 ?= true
 
 # Allow overriding executables used
 FONTMAKE ?= fontmake
@@ -45,19 +60,24 @@ include $(FONTSHIPDIR)/functions.mk
 
 # Read font name from metadata file or guess from repository name
 ifeq ($(CANONICAL),glyphs)
-FamilyName ?= $(call glyphsFamilyName,$(firstword $(wildcard *.glyphs)))
+FamilyNames ?= $(foreach SOURCE,$(filter %.glyphs,$(SOURCES)),$(call glyphsFamilyNames,$(SOURCE)))
+FontStyles ?= $(foreach SOURCE,$(filter %.glyphs),$(SOURCES)),$(call glyphsInstances,$(SOURCE)))
 isVariable ?= true
 endif
 
+ifeq ($(CANONICAL),sfd)
+FamilyNames ?= $(foreach SOURCE,$(filter %.sfd,$(SOURCES)),$(call sfdFamilyNames,$(SOURCE)))
+# FontStyles = $(subst $(FontBase)-,,$(basename $(wildcard $(FontBase)-*.ufo)))
+endif
+
 ifeq ($(CANONICAL),ufo)
-FamilyName ?= $(call ufoFamilyName,$(firstword $(wildcard *.ufo)))
+FamilyNames ?= $(foreach SOURCE,$(filter %.ufo,$(SOURCES)),$(call ufoFamilyNames,$(SOURCE)))
+FontStyles ?= $(foreach SOURCE,$(filter %.ufo,$(SOURCES))),$(call ufoInstances,$(SOURCE)))
 endif
 
 FamilyName ?= $(shell $(CONTAINERIZED) || $(PYTHON) $(PYTHONFLAGS) -c 'print("$(PROJECT)".replace("-", " ").title())')
 
-ifeq ($(FamilyName),)
-$(error We cannot properly detect the font’s Family Name yet from inside Docker. Please manually specify it by adding FamilyName='Family Name' as an agument to your command invocation)
-endif
+INSTANCES ?= $(foreach FamilyName,$(FamilyNames),$(foreach STYLE,$(FontStyles),$(BASE)-$(STYLE)))
 
 GITVER = --tags --abbrev=6 --match='[0-9].[0-9][0-9][0-9]'
 # Determine font version automatically from repository git tags
@@ -73,25 +93,8 @@ GitVersion ?= $(FontVersion)-r$(shell git rev-list --count HEAD)-g$(shell git re
 isTagged :=
 endif
 
-# Look for what fonts & styles are in this repository that will need building
-FontBase = $(subst $(space),,$(FamilyName))
-
-# FontStyles = $(subst $(FontBase)-,,$(basename $(wildcard $(FontBase)-*.ufo)))
-FontStyles += $(foreach UFO,$(wildcard *.ufo),$(call ufoInstances,$(UFO)))
-FontStyles += $(foreach GLYPHS,$(wildcard *.glyphs),$(call glyphInstances,$(GLYPHS)))
-
-INSTANCES = $(foreach BASE,$(FontBase),$(foreach STYLE,$(FontStyles),$(BASE)-$(STYLE)))
-
-STATICOTFS = $(addsuffix .otf,$(INSTANCES))
-STATICTTFS = $(addsuffix .ttf,$(INSTANCES))
-STATICWOFFS = $(addsuffix .woff,$(INSTANCES))
-STATICWOFF2S = $(addsuffix .woff2,$(INSTANCES))
-ifeq ($(isVariable),true)
-VARIABLEOTFS = $(addsuffix -VF.otf,$(FontBase))
-VARIABLETTFS = $(addsuffix -VF.ttf,$(FontBase))
-VARIABLEWOFFS = $(addsuffix -VF.woff,$(FontBase))
-VARIABLEWOFF2S = $(addsuffix -VF.woff2,$(FontBase))
-endif
+.PHONY: default
+default: all
 
 ifeq ($(DEBUG),true)
 .SHELLFLAGS += +x
@@ -138,8 +141,16 @@ endif
 endif
 endif
 
-.PHONY: default
-default: all
+STATICOTFS = $(and $(STATICOTF),$(addsuffix .otf,$(INSTANCES)))
+STATICTTFS = $(and $(STATICTTF),$(addsuffix .ttf,$(INSTANCES)))
+STATICWOFFS = $(and $(STATICWOFF),$(addsuffix .woff,$(INSTANCES)))
+STATICWOFF2S = $(and $(STATICWOFF2),$(addsuffix .woff2,$(INSTANCES)))
+ifeq ($(isVariable),true)
+VARIABLEOTFS = $(and $(VARIABLEOTF),$(addsuffix -VF.otf,$(FamilyNames)))
+VARIABLETTFS = $(and $(VARIABLETTF),$(addsuffix -VF.ttf,$(FamilyNames)))
+VARIABLEWOFFS = $(and $(VARIABLEWOFF),$(addsuffix -VF.woff,$(FamilyNames)))
+VARIABLEWOFF2S = $(and $(VARIABLEWOFF2),$(addsuffix -VF.woff2,$(FamilyNames)))
+endif
 
 .PHONY: debug
 debug:
@@ -148,9 +159,9 @@ debug:
 	echo PROJECT = $(PROJECT)
 	echo PROJECTDIR = $(PROJECTDIR)
 	echo PUBDIR = $(PUBDIR)
+	echo SOURCEDIR = $(SOURCEDIR)
 	echo ----------------------------
-	echo FamilyName = $(FamilyName)
-	echo FontBase = $(FontBase)
+	echo FamilyNames = $(FamilyNames)
 	echo FontStyles = $(FontStyles)
 	echo FontVersion = $(FontVersion)
 	echo FontVersionMeta = $(FontVersionMeta)
@@ -158,6 +169,7 @@ debug:
 	echo isTagged = $(isTagged)
 	echo ----------------------------
 	echo CANONICAL = $(CANONICAL)
+	echo SOURCES = $(SOURCES)
 	echo INSTANCES = $(INSTANCES)
 	echo STATICOTFS = $(STATICOTFS)
 	echo STATICTTFS = $(STATICTTFS)
@@ -170,7 +182,7 @@ debug:
 
 .PHONY: _gha
 _gha:
-	echo "::set-output name=family-name::$(FamilyName)"
+	echo "::set-output name=PROJECT::$(PROJECT)"
 	echo "::set-output name=font-version::$(FontVersion)"
 	echo "::set-output name=DISTDIR::$(DISTDIR)"
 
@@ -194,10 +206,10 @@ fonts: static variable
 static: static-otf static-ttf static-woff static-woff2
 
 .PHONY: variable
-variable: variable-ttf variable-woff variable-woff2 # variable-otf
+variable: variable-otf variable-ttf variable-woff variable-woff2
 
 .PHONY: otf
-otf: static-otf # variable-otf
+otf: static-otf variable-otf
 
 .PHONY: ttf
 ttf: static-ttf variable-ttf
@@ -237,7 +249,33 @@ BUILDDIR ?= .fontship
 $(BUILDDIR):
 	mkdir -p $@
 
-include $(FONTSHIPDIR)/rules-$(CANONICAL).mk
+ifeq ($(PROJECT),data)
+$(warning We cannot read the Project’s name inside Docker. Please manually specify it by adding PROOJECT='Name' as an agument to your command invocation)
+endif
+
+-include $(FONTSHIPDIR)/rules-$(CANONICAL).mk
+
+$(foreach FamilyName,$(FamilyNames),$(eval $(call otf_instance_template,$(FamilyName))))
+$(foreach FamilyName,$(FamilyNames),$(eval $(call ttf_instance_template,$(FamilyName))))
+
+# Final steps common to all input formats
+
+$(BUILDDIR)/%-hinted.ttf: $(BUILDDIR)/%-instance.ttf
+	$(TTFAUTOHINT) $(TTFAUTOHINTFLAGS) -n $< $@
+
+$(BUILDDIR)/%-hinted.ttf.fix: $(BUILDDIR)/%-hinted.ttf
+	$(GFTOOLS) $(GFTOOLSFLAGS) fix-hinting $<
+
+$(STATICTTFS): %.ttf: $(BUILDDIR)/%-hinted.ttf.fix $(BUILDDIR)/last-commit
+	cp $< $@
+	$(normalizeVersion)
+
+$(BUILDDIR)/%-hinted.otf: $(BUILDDIR)/%-instance.otf
+	$(PSAUTOHINT) $(PSAUTOHINTFLAGS) $< -o $@ --log $@.log
+
+$(STATICOTFS): %.otf: $(BUILDDIR)/%-hinted.otf $(BUILDDIR)/last-commit
+	cp $< $@
+	$(normalizeVersion)
 
 # Webfont compressions
 
@@ -252,11 +290,11 @@ include $(FONTSHIPDIR)/rules-$(CANONICAL).mk
 .PHONY: $(BUILDDIR)/last-commit
 $(BUILDDIR)/last-commit: | $(BUILDDIR)
 	git update-index --refresh --ignore-submodules ||:
-	git diff-index --quiet --cached HEAD -- *.ufo
+	git diff-index --quiet --cached HEAD -- $(SOURCES)
 	ts=$$(git log -n1 --pretty=format:%cI HEAD)
 	touch -d "$$ts" -- $@
 
-DISTDIR = $(FontBase)-$(GitVersion)
+DISTDIR = $(PROJECT)-$(GitVersion)
 
 $(DISTDIR):
 	mkdir -p $@
@@ -274,30 +312,24 @@ dist_license_DATA ?= $(wildcard $(foreach B,ofl OFL ofl-faq OFL-FAQ license LICE
 install-dist: fonts | $(DISTDIR)
 	$(and $(dist_doc_DATA),install -Dm644 -t "$(DISTDIR)/" $(dist_doc_DATA))
 	$(and $(dist_license_DATA),install -Dm644 -t "$(DISTDIR)/" $(dist_license_DATA))
-	install -Dm644 -t "$(DISTDIR)/static/OTF/" $(STATICOTFS)
-	install -Dm644 -t "$(DISTDIR)/static/TTF/" $(STATICTTFS)
-	install -Dm644 -t "$(DISTDIR)/static/WOFF/" $(STATICWOFFS)
-	install -Dm644 -t "$(DISTDIR)/static/WOFF2/" $(STATICWOFF2S)
-ifeq ($(CANONICAL),glyphs)
-	$(and $(wildcard $(VARIABLEOTFS)),install -Dm644 -t "$(DISTDIR)/variable/OTF/" $(VARIABLEOTFS))
-	install -Dm644 -t "$(DISTDIR)/variable/TTF/" $(VARIABLETTFS)
-	install -Dm644 -t "$(DISTDIR)/variable/WOFF/" $(VARIABLEWOFFS)
-	install -Dm644 -t "$(DISTDIR)/variable/WOFF2/" $(VARIABLEWOFF2S)
-endif
+	$(and $(STATICOTFS),install -Dm644 -t "$(DISTDIR)/static/OTF/" $(STATICOTFS))
+	$(and $(STATICTTFS),install -Dm644 -t "$(DISTDIR)/static/TTF/" $(STATICTTFS))
+	$(and $(STATICWOFFS),install -Dm644 -t "$(DISTDIR)/static/WOFF/" $(STATICWOFFS))
+	$(and $(STATICWOFF2S),install -Dm644 -t "$(DISTDIR)/static/WOFF2/" $(STATICWOFF2S))
+	$(and $(VARIABLEOTFS),install -Dm644 -t "$(DISTDIR)/variable/OTF/" $(VARIABLEOTFS))
+	$(and $(VARIABLETTFS),install -Dm644 -t "$(DISTDIR)/variable/TTF/" $(VARIABLETTFS))
+	$(and $(VARIABLEWOFFS),install -Dm644 -t "$(DISTDIR)/variable/WOFF/" $(VARIABLEWOFFS))
+	$(and $(VARIABLEWOFF2S),install -Dm644 -t "$(DISTDIR)/variable/WOFF2/" $(VARIABLEWOFF2S))
 
 install-local: install-local-otf
 
-install-local-otf: otf # variable-otf
-	install -Dm644 -t "$${HOME}/.local/share/fonts/OTF/" $(STATICOTFS)
-ifeq ($(CANONICAL),glyphs)
-	$(and $(wildcard $(VARIABLEOTFS)),install -Dm644 -t "$${HOME}/.local/share/fonts/variable/" $(VARIABLEOTFS))
-endif
+install-local-otf: otf
+	$(and $(STATICOTFS),install -Dm644 -t "$${HOME}/.local/share/fonts/OTF/" $(STATICOTFS))
+	$(and $(VARIABLEOTFS),install -Dm644 -t "$${HOME}/.local/share/fonts/variable/" $(VARIABLEOTFS))
 
-install-local-ttf: ttf variable-ttf
-	install -Dm644 -t "$${HOME}/.local/share/fonts/TTF/" $(STATICTTFS)
-ifeq ($(CANONICAL),glyphs)
-	install -Dm644 -t "$${HOME}/.local/share/fonts/variable/" $(VARIABLETTFS)
-endif
+install-local-ttf: ttf
+	$(and $(STATICTTFS),install -Dm644 -t "$${HOME}/.local/share/fonts/TTF/" $(STATICTTFS))
+	$(and $(VARIABLETTFS),install -Dm644 -t "$${HOME}/.local/share/fonts/variable/" $(VARIABLETTFS))
 
 # Empty recipie to suppres makefile regeneration
 $(MAKEFILE_LIST):;

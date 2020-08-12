@@ -38,10 +38,10 @@ def cli(debug, quiet, verbose):
 def make(ctx, target):
     """Build specified target(s)."""
     args = ['make']
-    args += ['-f', SRCDIR + 'rules.mk']
     for fname in ['GNUmakefile', 'makefile', 'Makefile', 'rules.mk']:
         if os.path.isfile(fname):
             args += ['-f', fname]
+    args += ['-f', SRCDIR + 'rules.mk']
     for flag in flags:
         if flags[flag]:
             args += [ flag + "=true" ]
