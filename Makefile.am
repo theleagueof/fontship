@@ -10,7 +10,7 @@ EXTRA_DIST = .version
 
 BUILT_SOURCES = .version
 
-CLEANFILES = $(bin_SCRIPTS)
+CLEANFILES = $(BUILT_SOURCES) $(bin_SCRIPTS)
 
 .version: $(shell test -e .git && awk '{print ".git/" $$2}' .git/HEAD)
 	mv $@{,-prev} 2>/dev/null || touch $@-prev

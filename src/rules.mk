@@ -300,9 +300,9 @@ $(DISTDIR):
 	mkdir -p $@
 
 .PHONY: dist
-dist: $(DISTDIR).zip $(DISTDIR).tar.bz2
+dist: $(DISTDIR).zip $(DISTDIR).tar.xz
 
-$(DISTDIR).tar.bz2 $(DISTDIR).zip: install-dist
+$(DISTDIR).tar.bz2 $(DISTDIR).tar.gz $(DISTDIR).tar.xz $(DISTDIR).zip $(DISTDIR).tar.zst: install-dist
 	bsdtar -acf $@ $(DISTDIR)
 
 dist_doc_DATA ?= $(wildcard $(foreach B,readme README,$(foreach E,md txt markdown,$(B).$(E))))
