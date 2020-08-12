@@ -16,7 +16,7 @@ jobs:
       - name: Fetch Tags
         run: git fetch --prune --tags
       - name: Push to GitHub Packages
-        uses: docker/build-push-action@v1
+        uses: docker/build-push-action@v1.1.0
         with:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
