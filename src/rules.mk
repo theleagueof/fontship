@@ -54,6 +54,7 @@ PYTHON ?= python3
 SFNT2WOFF ?= sfnt2woff-zopfli
 TTFAUTOHINT ?= ttfautohint
 PSAUTOHINT ?= psautohint
+SFDNORMALIZE ?= sfdnormalize
 TTX ?= ttx
 WOFF2COMPRESS ?= woff2_compress
 
