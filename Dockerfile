@@ -8,6 +8,7 @@ RUN sed -i -e '/IgnorePkg *=/s/^.*$/IgnorePkg = coreutils/' /etc/pacman.conf
 RUN pacman-key --init && pacman-key --populate
 RUN sed -i  /etc/pacman.conf -e \
 	'/^.community/{n;n;s!^!\n\[alerque\]\nServer = https://arch.alerque.com/$arch\n!}'
+RUN echo 'keyserver pool.sks-keyservers.net' >> /etc/pacman.d/gnupg/gpg.conf
 RUN pacman-key --recv-keys 63CC496475267693 && pacman-key --lsign-key 63CC496475267693
 
 # Freshen all base system packages
