@@ -4,7 +4,9 @@ on: [push, pull_request]
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+
+    runs-on: ubuntu-20.04
+
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -22,15 +24,23 @@ jobs:
         run: |
           ./bootstrap.sh
           ./configure
+          echo ::set-env name=VERSION::$(./build-aux/git-version-gen .tarball-version)
+          echo "::set-env name=MAKEFLAGS::-j$(nproc) -Otarget"
       - name: Build
         run: |
-          make
-          make distdir
-      - name: Get Build Info
-        run: |
-          echo ::set-env name=VERSION::$(./build-aux/git-version-gen .tarball-version)
-      - name: Upload Artifact
+          make dist
+      - name: Upload Artifacts
+        if: ${{ !contains(github.ref, 'refs/tags/v') }}
         uses: actions/upload-artifact@v2-preview
         with:
           name: fontship-${{ env.VERSION }}
-          path: fontship*-${{ env.VERSION }}/
+          path: fontship*-${{ env.VERSION }}.zip
+      - name: Publish Release
+        if: contains(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v0.1.5
+        with:
+          files: |
+            fontship-${{ env.VERSION }}.zip
+            fontship-${{ env.VERSION }}.tar.xz
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
