@@ -54,6 +54,7 @@ PYTHON ?= python3
 SFNT2WOFF ?= sfnt2woff-zopfli
 TTFAUTOHINT ?= ttfautohint
 PSAUTOHINT ?= psautohint
+SFDNORMALIZE ?= sfdnormalize
 TTX ?= ttx
 WOFF2COMPRESS ?= woff2_compress
 
@@ -198,11 +199,14 @@ all: fonts $(and $(DEBUG),debug)
 clean:
 	git clean -dxf
 
+.PHONY: ufo
+ufo: $$(addsuffix .ufo,$$(INSTANCES))
+
 .PHONY: glyphs
 glyphs: $$(addsuffix .glyphs,$$(INSTANCES))
 
-.PHONY: fontforge
-fontforge: $$(addsuffix .sfd,$$(INSTANCES))
+.PHONY: sfd
+sfd: $$(addsuffix .sfd,$$(INSTANCES))
 
 .PHONY: fonts
 fonts: static variable
@@ -248,6 +252,12 @@ variable-woff: $$(VARIABLEWOFFS)
 
 .PHONY: variable-woff2
 variable-woff2: $$(VARIABLEWOFF2S)
+
+.PHONY: normalize
+normalize: $(filter %.glyphs %.sfd %.ufo,$(SOURCES))
+
+.PHONY: check
+check:
 
 BUILDDIR ?= .fontship
 
