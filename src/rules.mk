@@ -256,6 +256,9 @@ variable-woff2: $$(VARIABLEWOFF2S)
 .PHONY: normalize
 normalize: $(filter %.glyphs %.sfd %.ufo,$(SOURCES))
 
+.PHONY: check
+check:
+
 BUILDDIR ?= .fontship
 
 $(BUILDDIR):
