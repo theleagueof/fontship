@@ -202,8 +202,8 @@ clean:
 .PHONY: glyphs
 glyphs: $$(addsuffix .glyphs,$$(INSTANCES))
 
-.PHONY: fontforge
-fontforge: $$(addsuffix .sfd,$$(INSTANCES))
+.PHONY: sfd
+sfd: $$(addsuffix .sfd,$$(INSTANCES))
 
 .PHONY: fonts
 fonts: static variable
