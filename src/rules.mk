@@ -199,6 +199,9 @@ all: fonts $(and $(DEBUG),debug)
 clean:
 	git clean -dxf
 
+.PHONY: ufo
+ufo: $$(addsuffix .ufo,$$(INSTANCES))
+
 .PHONY: glyphs
 glyphs: $$(addsuffix .glyphs,$$(INSTANCES))
 
