@@ -20,6 +20,26 @@ CLEANFILES = $(BUILT_SOURCES) $(bin_SCRIPTS)
 dist-hook:
 	echo $(VERSION) > $(distdir)/.tarball-version
 
+RELTYPE ?=
+
+.PHONY: tagrelease
+tagrelease:
+	test -z $$(git tag --points-at HEAD) || exit 0 # end if we are already on a release tag
+	git diff-index --quiet --cached HEAD || exit 1 # die if anything staged but not committed
+	git diff-files --quiet || exit 1 # die if any tracked files have unstagged changes
+	npm run release -- $(and $(RELTYPE),--release-as $(RELTYPE))
+
+.PHONY: prerelease
+prerelease: all
+
+.PHONY: release-preview
+release-preview:
+	npm run release -- --dry-run $(and $(RELTYPE),--release-as $(RELTYPE))
+
+.PHONY: release
+release: tagrelease
+
+
 .PHONY: docker
 docker: Dockerfile
 	docker build \
