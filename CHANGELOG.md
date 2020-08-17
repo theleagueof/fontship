@@ -2,6 +2,25 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.3.0](https://github.com/theleagueof/fontship/compare/v0.2.1...v0.3.0) (2020-08-17)
+
+
+### Features
+
+* **docker:** Distribute Dockerfile so people can build containers locally ([0033b9a](https://github.com/theleagueof/fontship/commit/0033b9a5a44d6b269f8909e0848b5da6f58c0f08))
+* Add check target to confirm normalization ([628a633](https://github.com/theleagueof/fontship/commit/628a6333d62317c1fa935fe2511c9305c018f189))
+* Add recipe to normalize SFD sources ([8ae2299](https://github.com/theleagueof/fontship/commit/8ae22990a2e3d2be0a392181a88a9e5c3551ed77))
+* Allow multiple family-names per project ([b11fdca](https://github.com/theleagueof/fontship/commit/b11fdca9b4b33c1585f0db0d36b8054c747c65c3))
+* Allow projects to toggle output formats ([00bde20](https://github.com/theleagueof/fontship/commit/00bde20d098508068fd6751c0dbd23d7d9306d64))
+* Make source dir easily configurable and default to 'sources' ([819dc58](https://github.com/theleagueof/fontship/commit/819dc580f695690373bdd62a8b065a2ff5acaca9))
+* Use templates to allow overriding how instances get built ([4e614b2](https://github.com/theleagueof/fontship/commit/4e614b216a8299aaa73901f1023d8f00ebda7642))
+
+
+### Bug Fixes
+
+* **build:** Use correct she-bang in bootstrap file ([a7d17c6](https://github.com/theleagueof/fontship/commit/a7d17c6eb219e0ab9ef9354421384dfde8fb4a7d))
+* Change GPG key server so key fetch works in Docker ([fe53280](https://github.com/theleagueof/fontship/commit/fe5328001a5ab533d127f04ced12fe5efb9c941b))
+
 ### [0.2.1](https://github.com/theleagueof/fontship/compare/v0.2.0...v0.2.1) (2020-08-14)
 
 * Fix automation so builds posted to Github Releases are automatic again.
