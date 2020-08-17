@@ -2,7 +2,7 @@ name: Deploy
 
 on:
   release:
-    types: [published]
+    types: [created]
 
 jobs:
   deploy:
@@ -12,15 +12,11 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-        with:
-          fetch-depth: 0
-      - name: Fetch Tags
-        run: git fetch --prune --tags
       - name: Push to GitHub Packages
         uses: docker/build-push-action@v1.1.0
         with:
           username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+          password: ${{ github.token }}
           registry: docker.pkg.github.com
           repository: theleagueof/fontship/fontship
           tag_with_ref: true
