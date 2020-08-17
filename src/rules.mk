@@ -302,8 +302,7 @@ $(STATICOTFS): %.otf: $(BUILDDIR)/%-hinted.otf $(BUILDDIR)/last-commit
 
 # Utility stuff
 
-.PHONY: $(BUILDDIR)/last-commit
-$(BUILDDIR)/last-commit: | $(BUILDDIR)
+$(BUILDDIR)/last-commit: $(shell test -e .git && awk '{print ".git/" $$2}' .git/HEAD)| $(BUILDDIR)
 	git update-index --refresh --ignore-submodules ||:
 	git diff-index --quiet --cached HEAD -- $(SOURCES)
 	ts=$$(git log -n1 --pretty=format:%cI HEAD)

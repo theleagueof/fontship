@@ -37,6 +37,7 @@ rules:
     - shaper
     - tooling
     - travis
+    - rules
     - ufo
     - glyphs
     - sfd
