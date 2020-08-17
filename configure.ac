@@ -40,7 +40,7 @@ else
 fi
 AC_SUBST([MAN_DATE])
 
-AC_CONFIG_FILES([Makefile])
+AC_CONFIG_FILES([Makefile fontship.1])
 AC_CONFIG_FILES([fontship], [chmod +x fontship])
 
 AC_OUTPUT
