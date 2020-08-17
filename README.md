@@ -36,7 +36,7 @@ jobs:
       - name: Fetch tags
         run: git fetch --prune --tags
       - name: Fontship
-        uses: theleagueof/fontship@master
+        uses: theleagueof/fontship@latest
 ```
 
 At the current time Fontship only builds the fonts into the currentp project directory, it doesn’t publish them anywhere. You’ll need to post the resulting artifacts by (e.g. by attaching them to each CI run or publishing them on releases) as another step your project’s workflow. For a full working example see [League Spartan’s workflow](https://github.com/theleagueof/league-spartan/blob/master/.github/workflow/fontship.yml).
