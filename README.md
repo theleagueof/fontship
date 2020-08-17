@@ -11,10 +11,10 @@ League of Moveable Type](https://www.theleagueofmoveabletype.com/).
 
 Fontship can be used in any of four different ways:
 
-1.  Remotely via a CI runner that responds to events in a remote Git repository.
-2.  Locally via an all-inclusive Docker image for low hastle setup.
-3.  Locally via a regular system utility install (provided all the required dependencies are also installed).
-4.  By including Fontship’s rules into your project’s existing Makefile (no installation of the CLI tool is required, but dependencies must be provided somehow).
+1. Remotely via a CI runner that responds to events in a remote Git repository.
+2. Locally via an all-inclusive Docker image for low hastle setup.
+3. Locally via a regular system utility install (provided all the required dependencies are also installed).
+4. By including Fontship’s rules into your project’s existing Makefile (no installation of the CLI tool is required, but dependencies must be provided somehow).
 
 ### CI Setup
 
@@ -51,14 +51,18 @@ The easiest way to instantiate a Docker container with all the right arguments i
 
 Using Docker Hub as an example, an alias could be:
 
-    $ alias fontship='docker run -it --volume "$(pwd):/data" --user "$(id -u):$(id -g)" theleagueof/fontship:latest'
+```console
+$ alias fontship='docker run -it --volume "$(pwd):/data" --user "$(id -u):$(id -g)" theleagueof/fontship:latest'
+```
 
 You may substitute *latest*, which will always be the most recently released version tag, with *master* to use the freshest unreleased build, with a tag name such as *v0.2.1* to explicitly use a specific version, or with *HEAD* to use an image built locally.
 
 To build a docker image locally, you’ll want to clone this repository and run `./bootstrap.sh` or download and extract the sources from a release, then run:
 
-    $ ./configure
-    $ make docker
+```console
+$ ./configure
+$ make docker
+```
 
 ### System Setup
 
@@ -74,9 +78,11 @@ Otherwise to install and use locally from source, you’ll need some dependencie
 
 To install the software to your computer, either clone this repository and run `./bootstrap.sh` or [download and extract the latest release](https://github.com/theleagueof/fontship/releases), then run:
 
-    $ ./configure
-    $ make
-    $ sudo make install
+```sh
+$ ./configure
+$ make
+$ sudo make install
+```
 
 ### Makefile Setup
 
@@ -96,13 +102,13 @@ Note: When using this mode, the CLI tool is not available but your project’s M
 
 To build all the possible formats for your font project, run
 
-```sh
+```console
 $ fontship make all
 ```
 
 To only generate a specific format, try:
 
-```sh
+```console
 # Just static OTF fonts
 $ fontship make otf
 
@@ -118,7 +124,7 @@ $ fontship make variable-ttf
 
 If you’re only interested in one specific file (say, a static weight instance) you can specify the exact file name you expect to get the fastest possible rebuild of just that file:
 
-```sh
+```console
 $ fontship make FooBar-Black.otf
 ```
 
@@ -126,7 +132,7 @@ $ fontship make FooBar-Black.otf
 
 When everything is ready or you want to actually ship a font (or send a sample to a friend), you’ll want to build the distribution package:
 
-```sh
+```console
 $ fontship make dist
 ```
 
