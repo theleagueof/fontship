@@ -26,18 +26,19 @@ jobs:
           ./bootstrap.sh
           ./configure
           echo ::set-env name=VERSION::$(./build-aux/git-version-gen .tarball-version)
-          echo "::set-env name=MAKEFLAGS::-j$(nproc) -Otarget"
+          echo ::set-env name=MAKEFLAGS::-j$(nproc) -Otarget
+          echo ::set-env name=ISRELEASE::$(grep -Px 'v\d\.\d\.\d' && echo true || echo false) }}
       - name: Build
         run: |
           make dist
       - name: Upload Artifacts
-        if: ${{ !contains(github.ref, 'refs/tags/v') }}
+        if: ${{ env.ISRELEASE == 'false' }}
         uses: actions/upload-artifact@v2-preview
         with:
           name: fontship-${{ env.VERSION }}
           path: fontship*-${{ env.VERSION }}.zip
       - name: Publish Release
-        if: contains(github.ref, 'refs/tags/v')
+        if: ${{ env.ISRELEASE == 'true' }}
         uses: softprops/action-gh-release@v0.1.5
         with:
           files: |
