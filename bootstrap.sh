@@ -1,4 +1,4 @@
-#/usr/bin/env sh
+#!/usr/bin/env sh
 set -e
 
 # Hint how to build from Github's snapshot archives
