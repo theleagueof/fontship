@@ -1,5 +1,6 @@
 import os
-import pygit2
+import pygit2  # pylint: disable=import-error
+
 
 class Repo():
 

@@ -20,11 +20,11 @@ import subprocess
 
 @click.group()
 @click.option('-d', '--debug', is_flag=True, default=False,
-              help="Enable debug mode flags.")
+                help="Enable debug mode flags.")
 @click.option('-q', '--quiet', is_flag=True, default=False,
-              help="Discard all non-error output messages.")
+                help="Discard all non-error output messages.")
 @click.option('-v', '--verbose', is_flag=True, default=False,
-              help="Enable extra verbose output from tooling.")
+                help="Enable extra verbose output from tooling.")
 @click.version_option(__version__)
 def cli(debug, quiet, verbose):
     """Execute any fontship supported subcommand COMMAND."""
