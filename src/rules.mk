@@ -81,12 +81,12 @@ FamilyName ?= $(shell $(CONTAINERIZED) || $(PYTHON) $(PYTHONFLAGS) -c 'print("$(
 
 INSTANCES ?= $(foreach FamilyName,$(FamilyNames),$(foreach STYLE,$(FontStyles),$(BASE)-$(STYLE)))
 
-GITVER = --tags --abbrev=6 --match='[0-9].[0-9][0-9][0-9]'
+GITVER = --tags --abbrev=6 --match='*[0-9].[0-9][0-9][0-9]'
 # Determine font version automatically from repository git tags
-FontVersion ?= $(shell git describe $(GITVER) 2> /dev/null | sed 's/-.*//g')
+FontVersion ?= $(shell git describe $(GITVER) 2> /dev/null | sed 's/^v//;s/-.*//g')
 ifneq ($(FontVersion),)
-FontVersionMeta ?= $(shell git describe --always --long $(GITVER) | sed 's/-[0-9]\+/\\;/;s/-g/[/')]
-GitVersion ?= $(shell git describe $(GITVER) | sed 's/-/-r/')
+FontVersionMeta ?= $(shell git describe --always --long $(GITVER) | sed 's/^v//;s/-[0-9]\+/\\;/;s/-g/[/')]
+GitVersion ?= $(shell git describe $(GITVER) | sed 's/^v//;s/-/-r/')
 isTagged := $(if $(subst $(FontVersion),,$(GitVersion)),,true)
 else
 FontVersion = 0.000
@@ -302,11 +302,11 @@ $(STATICOTFS): %.otf: $(BUILDDIR)/%-hinted.otf $(BUILDDIR)/last-commit
 
 # Utility stuff
 
-$(BUILDDIR)/last-commit: $(shell test -e .git && awk '{print ".git/" $$2}' .git/HEAD)| $(BUILDDIR)
+forceiftagchange = $(shell cmp -s $@ - <<< "$(GitVersion)" || echo force)
+$(BUILDDIR)/last-commit: $$(forceiftagchange) | $(BUILDDIR)
 	git update-index --refresh --ignore-submodules ||:
 	git diff-index --quiet --cached HEAD -- $(SOURCES)
-	ts=$$(git log -n1 --pretty=format:%cI HEAD)
-	touch -d "$$ts" -- $@
+	echo $(GitVersion) > $@
 
 DISTDIR = $(PROJECT)-$(GitVersion)
 

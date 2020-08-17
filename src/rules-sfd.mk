@@ -1,7 +1,6 @@
 needs_normalization = $(shell cmp -s $*.sfd $(BUILDDIR)/$(*F)-normalized.sfd || echo force)
 
 %.sfd: $$(needs_normalization)
-	git diff-files --quiet -- $@ || exit 1 # die if this file has uncommitted changes
 	local norm=$(BUILDDIR)/$(*F)-normalized.sfd
 	$(SFDNORMALIZE) $@ $$norm
 	cp $$norm $@
