@@ -33,8 +33,8 @@ space := $() $()
 
 SOURCES ?= $(shell git ls-files '$(SOURCEDIR)/*.glyphs' '$(SOURCEDIR)/*.sfd' '$(SOURCEDIR)/*.ufo')
 CANONICAL ?= $(or $(and $(filter %.glyphs,$(SOURCES)),glyphs),\
-			      $(and $(filter %.sfd,$(SOURCES)),sfd),\
-			      $(and $(filter %.ufo,$(SOURCES)),ufo))
+				$(and $(filter %.sfd,$(SOURCES)),sfd),\
+				$(and $(filter %.ufo,$(SOURCES)),ufo))
 
 # Output format selectors
 STATICOTF ?= true
