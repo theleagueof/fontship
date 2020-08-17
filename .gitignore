@@ -1,10 +1,18 @@
 ### Generated files ###
 
 fontship
+fontship-*
+.version
+.version-prev
 
 ### Editor cruft ###
 
 tags
+
+# Development environment cruft
+
+node_modules
+package-lock.json
 
 ### Autotools ###
 # http://www.gnu.org/software/automake

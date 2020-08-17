@@ -1,7 +1,7 @@
 AC_INIT([fontship],
         m4_esyscmd([build-aux/git-version-gen .tarball-version]),
         [caleb@alerque.com])
-AM_INIT_AUTOMAKE([foreign dist-zip])
+AM_INIT_AUTOMAKE([foreign tar-pax dist-xz dist-zip no-dist-gzip color-tests])
 AM_SILENT_RULES([yes])
 
 AC_CHECK_PROG(GFTOOLS, gftools, yes)
