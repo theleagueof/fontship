@@ -13,7 +13,8 @@ jobs:
         with:
           fetch-depth: 0
       - name: Fetch Tags
-        run: git fetch --prune --tags
+        run: |
+          git fetch --prune --tags ||:
       - name: Setup system dependencies
         run: sudo apt-get install sfnt2woff-zopfli ttfautohint woff2 zsh
       - name: Setup Python
@@ -43,4 +44,4 @@ jobs:
             fontship-${{ env.VERSION }}.zip
             fontship-${{ env.VERSION }}.tar.xz
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: "${{ github.token }}"
