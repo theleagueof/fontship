@@ -4,6 +4,7 @@ datadir = $(datarootdir)/fontship
 bin_SCRIPTS = fontship
 python_PYTHON = fontship.py
 dist_doc_DATA = README.md CHANGELOG.md
+dist_man_MANS = fontship.1
 dist_license_DATA = LICENSE
 dist_data_DATA = src/rules.mk src/functions.mk src/rules-glyphs.mk src/rules-sfd.mk src/rules-ufo.mk
 EXTRA_DIST = .version Dockerfile
