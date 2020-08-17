@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.3.1](https://github.com/theleagueof/fontship/compare/v0.3.0...v0.3.1) (2020-08-17)
+
+
+### Bug Fixes
+
+* **docker:** Add missing dependency or sfdnormalize ([c296acf](https://github.com/theleagueof/fontship/commit/c296acf30e4e29faadbf75f9bb43d1b000213d49))
+* **rules:** Keep last-commit file from being part of dependencies ([68742ae](https://github.com/theleagueof/fontship/commit/68742ae70cda0614911d3c5274b071a11d28d710))
+* **sfd:** Keep normalizer from running except when changes present ([761a619](https://github.com/theleagueof/fontship/commit/761a61962be72f49cb4486abf1670d553dec8104))
+* **tooling:** Work around bug in standard-version ([3f62f3a](https://github.com/theleagueof/fontship/commit/3f62f3a24dc288216b5fa06e14b6fd0ec9ae1ab1))
+
 ## [0.3.0](https://github.com/theleagueof/fontship/compare/v0.2.1...v0.3.0) (2020-08-17)
 
 
