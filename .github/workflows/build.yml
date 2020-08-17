@@ -30,7 +30,7 @@ jobs:
       - name: Build
         run: |
           make dist
-          echo ::set-env name=ISRELEASETAG::$(grep -Pqx 'v\d+\.\d+\.\d+' .version && echo true || echo false)
+          echo ::set-env name=ISRELEASETAG::$(grep -Pqx '\d+\.\d+\.\d+' .version && echo true || echo false)
       - name: Upload Artifacts
         if: ${{ env.ISRELEASETAG == 'false' }}
         uses: actions/upload-artifact@v2-preview
