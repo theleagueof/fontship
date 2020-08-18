@@ -23,6 +23,7 @@ Build your fonts without installing or running anything locally! Just push your 
 For use with Github Actions, add a configuration file to your repository such as `.github/workflow/fontship.yml`:
 
 ```yaml
+name: Fontship
 on: [push, pull_request]
 jobs:
   fontship:
@@ -36,19 +37,19 @@ jobs:
       - name: Fetch tags
         run: git fetch --prune --tags
       - name: Fontship
-        uses: theleagueof/fontship@latest
+        uses: docker://theleagueof/fontship:latest
 ```
 
-Because Github rebuilds the container image used in Actions on each run (even if you pin a specific tag) you can save some time if you pull a read-made Docker image instead of referencing the repository directly. Substitute:
+Note that this example workflow used the syntax to pull a container from Docker Hub because it is much faster to pull an existing container than to use Github Action's default method which rebuilds a new container at runtime on every invocation. If you'd prefer to wait the couple extra minutes you may also use the default invocation suggested by Github by substituting this line:
 
 ```yaml
-        uses: theleagueof/fontship@latest
+        uses: docker://theleagueof/fontship:latest
 ```
 
 With:
 
 ```yaml
-        uses: docker://theleagueof/fontship:latest
+        uses: theleagueof/fontship@latest
 ```
 
 At the current time Fontship only builds the fonts into the current project directory, it doesn’t publish them anywhere. You’ll need to post the resulting artifacts by (e.g. by attaching them to each CI run or publishing them on releases) as another step your project’s workflow. For a full working examples see [League Spartan’s](https://github.com/theleagueof/league-spartan/blob/master/.github/workflow/fontship.yml) or [Libertinus’s workflow](https://github.com/alerque/libertinus/blob/master/.github/workflow/fontship.yml)s.
