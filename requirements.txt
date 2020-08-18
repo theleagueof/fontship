@@ -4,10 +4,10 @@ click==7.1.2
 defcon==0.7.2
 font-v==1.0.2
 fontmake==2.2.0
-fonttools[lxml,ufo,unicode,woff]==4.12.1
-gftools==0.3.14
+fonttools[lxml,ufo,unicode,woff]==4.13.0
+gftools==0.4.1
 pcpp==1.21.0
-psautohint==2.0.1
+psautohint==2.1.0
 pygit2==1.2.1
 git+git://github.com/alif-type/sfdLib.git@v1.0.6#egg=sfdLib
 sfdnormalize==0.3.0

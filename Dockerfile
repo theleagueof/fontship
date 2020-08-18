@@ -17,7 +17,7 @@ RUN pacman --needed --noconfirm -Syuq && yes | pacman -Sccq
 # Install fontship run-time dependecies
 RUN pacman --needed --noconfirm -Syq \
 		diffutils entr font-v gftools git libarchive make psautohint python sfd2ufo sfdnormalize sfnt2woff-zopfli ttfautohint woff2 zsh \
-		python-{babelfont,brotli,click,defcon,font{make,tools},fs,lxml,pcpp,pygit2,skia-pathops,ufo{2ft,lib2,normalizer},unicodedata2,zopfli} \
+		python-{babelfont,brotli,cffsubr,click,defcon,font{make,tools},fs,lxml,pcpp,pygit2,skia-pathops,ufo{2ft,lib2,normalizer},unicodedata2,zopfli} \
 	&& yes | pacman -Sccq
 
 # Setup separate image to build fontship so we don't bloat the final image
