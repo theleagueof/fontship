@@ -15,8 +15,16 @@ sys.path.append("@pythondir@/".replace("${prefix}", "@prefix@"))
 
 import click
 import fontship
-import os.path
+import os
 import subprocess
+
+# Workaround for Github Actions usage to make the prebuilt Docker image
+# invocation interchangeable with the default run-time built invocation we
+# need to set some default arguments. These are not used by the regular CLI.
+# See the action.yml file for matching arguments for run-time invocations.
+import os
+if os.getenv("GITHUB_ACTIONS") and len(sys.argv) == 1:
+    sys.argv += ["make", "_gha", "dist"]
 
 @click.group()
 @click.option('-d', '--debug', is_flag=True, default=False,

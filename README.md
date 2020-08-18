@@ -23,6 +23,7 @@ Build your fonts without installing or running anything locally! Just push your 
 For use with Github Actions, add a configuration file to your repository such as `.github/workflow/fontship.yml`:
 
 ```yaml
+name: Fontship
 on: [push, pull_request]
 jobs:
   fontship:
@@ -36,10 +37,22 @@ jobs:
       - name: Fetch tags
         run: git fetch --prune --tags
       - name: Fontship
+        uses: docker://theleagueof/fontship:latest
+```
+
+Note that this example workflow used the syntax to pull a container from Docker Hub because it is much faster to pull an existing container than to use Github Action's default method which rebuilds a new container at runtime on every invocation. If you'd prefer to wait the couple extra minutes you may also use the default invocation suggested by Github by substituting this line:
+
+```yaml
+        uses: docker://theleagueof/fontship:latest
+```
+
+With:
+
+```yaml
         uses: theleagueof/fontship@latest
 ```
 
-At the current time Fontship only builds the fonts into the currentp project directory, it doesn’t publish them anywhere. You’ll need to post the resulting artifacts by (e.g. by attaching them to each CI run or publishing them on releases) as another step your project’s workflow. For a full working example see [League Spartan’s workflow](https://github.com/theleagueof/league-spartan/blob/master/.github/workflow/fontship.yml).
+At the current time Fontship only builds the fonts into the current project directory, it doesn’t publish them anywhere. You’ll need to post the resulting artifacts by (e.g. by attaching them to each CI run or publishing them on releases) as another step your project’s workflow. For a full working examples see [League Spartan’s](https://github.com/theleagueof/league-spartan/blob/master/.github/workflow/fontship.yml) or [Libertinus’s workflow](https://github.com/alerque/libertinus/blob/master/.github/workflow/fontship.yml)s.
 
 Other CI runners could easily be supported, see [issue #32](https://github.com/theleagueof/fontship/issues/32) for details or to request sample configs for your favorite.
 
@@ -71,7 +84,7 @@ If you use Arch Linux, you can install [this AUR package](https://aur.archlinux.
 Otherwise to install and use locally from source, you’ll need some dependencies:
 
 * Git,
-* GNU core utilities plus `bsdtar`, `entr`, `zsh`,
+* GNU core utilities plus `diffutils`, `bsdtar`, `entr`, `zsh`,
 * GNU `make` (4.2+) with corresponding autoconf tools,
 * Python 3 plus assorted modules, see *requirements.txt* file.
 * A handfull of other font related CLI utilities, namely: `sfn2woff-zopfli`, `psautohint`, `ttfautohint`, and `woff2_compress`.
