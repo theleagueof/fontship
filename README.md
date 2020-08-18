@@ -84,7 +84,7 @@ If you use Arch Linux, you can install [this AUR package](https://aur.archlinux.
 Otherwise to install and use locally from source, you’ll need some dependencies:
 
 * Git,
-* GNU core utilities plus `bsdtar`, `entr`, `zsh`,
+* GNU core utilities plus `diffutils`, `bsdtar`, `entr`, `zsh`,
 * GNU `make` (4.2+) with corresponding autoconf tools,
 * Python 3 plus assorted modules, see *requirements.txt* file.
 * A handfull of other font related CLI utilities, namely: `sfn2woff-zopfli`, `psautohint`, `ttfautohint`, and `woff2_compress`.
