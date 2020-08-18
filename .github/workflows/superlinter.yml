@@ -1,0 +1,15 @@
+name: Superlinter
+
+on: [push, pull_request]
+
+jobs:
+  superlinter:
+    name: Lint
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Super-Linter
+        uses: github/super-linter@v3.6.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

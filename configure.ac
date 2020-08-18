@@ -1,7 +1,7 @@
 AC_INIT([fontship],
         m4_esyscmd([build-aux/git-version-gen .tarball-version]),
         [caleb@alerque.com])
-AM_INIT_AUTOMAKE([foreign dist-zip])
+AM_INIT_AUTOMAKE([foreign tar-pax dist-xz dist-zip no-dist-gzip color-tests])
 AM_SILENT_RULES([yes])
 
 AC_CHECK_PROG(GFTOOLS, gftools, yes)
@@ -33,7 +33,14 @@ test "x$ZSH" == "xyes" || AC_MSG_ERROR([zsh is required])
 
 AM_PATH_PYTHON([3.6])
 
-AC_CONFIG_FILES([Makefile])
+if [[ -d .git ]]; then
+    MAN_DATE=$(git log -1 --format="%cd" --date=format:"%d %B %Y" -- fontship.1.in)
+else
+    MAN_DATE=$(date "+%d %B %Y")
+fi
+AC_SUBST([MAN_DATE])
+
+AC_CONFIG_FILES([Makefile fontship.1])
 AC_CONFIG_FILES([fontship], [chmod +x fontship])
 
 AC_OUTPUT

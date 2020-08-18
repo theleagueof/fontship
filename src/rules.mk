@@ -33,8 +33,8 @@ space := $() $()
 
 SOURCES ?= $(shell git ls-files '$(SOURCEDIR)/*.glyphs' '$(SOURCEDIR)/*.sfd' '$(SOURCEDIR)/*.ufo')
 CANONICAL ?= $(or $(and $(filter %.glyphs,$(SOURCES)),glyphs),\
-			      $(and $(filter %.sfd,$(SOURCES)),sfd),\
-			      $(and $(filter %.ufo,$(SOURCES)),ufo))
+				$(and $(filter %.sfd,$(SOURCES)),sfd),\
+				$(and $(filter %.ufo,$(SOURCES)),ufo))
 
 # Output format selectors
 STATICOTF ?= true
@@ -54,6 +54,7 @@ PYTHON ?= python3
 SFNT2WOFF ?= sfnt2woff-zopfli
 TTFAUTOHINT ?= ttfautohint
 PSAUTOHINT ?= psautohint
+SFDNORMALIZE ?= sfdnormalize
 TTX ?= ttx
 WOFF2COMPRESS ?= woff2_compress
 
@@ -80,12 +81,12 @@ FamilyName ?= $(shell $(CONTAINERIZED) || $(PYTHON) $(PYTHONFLAGS) -c 'print("$(
 
 INSTANCES ?= $(foreach FamilyName,$(FamilyNames),$(foreach STYLE,$(FontStyles),$(BASE)-$(STYLE)))
 
-GITVER = --tags --abbrev=6 --match='[0-9].[0-9][0-9][0-9]'
+GITVER = --tags --abbrev=6 --match='*[0-9].[0-9][0-9][0-9]'
 # Determine font version automatically from repository git tags
-FontVersion ?= $(shell git describe $(GITVER) 2> /dev/null | sed 's/-.*//g')
+FontVersion ?= $(shell git describe $(GITVER) 2> /dev/null | sed 's/^v//;s/-.*//g')
 ifneq ($(FontVersion),)
-FontVersionMeta ?= $(shell git describe --always --long $(GITVER) | sed 's/-[0-9]\+/\\;/;s/-g/[/')]
-GitVersion ?= $(shell git describe $(GITVER) | sed 's/-/-r/')
+FontVersionMeta ?= $(shell git describe --always --long $(GITVER) | sed 's/^v//;s/-[0-9]\+/\\;/;s/-g/[/')]
+GitVersion ?= $(shell git describe $(GITVER) | sed 's/^v//;s/-/-r/')
 isTagged := $(if $(subst $(FontVersion),,$(GitVersion)),,true)
 else
 FontVersion = 0.000
@@ -198,11 +199,14 @@ all: fonts $(and $(DEBUG),debug)
 clean:
 	git clean -dxf
 
+.PHONY: ufo
+ufo: $$(addsuffix .ufo,$$(INSTANCES))
+
 .PHONY: glyphs
 glyphs: $$(addsuffix .glyphs,$$(INSTANCES))
 
-.PHONY: fontforge
-fontforge: $$(addsuffix .sfd,$$(INSTANCES))
+.PHONY: sfd
+sfd: $$(addsuffix .sfd,$$(INSTANCES))
 
 .PHONY: fonts
 fonts: static variable
@@ -249,6 +253,12 @@ variable-woff: $$(VARIABLEWOFFS)
 .PHONY: variable-woff2
 variable-woff2: $$(VARIABLEWOFF2S)
 
+.PHONY: normalize
+normalize: $(filter %.glyphs %.sfd %.ufo,$(SOURCES))
+
+.PHONY: check
+check:
+
 BUILDDIR ?= .fontship
 
 $(BUILDDIR):
@@ -292,12 +302,11 @@ $(STATICOTFS): %.otf: $(BUILDDIR)/%-hinted.otf $(BUILDDIR)/last-commit
 
 # Utility stuff
 
-.PHONY: $(BUILDDIR)/last-commit
-$(BUILDDIR)/last-commit: | $(BUILDDIR)
+forceiftagchange = $(shell cmp -s $@ - <<< "$(GitVersion)" || echo force)
+$(BUILDDIR)/last-commit: $$(forceiftagchange) | $(BUILDDIR)
 	git update-index --refresh --ignore-submodules ||:
 	git diff-index --quiet --cached HEAD -- $(SOURCES)
-	ts=$$(git log -n1 --pretty=format:%cI HEAD)
-	touch -d "$$ts" -- $@
+	echo $(GitVersion) > $@
 
 DISTDIR = $(PROJECT)-$(GitVersion)
 
@@ -305,9 +314,9 @@ $(DISTDIR):
 	mkdir -p $@
 
 .PHONY: dist
-dist: $(DISTDIR).zip $(DISTDIR).tar.bz2
+dist: $(DISTDIR).zip $(DISTDIR).tar.xz
 
-$(DISTDIR).tar.bz2 $(DISTDIR).zip: install-dist
+$(DISTDIR).tar.bz2 $(DISTDIR).tar.gz $(DISTDIR).tar.xz $(DISTDIR).zip $(DISTDIR).tar.zst: install-dist
 	bsdtar -acf $@ $(DISTDIR)
 
 dist_doc_DATA ?= $(wildcard $(foreach B,readme README,$(foreach E,md txt markdown,$(B).$(E))))

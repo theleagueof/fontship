@@ -4,14 +4,17 @@ on: [push, pull_request]
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+
+    runs-on: ubuntu-20.04
+
     steps:
       - name: Checkout
         uses: actions/checkout@v2
         with:
           fetch-depth: 0
       - name: Fetch Tags
-        run: git fetch --prune --tags
+        run: |
+          git fetch --prune --tags ||:
       - name: Setup system dependencies
         run: sudo apt-get install sfnt2woff-zopfli ttfautohint woff2 zsh
       - name: Setup Python
@@ -22,15 +25,24 @@ jobs:
         run: |
           ./bootstrap.sh
           ./configure
+          echo ::set-env name=VERSION::$(./build-aux/git-version-gen .tarball-version)
+          echo ::set-env name=MAKEFLAGS::-j$(nproc) -Otarget
       - name: Build
         run: |
-          make
-          make distdir
-      - name: Get Build Info
-        run: |
-          echo ::set-env name=VERSION::$(./build-aux/git-version-gen .tarball-version)
-      - name: Upload Artifact
+          make dist
+          echo ::set-env name=ISRELEASETAG::$(grep -Pqx '\d+\.\d+\.\d+' .version && echo true || echo false)
+      - name: Upload Artifacts
+        if: ${{ env.ISRELEASETAG == 'false' }}
         uses: actions/upload-artifact@v2-preview
         with:
           name: fontship-${{ env.VERSION }}
-          path: fontship*-${{ env.VERSION }}/
+          path: fontship*-${{ env.VERSION }}.zip
+      - name: Publish Release
+        if: ${{ env.ISRELEASETAG == 'true' }}
+        uses: softprops/action-gh-release@v0.1.5
+        with:
+          files: |
+            fontship-${{ env.VERSION }}.zip
+            fontship-${{ env.VERSION }}.tar.xz
+        env:
+          GITHUB_TOKEN: "${{ github.token }}"

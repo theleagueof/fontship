@@ -11,14 +11,14 @@ League of Moveable Type](https://www.theleagueofmoveabletype.com/).
 
 Fontship can be used in any of four different ways:
 
-1.  Remotely via a CI runner.
-2.  On a local system via a Docker image for low hastle setup.
-3.  On a local system that has all the required dependencies and fontship directly installed.
-4.  By including Fontship’s rules into your project’s Makefile.
+1. Remotely via a CI runner that responds to events in a remote Git repository.
+2. Locally via an all-inclusive Docker image for low hastle setup.
+3. Locally via a regular system utility install (provided all the required dependencies are also installed).
+4. By including Fontship’s rules into your project’s existing Makefile (no installation of the CLI tool is required, but dependencies must be provided somehow).
 
 ### CI Setup
 
-Build your fonts without installing or running anything! Just push your sources to a repmote Git repository and let Fontship do the rest.
+Build your fonts without installing or running anything locally! Just push your sources to a repmote Git repository and let Fontship do the rest.
 
 For use with Github Actions, add a configuration file to your repository such as `.github/workflow/fontship.yml`:
 
@@ -36,39 +36,45 @@ jobs:
       - name: Fetch tags
         run: git fetch --prune --tags
       - name: Fontship
-        uses: theleagueof/fontship@master
+        uses: theleagueof/fontship@latest
 ```
 
-Because Github rebuilds the container image used in Actions on each run you can save some time if you use their Docker image cache instead of referencing the repository directly. Substitute:
+Because Github rebuilds the container image used in Actions on each run (even if you pin a specific tag) you can save some time if you pull a read-made Docker image instead of referencing the repository directly. Substitute:
 
 ```yaml
-        uses: actions/checkout@v2
+        uses: theleagueof/fontship@latest
 ```
 
 With:
 
 ```yaml
-        uses: docker://docker.pkg.github.com/theleagueof/fontship/fontship:v0.2.1
+        uses: docker://theleagueof/fontship:latest
 ```
 
-At the current time Fontship only builds the fonts, it doesn’t do anything with them. You’ll need to post them as artifacts or publish them on releases as another step in the workflow. For a full working example see [League Spartan’s workflow](https://github.com/theleagueof/league-spartan/blob/master/.github/workflow/fontship.yml).
+At the current time Fontship only builds the fonts into the current project directory, it doesn’t publish them anywhere. You’ll need to post the resulting artifacts by (e.g. by attaching them to each CI run or publishing them on releases) as another step your project’s workflow. For a full working example see [League Spartan’s workflow](https://github.com/theleagueof/league-spartan/blob/master/.github/workflow/fontship.yml).
 
-Other CI runners could easily be supported, see [issue #32](https://github.com/theleagueof/fontship/issues/32) for details.
+Other CI runners could easily be supported, see [issue #32](https://github.com/theleagueof/fontship/issues/32) for details or to request sample configs for your favorite.
 
 ### Docker Setup
 
-Docker images are available from Docker Hub or you can build them yourself.
+Prebuilt Docker images are available from [Docker Hub](https://hub.docker.com/repository/docker/theleagueof/fontship), [Github Packages](https://github.com/theleagueof/fontship/packages), or you can build them yourself.
 
-Add an alias:
+The easiest way to instantiate a Docker container with all the right arguments is to set an alias (which can be added to your shell’s RC file to persist it):
 
-    $ alias fontship='docker run -it --volume "$(pwd):/data" --user "$(id -u):$(id -g)" theleagueof/fontship:latest'
+Using Docker Hub as an example, an alias could be:
 
-You may substitute *latest*, which will always be the most recently released tagged version, with *master* to use the freshest unreleased build, with a tag name to explicitly use a specific version, or with *HEAD* to use an image build locally.
+```console
+$ alias fontship='docker run -it --volume "$(pwd):/data" --user "$(id -u):$(id -g)" theleagueof/fontship:latest'
+```
 
-To build a docker image locally, you’ll want to clone this repository and run `./bootstrap.sh` or download and extract a tarball, then run:
+You may substitute *latest*, which will always be the most recently released version tag, with *master* to use the freshest unreleased build, with a tag name such as *v0.2.1* to explicitly use a specific version, or with *HEAD* to use an image built locally.
 
-    $ ./configure
-    $ make docker
+To build a docker image locally, you’ll want to clone this repository and run `./bootstrap.sh` or download and extract the sources from a release, then run:
+
+```console
+$ ./configure
+$ make docker
+```
 
 ### System Setup
 
@@ -80,13 +86,15 @@ Otherwise to install and use locally from source, you’ll need some dependencie
 * GNU core utilities plus `bsdtar`, `entr`, `zsh`,
 * GNU `make` (4.2+) with corresponding autoconf tools,
 * Python 3 plus assorted modules, see *requirements.txt* file.
-* A handfull of other font related CLI utilities, namely: `sfn2woff-zopfli`,`ttfautohint`, and `woff2_compress`.
+* A handfull of other font related CLI utilities, namely: `sfn2woff-zopfli`, `psautohint`, `ttfautohint`, and `woff2_compress`.
 
 To install the software to your computer, either clone this repository and run `./bootstrap.sh` or [download and extract the latest release](https://github.com/theleagueof/fontship/releases), then run:
 
-    $ ./configure
-    $ make
-    $ sudo make install
+```sh
+$ ./configure
+$ make
+$ sudo make install
+```
 
 ### Makefile Setup
 
@@ -98,19 +106,21 @@ include path/to/fontship/src/rules.mk
 
 This may reference a path to fontship as a git submodule (useful for locking the fontship version to your project’s build), or just a relative path to somewhere you have the fontship source.
 
-## Usage
+Note: When using this mode, the CLI tool is not available but your project’s Makefile will be extended with all the targets it uses. Instead of running for example `fontship make otf`, just run `make otf`.
 
-To build all the possible formats for your font project, run
+## Usage
 
 ### Building
 
-```sh
+To build all the possible formats for your font project, run
+
+```console
 $ fontship make all
 ```
 
 To only generate a specific format, try:
 
-```sh
+```console
 # Just static OTF fonts
 $ fontship make otf
 
@@ -124,17 +134,17 @@ $ fontship make variable
 $ fontship make variable-ttf
 ```
 
-If you're only interested in one specific file (say, a static weight instance) you can specify the exact file name you expect to get the fastest possible rebuild of just that file:
+If you’re only interested in one specific file (say, a static weight instance) you can specify the exact file name you expect to get the fastest possible rebuild of just that file:
 
-```sh
+```console
 $ fontship make FooBar-Black.otf
 ```
 
 ### Publishing
 
-When everything is ready or you want to actually ship a font (or send a sample to a friend), you'll want to build the distribution package:
+When everything is ready or you want to actually ship a font (or send a sample to a friend), you’ll want to build the distribution package:
 
-```sh
+```console
 $ fontship make dist
 ```
 

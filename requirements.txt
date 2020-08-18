@@ -10,6 +10,7 @@ pcpp==1.21.0
 psautohint==2.0.1
 pygit2==1.2.1
 git+git://github.com/alif-type/sfdLib.git@v1.0.6#egg=sfdLib
+sfdnormalize==0.3.0
 skia-pathops==0.4.1
 ufo2ft[cffsubr]==2.15.0
 ufoLib2==0.8.0

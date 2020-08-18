@@ -93,11 +93,13 @@ Options:
 Running without arguments will suffice in most cases."
 
 prefix=v
+match="v[0-9]*.[0-9]*.[0-9]*"
 
 while test $# -gt 0; do
   case $1 in
     --help) echo "$usage"; exit 0;;
     --version) echo "$version"; exit 0;;
+    --match) shift; match="$1";;
     --prefix) shift; prefix="$1";;
     -*)
       echo "$0: Unknown option '$1'." >&2
@@ -151,7 +153,8 @@ then
 # directory, and "git describe" output looks sensible, use that to
 # derive a version string.
 elif test "`git log -1 --pretty=format:x . 2>/dev/null`" = x \
-    && v=`git describe --tags --abbrev=7 --match="$prefix*" HEAD 2>/dev/null \
+    && v=`git describe --tags --abbrev=7 --match="$match" HEAD 2>/dev/null \
+          || git describe --tags --abbrev=7 --match="$prefix*" HEAD 2>/dev/null \
           || git describe --tags --abbrev=7 HEAD 2>/dev/null \
           || git log -1 --pretty=format:'v0-HEAD-%h' 2>/dev/null` \
     && v=`printf '%s\n' "$v" | sed "$tag_sed_script"` \

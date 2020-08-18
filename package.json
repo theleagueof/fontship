@@ -1,0 +1,78 @@
+{
+  "name": "fontship",
+  "version": "0.3.1",
+  "description": "A font development toolkit and collaborative work flow",
+  "main": "fontship",
+  "scripts": {
+    "release": "standard-version"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/theleagueof/fontship.git"
+  },
+  "author": "Caleb Maclennan",
+  "license": "AGPL-3.0",
+  "bugs": {
+    "url": "https://github.com/theleagueof/fontship/issues"
+  },
+  "homepage": "https://github.com/theleagueof/fontship",
+  "devDependencies": {
+    "@commitlint/cli": "^9.1.2",
+    "@commitlint/config-conventional": "^9.1.2",
+    "@commitlint/prompt": "^9.1.2",
+    "commitizen": "^4.1.2",
+    "conventional-changelog-cli": "^2.0.34",
+    "husky": "^4.2.5",
+    "standard-version": "^9.0.0"
+  },
+  "config": {
+    "commitizen": {
+      "path": "@commitlint/prompt"
+    }
+  },
+  "husky": {
+    "hooks": {
+      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
+    }
+  },
+  "standard-version": {
+    "infile": "CHANGELOG.md",
+    "types": [
+      {
+        "type": "feat",
+        "section": "New Features"
+      },
+      {
+        "type": "fix",
+        "section": "Bug Fixes"
+      },
+      {
+        "type": "chore",
+        "section": "Behind the Scenes",
+        "hidden": true
+      },
+      {
+        "type": "docs",
+        "hidden": true
+      },
+      {
+        "type": "style",
+        "hidden": true
+      },
+      {
+        "type": "refactor",
+        "section": "Changes",
+        "hidden": true
+      },
+      {
+        "type": "perf",
+        "section": "Optimizations"
+      },
+      {
+        "type": "test",
+        "hidden": true
+      }
+    ],
+    "preset": "conventionalcommits"
+  }
+}
