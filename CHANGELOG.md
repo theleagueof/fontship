@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.3.2](https://github.com/theleagueof/fontship/compare/v0.3.1...v0.3.2) (2020-08-18)
+
+
+### Features
+
+* **docker:** Allow Docker in GH Actions usage with default arguments ([7133452](https://github.com/theleagueof/fontship/commit/713345205109aaa4eca51d09cb9fce246ee96d66))
+* **otf:** Add CFF subroutinizer to processing chain ([978a88c](https://github.com/theleagueof/fontship/commit/978a88c5b5d6824994d59622771b44c413119f29))
+
+
+### Bug Fixes
+
+* **build:** Expect sanitized version string in version file ([ab25d46](https://github.com/theleagueof/fontship/commit/ab25d46f27df7ed5767293c4222120e6cb6ac6e2))
+
 ### [0.3.1](https://github.com/theleagueof/fontship/compare/v0.3.0...v0.3.1) (2020-08-17)
 
 
