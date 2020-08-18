@@ -51,7 +51,7 @@ With:
         uses: docker://theleagueof/fontship:latest
 ```
 
-At the current time Fontship only builds the fonts into the current project directory, it doesn’t publish them anywhere. You’ll need to post the resulting artifacts by (e.g. by attaching them to each CI run or publishing them on releases) as another step your project’s workflow. For a full working example see [League Spartan’s workflow](https://github.com/theleagueof/league-spartan/blob/master/.github/workflow/fontship.yml).
+At the current time Fontship only builds the fonts into the current project directory, it doesn’t publish them anywhere. You’ll need to post the resulting artifacts by (e.g. by attaching them to each CI run or publishing them on releases) as another step your project’s workflow. For a full working examples see [League Spartan’s](https://github.com/theleagueof/league-spartan/blob/master/.github/workflow/fontship.yml) or [Libertinus’s workflow](https://github.com/alerque/libertinus/blob/master/.github/workflow/fontship.yml)s.
 
 Other CI runners could easily be supported, see [issue #32](https://github.com/theleagueof/fontship/issues/32) for details or to request sample configs for your favorite.
 
