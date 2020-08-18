@@ -18,6 +18,8 @@ CLEANFILES = $(BUILT_SOURCES) $(bin_SCRIPTS)
 	( test -e .git && ./build-aux/git-version-gen .tarball-version || echo $(VERSION) ) > $@
 	cmp -s $@{,-prev} || autoreconf configure.ac --force -W none
 
+dist: fontship-$(VERSION).md
+
 dist-hook:
 	echo $(VERSION) > $(distdir)/.tarball-version
 
@@ -40,6 +42,9 @@ release-preview:
 .PHONY: release
 release: tagrelease
 
+fontship-%.md: CHANGELOG.md
+	sed -e '/\.\.\.v$*/,/\.\.\.v/!d' $< | \
+		sed -e '1,3d;N;$$!P;$$!D;$$d' > $@
 
 .PHONY: docker
 docker: Dockerfile
