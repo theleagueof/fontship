@@ -41,6 +41,7 @@ jobs:
         if: ${{ (env.ISRELEASETAG == 'true' && contains(github.ref, 'refs/tags/v')) }}
         uses: softprops/action-gh-release@v0.1.5
         with:
+          body_path: fontship-${{ env.version }}.md
           files: |
             fontship-${{ env.VERSION }}.zip
             fontship-${{ env.VERSION }}.tar.xz
