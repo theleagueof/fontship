@@ -68,7 +68,10 @@ Using Docker Hub as an example, an alias could be:
 $ alias fontship='docker run -it --volume "$(pwd):/data" --user "$(id -u):$(id -g)" theleagueof/fontship:latest'
 ```
 
-You may substitute *latest*, which will always be the most recently released version tag, with *master* to use the freshest unreleased build, with a tag name such as *v0.2.1* to explicitly use a specific version, or with *HEAD* to use an image built locally.
+Docker will automatically pull the containers it needs to run this the first time you use it, after which it will just use its local container cache.
+To jump start the download without running `fontship` or to manually update your cache later (e.g. when *latest* gets updated to a new release) use `docker pull theleagueof/fontship:latest`.
+
+You may substitute *latest* (which will always be the most recently released version tag) with *master* to use the freshest unreleased build, with a tag name such as *v0.3.2* to explicitly use a specific version, or with *HEAD* to use an image built locally.
 
 To build a docker image locally, you’ll want to clone this repository and run `./bootstrap.sh` or download and extract the sources from a release, then run:
 
