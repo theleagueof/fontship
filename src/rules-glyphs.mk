@@ -43,15 +43,19 @@ $(VARIABLETTFS): %.ttf: $(BUILDDIR)/%-variable-hinted.ttf.fix $(BUILDDIR)/last-c
 # Glyphs -> Static OTF
 
 define otf_instance_template ?=
-$$(BUILDDIR)/$1-%-instance.otf: $1.glyphs | $$(BUILDDIR)
+
+$$(BUILDDIR)/$1-%-instance.otf: $(SOURCEDIR)/$1.glyphs | $$(BUILDDIR)
 	$$(FONTMAKE) $$(FONTMAKEFLAGS) -g $$< -i "$1 $$*" -o otf --output-path $$@
 	$$(GFTOOLS) $$(GFTOOLSFLAGS) fix-dsig -f $$@
+
 endef
 
 # Glyphs -> Static TTF
 
 define ttf_instance_template ?=
-$$(BUILDDIR)/$1-%-instance.ttf: $1.glyphs | $$(BUILDDIR)
+
+$$(BUILDDIR)/$1-%-instance.ttf: $(SOURCEDIR)/$1.glyphs | $$(BUILDDIR)
 	$$(FONTMAKE) $$(FONTMAKEFLAGS) -g $$< -i "$1 $$*" -o ttf --output-path $$@
 	$$(GFTOOLS) $$(GFTOOLSFLAGS) fix-dsig -f $$@
+
 endef
