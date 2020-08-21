@@ -188,6 +188,7 @@ debug:
 
 .PHONY: _gha
 _gha:
+	fontship --version
 	echo "::set-output name=PROJECT::$(PROJECT)"
 	echo "::set-output name=font-version::$(FontVersion)"
 	echo "::set-output name=DISTDIR::$(DISTDIR)"
