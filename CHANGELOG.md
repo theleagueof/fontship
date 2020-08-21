@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.3.3](https://github.com/theleagueof/fontship/compare/v0.3.2...v0.3.3) (2020-08-21)
+
+
+### Bug Fixes
+
+* **glyphs:** Deduce instance names from since source ([9eaff99](https://github.com/theleagueof/fontship/commit/9eaff99788526298ecd2473c27f4bf402c20254e))
+* **glyphs:** Expand family names from from file names ([5c3a202](https://github.com/theleagueof/fontship/commit/5c3a20212afeac813df98bf97a96eaefeaf1cb91))
+* **glyphs:** Fix usage of user-configurable source directory ([d61fadc](https://github.com/theleagueof/fontship/commit/d61fadccad03c114324ca567a56af2c7162b7d9e))
+* **rules:** Correct syntax error blocking UFO/Glyphs canonical projects ([dab64e3](https://github.com/theleagueof/fontship/commit/dab64e3ea21225e96767b315de84ca3626cb111b))
+
 ### [0.3.2](https://github.com/theleagueof/fontship/compare/v0.3.1...v0.3.2) (2020-08-18)
 
 
