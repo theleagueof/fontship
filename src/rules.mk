@@ -79,7 +79,7 @@ endif
 
 FamilyName ?= $(shell $(CONTAINERIZED) || $(PYTHON) $(PYTHONFLAGS) -c 'print("$(PROJECT)".replace("-", " ").title())')
 
-INSTANCES ?= $(foreach FamilyName,$(FamilyNames),$(foreach STYLE,$(FontStyles),$(BASE)-$(STYLE)))
+INSTANCES ?= $(foreach FamilyName,$(FamilyNames),$(foreach STYLE,$(FontStyles),$(FamilyName)-$(STYLE)))
 
 GITVER = --tags --abbrev=6 --match='*[0-9].[0-9][0-9][0-9]'
 # Determine font version automatically from repository git tags
