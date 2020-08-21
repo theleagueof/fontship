@@ -63,7 +63,7 @@ include $(FONTSHIPDIR)/functions.mk
 # Read font name from metadata file or guess from repository name
 ifeq ($(CANONICAL),glyphs)
 FamilyNames ?= $(foreach SOURCE,$(filter %.glyphs,$(SOURCES)),$(call glyphsFamilyNames,$(SOURCE)))
-FontStyles ?= $(foreach SOURCE,$(filter %.glyphs),$(SOURCES)),$(call glyphsInstances,$(SOURCE)))
+FontStyles ?= $(foreach SOURCE,$(filter %.glyphs,$(SOURCES)),$(call glyphsInstances,$(SOURCE)))
 isVariable ?= true
 endif
 
@@ -74,12 +74,12 @@ endif
 
 ifeq ($(CANONICAL),ufo)
 FamilyNames ?= $(foreach SOURCE,$(filter %.ufo,$(SOURCES)),$(call ufoFamilyNames,$(SOURCE)))
-FontStyles ?= $(foreach SOURCE,$(filter %.ufo,$(SOURCES))),$(call ufoInstances,$(SOURCE)))
+FontStyles ?= $(foreach SOURCE,$(filter %.ufo,$(SOURCES)),$(call ufoInstances,$(SOURCE)))
 endif
 
 FamilyName ?= $(shell $(CONTAINERIZED) || $(PYTHON) $(PYTHONFLAGS) -c 'print("$(PROJECT)".replace("-", " ").title())')
 
-INSTANCES ?= $(foreach FamilyName,$(FamilyNames),$(foreach STYLE,$(FontStyles),$(BASE)-$(STYLE)))
+INSTANCES ?= $(foreach FamilyName,$(FamilyNames),$(foreach STYLE,$(FontStyles),$(FamilyName)-$(STYLE)))
 
 GITVER = --tags --abbrev=6 --match='*[0-9].[0-9][0-9][0-9]'
 # Determine font version automatically from repository git tags

@@ -1,4 +1,4 @@
-FROM docker.io/library/archlinux as fontship-base
+FROM docker.io/library/archlinux:20200705 as fontship-base
 
 # Downgrade coreutils to avoid filesystem bug on DockerHub host kernels
 RUN pacman --noconfirm -U https://archive.archlinux.org/packages/c/coreutils/coreutils-8.31-3-x86_64.pkg.tar.xz

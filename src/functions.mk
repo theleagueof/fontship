@@ -5,6 +5,8 @@ glyphsInstances ?= $(shell $(PYTHON) -c 'from glyphsLib import GSFont; list(map(
 ufoInstances ?= $(shell $(PYTHON) -c 'import babelfont; print(babelfont.OpenFont("$1").info.styleName)')
 sfdInstances ?=
 
+file2family ?= $(shell $(PYTHON) -c 'import re; print(re.sub(r"(?<!^)(?=[A-Z])", " ", "$1"))')
+
 define normalizeVersion ?=
 	$(FONTV) $(FONTVFLAGS) write --ver=$(FontVersion) $(if $(isTagged),--rel,--dev --sha1) $@
 endef
