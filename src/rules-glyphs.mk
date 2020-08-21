@@ -45,7 +45,7 @@ $(VARIABLETTFS): %.ttf: $(BUILDDIR)/%-variable-hinted.ttf.fix $(BUILDDIR)/last-c
 define otf_instance_template ?=
 
 $$(BUILDDIR)/$1-%-instance.otf: $(SOURCEDIR)/$1.glyphs | $$(BUILDDIR)
-	$$(FONTMAKE) $$(FONTMAKEFLAGS) -g $$< -i "$1 $$*" -o otf --output-path $$@
+	$$(FONTMAKE) $$(FONTMAKEFLAGS) -g $$< -i "$$(call file2family,$1) $$*" -o otf --output-path $$@
 	$$(GFTOOLS) $$(GFTOOLSFLAGS) fix-dsig -f $$@
 
 endef
@@ -55,7 +55,7 @@ endef
 define ttf_instance_template ?=
 
 $$(BUILDDIR)/$1-%-instance.ttf: $(SOURCEDIR)/$1.glyphs | $$(BUILDDIR)
-	$$(FONTMAKE) $$(FONTMAKEFLAGS) -g $$< -i "$1 $$*" -o ttf --output-path $$@
+	$$(FONTMAKE) $$(FONTMAKEFLAGS) -g $$< -i "$$(call file2family,$1) $$*" -o ttf --output-path $$@
 	$$(GFTOOLS) $$(GFTOOLSFLAGS) fix-dsig -f $$@
 
 endef
