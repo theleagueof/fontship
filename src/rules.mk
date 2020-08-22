@@ -22,7 +22,7 @@ CONTAINERIZED != test -f /.dockerenv && echo true || echo false
 # Initial environment setup
 FONTSHIPDIR != cd "$(shell dirname $(lastword $(MAKEFILE_LIST)))/" && pwd
 GITNAME := $(notdir $(or $(shell git remote get-url origin 2> /dev/null | sed 's#^.*/##;s#.git$$##' ||:),$(shell git worktree list | head -n1 | awk '{print $$1}')))
-PROJECT ?= $(shell $(PYTHON) $(PYTHONFLAGS) -c 'print("$(GITNAME)".replace(" ", "").title())')
+PROJECT ?= $(shell $(PYTHON) $(PYTHONFLAGS) -c 'print("$(GITNAME)".title().replace(" ", ""))')
 _PROJECTDIR != cd "$(shell dirname $(firstword $(MAKEFILE_LIST)))/" && pwd
 PROJECTDIR ?= $(_PROJECTDIR)
 PUBDIR ?= $(PROJECTDIR)/pub
@@ -265,8 +265,8 @@ BUILDDIR ?= .fontship
 $(BUILDDIR):
 	mkdir -p $@
 
-ifeq ($(PROJECT),data)
-$(warning We cannot read the Project’s name inside Docker. Please manually specify it by adding PROOJECT='Name' as an agument to your command invocation)
+ifeq ($(PROJECT),Data)
+$(warning We cannot read the Project’s name inside Docker. Please manually specify it by adding PROJECT='Name' as an agument to your command invocation)
 endif
 
 -include $(FONTSHIPDIR)/rules-$(CANONICAL).mk
