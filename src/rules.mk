@@ -21,8 +21,8 @@ CONTAINERIZED != test -f /.dockerenv && echo true || echo false
 
 # Initial environment setup
 FONTSHIPDIR != cd "$(shell dirname $(lastword $(MAKEFILE_LIST)))/" && pwd
-GITNAME := $(notdir $(shell git worktree list | head -n1 | awk '{print $$1}'))
-PROJECT ?= $(shell $(CONTAINERIZED) || $(PYTHON) $(PYTHONFLAGS) -c 'print("$(GITNAME)".replace(" ", "").title())')
+GITNAME := $(notdir $(or $(shell git remote get-url origin 2> /dev/null | sed 's#^.*/##;s#.git$$##' ||:),$(shell git worktree list | head -n1 | awk '{print $$1}')))
+PROJECT ?= $(shell $(PYTHON) $(PYTHONFLAGS) -c 'print("$(GITNAME)".replace(" ", "").title())')
 _PROJECTDIR != cd "$(shell dirname $(firstword $(MAKEFILE_LIST)))/" && pwd
 PROJECTDIR ?= $(_PROJECTDIR)
 PUBDIR ?= $(PROJECTDIR)/pub
