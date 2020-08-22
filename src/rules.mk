@@ -287,7 +287,7 @@ $(STATICTTFS): %.ttf: $(BUILDDIR)/%-hinted.ttf.fix $(BUILDDIR)/last-commit
 	$(normalizeVersion)
 
 $(BUILDDIR)/%-hinted.otf: $(BUILDDIR)/%-instance.otf
-	$(PSAUTOHINT) $(PSAUTOHINTFLAGS) $< -o $@ --log $@.log
+	$(PSAUTOHINT) $(PSAUTOHINTFLAGS) $< -o $@
 
 $(BUILDDIR)/%-subr.otf: $(BUILDDIR)/%-hinted.otf
 	$(PYTHON) -m cffsubr -o $@ $<
