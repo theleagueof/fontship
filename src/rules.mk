@@ -31,7 +31,7 @@ SOURCEDIR ?= sources
 # Some Makefile shinanigans to avoid aggressive trimming
 space := $() $()
 
-SOURCES ?= $(shell git ls-files '$(SOURCEDIR)/*.glyphs' '$(SOURCEDIR)/*.sfd' '$(SOURCEDIR)/*.ufo')
+SOURCES ?= $(shell git ls-files -- '$(SOURCEDIR)/*.glyphs' '$(SOURCEDIR)/*.sfd' '$(SOURCEDIR)/*.ufo/*' | sed -e '/\.ufo/s#.ufo/.*#.ufo#' | uniq)
 CANONICAL ?= $(or $(and $(filter %.glyphs,$(SOURCES)),glyphs),\
 				$(and $(filter %.sfd,$(SOURCES)),sfd),\
 				$(and $(filter %.ufo,$(SOURCES)),ufo))
@@ -287,7 +287,7 @@ $(STATICTTFS): %.ttf: $(BUILDDIR)/%-hinted.ttf.fix $(BUILDDIR)/last-commit
 	$(normalizeVersion)
 
 $(BUILDDIR)/%-hinted.otf: $(BUILDDIR)/%-instance.otf
-	$(PSAUTOHINT) $(PSAUTOHINTFLAGS) $< -o $@ --log $@.log
+	$(PSAUTOHINT) $(PSAUTOHINTFLAGS) $< -o $@
 
 $(BUILDDIR)/%-subr.otf: $(BUILDDIR)/%-hinted.otf
 	$(PYTHON) -m cffsubr -o $@ $<
