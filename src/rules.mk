@@ -31,7 +31,7 @@ SOURCEDIR ?= sources
 # Some Makefile shinanigans to avoid aggressive trimming
 space := $() $()
 
-SOURCES ?= $(shell git ls-files '$(SOURCEDIR)/*.glyphs' '$(SOURCEDIR)/*.sfd' '$(SOURCEDIR)/*.ufo')
+SOURCES ?= $(shell git ls-files -- '$(SOURCEDIR)/*.glyphs' '$(SOURCEDIR)/*.sfd' '$(SOURCEDIR)/*.ufo/*' | sed -e '/\.ufo/s#.ufo/.*#.ufo#' | uniq)
 CANONICAL ?= $(or $(and $(filter %.glyphs,$(SOURCES)),glyphs),\
 				$(and $(filter %.sfd,$(SOURCES)),sfd),\
 				$(and $(filter %.ufo,$(SOURCES)),ufo))
