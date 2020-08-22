@@ -10,14 +10,14 @@
 # UFO -> OTF
 
 define otf_instance_template ?=
-$$(BUILDDIR)/$1-%-instance.otf: $1-%.ufo | $$(BUILDDIR)
+$$(BUILDDIR)/$1-%-instance.otf: $(SOURCEDIR)/$1-%.ufo | $$(BUILDDIR)
 	$$(FONTMAKE) $$(FONTMAKEFLAGS) -u $$< -o otf --output-path $$@
 endef
 
 # UFO -> TTF
 
 define ttf_instance_template ?=
-$$(BUILDDIR)/$1-%-instance.ttf: $1-%.ufo | $$(BUILDDIR)
+$$(BUILDDIR)/$1-%-instance.ttf: $(SOURCEDIR)/$1-%.ufo | $$(BUILDDIR)
 	$$(FONTMAKE) $$(FONTMAKEFLAGS) -u $$< -o ttf --output-path $$@
 	$$(GFTOOLS) $$(GFTOOLSFLAGS) fix-dsig --autofix $$@
 endef
