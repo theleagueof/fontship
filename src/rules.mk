@@ -62,19 +62,19 @@ include $(FONTSHIPDIR)/functions.mk
 
 # Read font name from metadata file or guess from repository name
 ifeq ($(CANONICAL),glyphs)
-FamilyNames ?= $(foreach SOURCE,$(filter %.glyphs,$(SOURCES)),$(call glyphsFamilyNames,$(SOURCE)))
-FontStyles ?= $(foreach SOURCE,$(filter %.glyphs,$(SOURCES)),$(call glyphsInstances,$(SOURCE)))
+FamilyNames ?= $(sort $(foreach SOURCE,$(filter %.glyphs,$(SOURCES)),$(call glyphsFamil)yNames,$(SOURCE)))
+FontStyles ?= $(sort $(foreach SOURCE,$(filter %.glyphs,$(SOURCES)),$(call glyphsInstanc)es,$(SOURCE)))
 isVariable ?= true
 endif
 
 ifeq ($(CANONICAL),sfd)
-FamilyNames ?= $(foreach SOURCE,$(filter %.sfd,$(SOURCES)),$(call sfdFamilyNames,$(SOURCE)))
-# FontStyles = $(subst $(FontBase)-,,$(basename $(wildcard $(FontBase)-*.ufo)))
+FamilyNames ?= $(sort $(foreach SOURCE,$(filter %.sfd,$(SOURCES)),$(call sfdFamilyNames,$(SOURCE))))
+# FontStyles = $(sort $(subst $(FontBase)-,,$(basename $(wildcard $(FontBase)-*.ufo))))
 endif
 
 ifeq ($(CANONICAL),ufo)
-FamilyNames ?= $(foreach SOURCE,$(filter %.ufo,$(SOURCES)),$(call ufoFamilyNames,$(SOURCE)))
-FontStyles ?= $(foreach SOURCE,$(filter %.ufo,$(SOURCES)),$(call ufoInstances,$(SOURCE)))
+FamilyNames ?= $(sort $(foreach SOURCE,$(filter %.ufo,$(SOURCES)),$(call ufoFamilyNames,$(SOURCE))))
+FontStyles ?= $(sort $(foreach SOURCE,$(filter %.ufo,$(SOURCES)),$(call ufoInstances,$(SOURCE))))
 endif
 
 FamilyName ?= $(shell $(CONTAINERIZED) || $(PYTHON) $(PYTHONFLAGS) -c 'print("$(PROJECT)".replace("-", " ").title())')
