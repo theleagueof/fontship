@@ -4,8 +4,8 @@ click==7.1.2
 defcon==0.7.2
 font-v==1.0.2
 fontmake==2.2.0
-fonttools[lxml,ufo,unicode,woff]==4.13.0
-gftools==0.4.1
+fonttools[lxml,ufo,unicode,woff]==4.14.0
+gftools==0.4.2
 pcpp==1.21.0
 psautohint==2.1.0
 pygit2==1.2.1
