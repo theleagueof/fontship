@@ -21,7 +21,7 @@ CONTAINERIZED != test -f /.dockerenv && echo true || echo false
 
 # Initial environment setup
 FONTSHIPDIR != cd "$(shell dirname $(lastword $(MAKEFILE_LIST)))/" && pwd
-GITNAME := $(notdir $(or $(shell git remote get-url origin 2> /dev/null | sed 's#^.*/##;s#.git$$##' ||:),$(shell git worktree list | head -n1 | awk '{print $$1}')))
+GITNAME := $(notdir $(or $(shell git remote get-url origin 2> /dev/null | sed 's,^.*/,,;s,.git$$,,' ||:),$(shell git worktree list | head -n1 | awk '{print $$1}')))
 PROJECT ?= $(shell $(PYTHON) $(PYTHONFLAGS) -c 'import re; print(re.sub(r"[-_]", " ", "$(GITNAME)".title()).replace(" ", ""))')
 _PROJECTDIR != cd "$(shell dirname $(firstword $(MAKEFILE_LIST)))/" && pwd
 PROJECTDIR ?= $(_PROJECTDIR)
@@ -31,7 +31,7 @@ SOURCEDIR ?= sources
 # Some Makefile shinanigans to avoid aggressive trimming
 space := $() $()
 
-SOURCES ?= $(shell git ls-files -- '$(SOURCEDIR)/*.glyphs' '$(SOURCEDIR)/*.sfd' '$(SOURCEDIR)/*.ufo/*' | sed -e '/\.ufo/s#.ufo/.*#.ufo#' | uniq)
+SOURCES ?= $(shell git ls-files -- '$(SOURCEDIR)/*.glyphs' '$(SOURCEDIR)/*.sfd' '$(SOURCEDIR)/*.ufo/*' | sed -e '/\.ufo/s,.ufo/.*,.ufo,' | uniq)
 CANONICAL ?= $(or $(and $(filter %.glyphs,$(SOURCES)),glyphs),\
 				$(and $(filter %.sfd,$(SOURCES)),sfd),\
 				$(and $(filter %.ufo,$(SOURCES)),ufo))
