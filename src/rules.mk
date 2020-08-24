@@ -66,7 +66,7 @@ endif
 
 ifeq ($(CANONICAL),ufo)
 FamilyNames ?= $(sort $(foreach SOURCE,$(filter %.ufo,$(SOURCES)),$(call ufoFamilyNames,$(SOURCE))))
-FontStyles ?= $(sort $(foreach SOURCE,$(filter %.ufo,$(SOURCES)),$(call ufoInstances,$(SOURCE))))
+FontStyles ?= $(sort $(foreach SOURCE,$(filter $(if $(isVariable),%.designspace,%.ufo),$(SOURCES)),$(call $(if $(isVariable),designspaceInstances,ufoInstances),$(SOURCE))))
 endif
 
 FamilyName ?= $(shell $(CONTAINERIZED) || $(PYTHON) $(PYTHONFLAGS) -c 'print("$(PROJECT)".replace("-", " ").title())')
