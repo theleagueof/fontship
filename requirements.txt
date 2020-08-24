@@ -14,3 +14,4 @@ sfdnormalize==0.3.0
 skia-pathops==0.4.1
 ufo2ft[cffsubr]==2.15.0
 ufoLib2==0.8.0
+vttLib==0.9.1.post2
