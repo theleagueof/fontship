@@ -2,7 +2,7 @@ glyphsFamilyNames ?= $(shell $(PYTHON) -c 'from glyphsLib import GSFont; print(G
 sfdFamilyNames ?=
 ufoFamilyNames ?= $(shell $(PYTHON) -c 'import babelfont; print(babelfont.OpenFont("$1").info.familyName.title().replace(" ", ""))')
 glyphsInstances ?= $(shell $(PYTHON) -c 'from glyphsLib import GSFont; list(map(lambda x: print(x.name), GSFont("$1").instances))')
-ufoInstances ?= $(shell $(PYTHON) -c 'import babelfont; print(babelfont.OpenFont("$1").info.styleName)')
+ufoInstances ?= $(shell $(PYTHON) -c 'import babelfont; print(babelfont.OpenFont("$1").info.styleName.replace(" ", ""))')
 sfdInstances ?=
 
 file2family ?= $(shell $(PYTHON) -c 'import re; print(re.sub(r"(?<!^)(?=[A-Z])", " ", "$1"))')
