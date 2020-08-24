@@ -31,21 +31,6 @@ SOURCEDIR ?= sources
 # Some Makefile shinanigans to avoid aggressive trimming
 space := $() $()
 
-SOURCES ?= $(shell git ls-files -- '$(SOURCEDIR)/*.glyphs' '$(SOURCEDIR)/*.sfd' '$(SOURCEDIR)/*.ufo/*' | sed -e '/\.ufo/s#.ufo/.*#.ufo#' | uniq)
-CANONICAL ?= $(or $(and $(filter %.glyphs,$(SOURCES)),glyphs),\
-				$(and $(filter %.sfd,$(SOURCES)),sfd),\
-				$(and $(filter %.ufo,$(SOURCES)),ufo))
-
-# Output format selectors
-STATICOTF ?= true
-STATICTTF ?= true
-STATICWOFF ?= true
-STATICWOFF2 ?= true
-VARIABLEOTF ?=
-VARIABLETTF ?= true
-VARIABLEWOFF ?= true
-VARIABLEWOFF2 ?= true
-
 # Allow overriding executables used
 FONTMAKE ?= fontmake
 FONTV ?= font-v
@@ -59,6 +44,13 @@ TTX ?= ttx
 WOFF2COMPRESS ?= woff2_compress
 
 include $(FONTSHIPDIR)/functions.mk
+
+SOURCES ?= $(shell git ls-files -- '$(SOURCEDIR)/*.glyphs' '$(SOURCEDIR)/*.sfd' '$(SOURCEDIR)/*.ufo/*' '$(SOURCEDIR)/*.designspace' | sed -e '/\.ufo/s#.ufo/.*#.ufo#' | uniq)
+CANONICAL ?= $(or $(and $(filter %.glyphs,$(SOURCES)),glyphs),\
+				$(and $(filter %.sfd,$(SOURCES)),sfd),\
+				$(and $(filter %.ufo,$(SOURCES)),ufo))
+
+isVariable ?= $(and $(filter %.designspace,$(SOURCES),true))
 
 # Read font name from metadata file or guess from repository name
 ifeq ($(CANONICAL),glyphs)
@@ -78,6 +70,16 @@ FontStyles ?= $(sort $(foreach SOURCE,$(filter %.ufo,$(SOURCES)),$(call ufoInsta
 endif
 
 FamilyName ?= $(shell $(CONTAINERIZED) || $(PYTHON) $(PYTHONFLAGS) -c 'print("$(PROJECT)".replace("-", " ").title())')
+
+# Output format selectors
+STATICOTF ?= true
+STATICTTF ?= true
+STATICWOFF ?= true
+STATICWOFF2 ?= true
+VARIABLEOTF ?=
+VARIABLETTF ?= $(isVariable)
+VARIABLEWOFF ?= $(isVariable)
+VARIABLEWOFF2 ?= $(isVariable)
 
 INSTANCES ?= $(foreach FamilyName,$(FamilyNames),$(foreach STYLE,$(FontStyles),$(FamilyName)-$(STYLE)))
 
