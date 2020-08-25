@@ -65,8 +65,13 @@ FamilyNames ?= $(sort $(foreach SOURCE,$(filter %.sfd,$(SOURCES)),$(call sfdFami
 endif
 
 ifeq ($(CANONICAL),ufo)
+ifeq ($(isVariable),true)
+FamilyNames ?= $(sort $(foreach SOURCE,$(filter %.ufo,$(SOURCES)),$(call designspaceFamilyNames,$(SOURCE))))
+FontStyles ?= $(sort $(foreach SOURCE,$(filter %.designspace),$(SOURCES)),$(call designspaceInstances),$(SOURCE))))
+else
 FamilyNames ?= $(sort $(foreach SOURCE,$(filter %.ufo,$(SOURCES)),$(call ufoFamilyNames,$(SOURCE))))
-FontStyles ?= $(sort $(foreach SOURCE,$(filter $(if $(isVariable),%.designspace,%.ufo),$(SOURCES)),$(call $(if $(isVariable),designspaceInstances,ufoInstances),$(SOURCE))))
+FontStyles ?= $(sort $(foreach SOURCE,$(filter %.ufo,$(SOURCES)),$(call ufoInstances,$(SOURCE))))
+endif
 endif
 
 FamilyName ?= $(shell $(CONTAINERIZED) || $(PYTHON) $(PYTHONFLAGS) -c 'print("$(PROJECT)".replace("-", " ").title())')

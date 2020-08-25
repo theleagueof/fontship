@@ -3,6 +3,7 @@ sfdFamilyNames ?=
 ufoFamilyNames ?= $(shell $(PYTHON) -c 'import babelfont; print(babelfont.OpenFont("$1").info.familyName.title().replace(" ", ""))')
 glyphsInstances ?= $(shell $(PYTHON) -c 'from glyphsLib import GSFont; list(map(lambda x: print(x.name), GSFont("$1").instances))')
 ufoInstances ?= $(shell $(PYTHON) -c 'import babelfont; print(babelfont.OpenFont("$1").info.styleName.replace(" ", ""))')
+designspaceFamilyNames ?= $(shell $(PYTHON) -c 'from fontTools.designspaceLib import DesignSpaceDocument; d = DesignSpaceDocument(); d.read("$1");for i in d.instances: print(i.familyName.replace(" ", ""))')
 designspaceInstances ?= $(shell $(PYTHON) -c 'from fontTools.designspaceLib import DesignSpaceDocument; d = DesignSpaceDocument(); d.read("$1");for i in d.instances: print(i.styleName.replace(" ", ""))')
 sfdInstances ?=
 
