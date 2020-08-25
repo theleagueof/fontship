@@ -10,3 +10,7 @@ file2family ?= $(shell $(PYTHON) -c 'import re; print(re.sub(r"(?<!^)(?=[A-Z])",
 define normalizeVersion ?=
 	$(FONTV) $(FONTVFLAGS) write --ver=$(FontVersion) $(if $(isTagged),--rel,--dev --sha1) $@
 endef
+
+parseCheckName ?= $(patsubst %.glyphs,%-check.glyphs,$(patsubst %.ufo,%-check.ufo,$(patsubst %.sfd,%-check.sfd,$(patsubst $(SOURCEDIR)/%,$(BUILDDIR)/%,$1))))
+# Same thing in sed is way simpler, but 2× orders of magnitude slower
+# parseCheckName ?= $(shell <<< $1 sed -e 's/\(\.[[:alpha:]]\+\)\b/-check\1/g')
