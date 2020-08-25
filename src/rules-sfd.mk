@@ -1,15 +1,11 @@
-needs_normalization = $(shell cmp -s $*.sfd $(BUILDDIR)/$(*F)-normalized.sfd || echo force)
+$(SOURCEDIR)/%.sfd: $$(call ifTrue,$$(NORMALIZE_MODE),force) | $(BUILDDIR)
+	local _normalized=$(BUILDDIR)/$(*F)-normalized.sfd
+	$(SFDNORMALIZE) $@ $${_normalized}
+	cp $${_normalized} $@
 
-%.sfd: $$(needs_normalization)
-	local norm=$(BUILDDIR)/$(*F)-normalized.sfd
-	$(SFDNORMALIZE) $@ $$norm
-	cp $$norm $@
+$(BUILDDIR)/%-normalized.sfd: $(SOURCEDIR)/%.sfd | $(BUILDDIR)
+	$(SFDNORMALIZE) $< $@
 
-$(BUILDDIR)/%-normalized.sfd: %.sfd | $(BUILDDIR)
-	$(SFDNORMALIZE) $(SOURCEDIR)/$(*F).sfd $@
-
-check: $(foreach SFD,$(filter %.sfd,$(SOURCES)),$(SFD)-check)
-
-.PHONY: %-.sfd-check
-$(SOURCEDIR)/%.sfd-check: $(BUILDDIR)/%-normalized.sfd
-	cmp $< $(SOURCEDIR)/$*.sfd
+.PHONY: $(SOURCEDIR)/%.sfd-check
+$(SOURCEDIR)/%.sfd-check: $(SOURCEDIR)/%.sfd $(BUILDDIR)/%-normalized.sfd
+	cmp $^

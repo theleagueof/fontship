@@ -21,7 +21,7 @@ CONTAINERIZED != test -f /.dockerenv && echo true || echo false
 
 # Initial environment setup
 FONTSHIPDIR != cd "$(shell dirname $(lastword $(MAKEFILE_LIST)))/" && pwd
-GITNAME := $(notdir $(or $(shell git remote get-url origin 2> /dev/null | sed 's#^.*/##;s#.git$$##' ||:),$(shell git worktree list | head -n1 | awk '{print $$1}')))
+GITNAME := $(notdir $(or $(shell git remote get-url origin 2> /dev/null | sed 's,^.*/,,;s,.git$$,,' ||:),$(shell git worktree list | head -n1 | awk '{print $$1}')))
 PROJECT ?= $(shell $(PYTHON) $(PYTHONFLAGS) -c 'import re; print(re.sub(r"[-_]", " ", "$(GITNAME)".title()).replace(" ", ""))')
 _PROJECTDIR != cd "$(shell dirname $(firstword $(MAKEFILE_LIST)))/" && pwd
 PROJECTDIR ?= $(_PROJECTDIR)
@@ -45,7 +45,7 @@ WOFF2COMPRESS ?= woff2_compress
 
 include $(FONTSHIPDIR)/functions.mk
 
-SOURCES ?= $(shell git ls-files -- '$(SOURCEDIR)/*.glyphs' '$(SOURCEDIR)/*.sfd' '$(SOURCEDIR)/*.ufo/*' '$(SOURCEDIR)/*.designspace' | sed -e '/\.ufo/s#.ufo/.*#.ufo#' | uniq)
+SOURCES ?= $(shell git ls-files -- '$(SOURCEDIR)/*.glyphs' '$(SOURCEDIR)/*.sfd' '$(SOURCEDIR)/*.ufo/*' '$(SOURCEDIR)/*.designspace' | sed -e '/\.ufo/s,.ufo/.*,.ufo,' | uniq)
 CANONICAL ?= $(or $(and $(filter %.glyphs,$(SOURCES)),glyphs),\
 				$(and $(filter %.sfd,$(SOURCES)),sfd),\
 				$(and $(filter %.ufo,$(SOURCES)),ufo))
@@ -54,20 +54,20 @@ isVariable ?= $(and $(filter %.designspace,$(SOURCES),true))
 
 # Read font name from metadata file or guess from repository name
 ifeq ($(CANONICAL),glyphs)
-FamilyNames ?= $(sort $(foreach SOURCE,$(filter %.glyphs,$(SOURCES)),$(call glyphsFamil)yNames,$(SOURCE)))
-FontStyles ?= $(sort $(foreach SOURCE,$(filter %.glyphs,$(SOURCES)),$(call glyphsInstanc)es,$(SOURCE)))
+FamilyNames ?= $(sort $(foreach SOURCE,$(filter %.glyphs,$(SOURCES)),$(call glyphsFamilyNames,$(SOURCE))))
+FontStyles ?= $(sort $(foreach SOURCE,$(filter %.glyphs,$(SOURCES)),$(call glyphsInstances,$(SOURCE))))
 isVariable ?= true
 endif
 
 ifeq ($(CANONICAL),sfd)
 FamilyNames ?= $(sort $(foreach SOURCE,$(filter %.sfd,$(SOURCES)),$(call sfdFamilyNames,$(SOURCE))))
-# FontStyles = $(sort $(subst $(FontBase)-,,$(basename $(wildcard $(FontBase)-*.ufo))))
+# FontStyles ?=
 endif
 
 ifeq ($(CANONICAL),ufo)
 ifeq ($(isVariable),true)
 FamilyNames ?= $(sort $(foreach SOURCE,$(filter %.ufo,$(SOURCES)),$(call designspaceFamilyNames,$(SOURCE))))
-FontStyles ?= $(sort $(foreach SOURCE,$(filter %.designspace),$(SOURCES)),$(call designspaceInstances),$(SOURCE))))
+FontStyles ?= $(sort $(foreach SOURCE,$(filter %.designspace,$(SOURCES)),$(call designspaceInstances,$(SOURCE))))
 else
 FamilyNames ?= $(sort $(foreach SOURCE,$(filter %.ufo,$(SOURCES)),$(call ufoFamilyNames,$(SOURCE))))
 FontStyles ?= $(sort $(foreach SOURCE,$(filter %.ufo,$(SOURCES)),$(call ufoInstances,$(SOURCE))))
@@ -262,10 +262,11 @@ variable-woff: $$(VARIABLEWOFFS)
 variable-woff2: $$(VARIABLEWOFF2S)
 
 .PHONY: normalize
+normalize: NORMALIZE_MODE = true
 normalize: $(filter %.glyphs %.sfd %.ufo,$(SOURCES))
 
 .PHONY: check
-check:
+check: $(addsuffix -check,$(SOURCES))
 
 BUILDDIR ?= .fontship
 
