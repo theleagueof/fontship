@@ -183,7 +183,12 @@ debug:
 	echo isTagged = $(isTagged)
 	echo ----------------------------
 	echo CANONICAL = $(CANONICAL)
+	echo isVariable = $(isVariable)
 	echo SOURCES = $(SOURCES)
+	echo SOURCES_SFD = $(SOURCES_SFD)
+	echo SOURCES_GLYPHS = $(SOURCES_GLYPHS)
+	echo SOURCES_UFO = $(SOURCES_UFO)
+	echo SOURCES_DESIGNSPACE = $(SOURCES_DESIGNSPACE)
 	echo INSTANCES = $(INSTANCES)
 	echo STATICOTFS = $(STATICOTFS)
 	echo STATICTTFS = $(STATICTTFS)
@@ -195,7 +200,7 @@ debug:
 	echo VARIABLEWOFF2S = $(VARIABLEWOFF2S)
 
 .PHONY: _gha
-_gha:
+_gha: debug
 	fontship --version
 	echo "::set-output name=PROJECT::$(PROJECT)"
 	echo "::set-output name=font-version::$(FontVersion)"
