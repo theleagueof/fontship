@@ -1,11 +1,18 @@
-%.ufo: $(BUILDDIR)/last-commit
-	cat <<- EOF | $(PYTHON) $(PYTHONFLAGS)
-		from defcon import Font, Info
-		ufo = Font('$@')
-		major, minor = "$(FontVersion)".split(".")
-		ufo.info.versionMajor, ufo.info.versionMinor = int(major), int(minor) + 7
-		ufo.save('$@')
-	EOF
+ufoNormalize ?= $(UFONORMALIZER) $(UFONORMALIZERFLAGS) "$1" -o "$2"
+expandUFOParts = $(shell find "$1" -type f 2> /dev/null)
+ufoParts = $(call expandUFOParts,$(patsubst %-normalized.ufo,%.ufo,$(patsubst $(BUILDDIR)/%,$(SOURCEDIR)/%,$@)))
+
+$(SOURCEDIR)/%.ufo: UFONORMALIZERFLAGS += -m
+$(SOURCEDIR)/%.ufo: $$(call ifTrue,$$(NORMALIZE_MODE),force) | $(BUILDDIR)
+	local _normalized=$(BUILDDIR)/$(*F)-normalized.ufo
+	$(call ufoNormalize,$@,$${_normalized})
+	cp -aT --remove-destination $${_normalized} $@
+	touch $@
+
+$(BUILDDIR)/%-normalized.ufo: UFONORMALIZERFLAGS += -a
+$(BUILDDIR)/%-normalized.ufo: $(SOURCEDIR)/%.ufo $$(ufoParts) | $(BUILDDIR)
+	$(call ufoNormalize,$<,$@)
+	touch $@
 
 # UFO -> OTF
 
