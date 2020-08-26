@@ -41,6 +41,7 @@ TTFAUTOHINT ?= ttfautohint
 PSAUTOHINT ?= psautohint
 SFDNORMALIZE ?= sfdnormalize
 TTX ?= ttx
+UFONORMALIZER ?= ufonormalizer
 WOFF2COMPRESS ?= woff2_compress
 
 include $(FONTSHIPDIR)/functions.mk
