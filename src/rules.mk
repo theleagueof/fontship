@@ -46,31 +46,32 @@ WOFF2COMPRESS ?= woff2_compress
 include $(FONTSHIPDIR)/functions.mk
 
 SOURCES ?= $(shell git ls-files -- '$(SOURCEDIR)/*.glyphs' '$(SOURCEDIR)/*.sfd' '$(SOURCEDIR)/*.ufo/*' '$(SOURCEDIR)/*.designspace' | sed -e '/\.ufo/s,.ufo/.*,.ufo,' | uniq)
-CANONICAL ?= $(or $(and $(filter %.glyphs,$(SOURCES)),glyphs),\
-				$(and $(filter %.sfd,$(SOURCES)),sfd),\
-				$(and $(filter %.ufo,$(SOURCES)),ufo))
+SOURCES_SFD ?= $(filter %.sfd,$(SOURCES))
+SOURCES_UFO ?= $(filter %.ufo,$(SOURCES))
+SOURCES_GLYPHS ?= $(filter %.glyphs,$(SOURCES))
+SOURCES_DESIGNSPACE ?= $(filter %.designspace,$(SOURCES))
+CANONICAL ?= $(or $(and $(SOURCES_GLYPHS),glyphs),$(and $(SOURCES_SFD),sfd),$(and $(SOURCES_UFO),ufo))
 
-isVariable ?= $(and $(filter %.designspace,$(SOURCES),true))
+isVariable ?= $(and $(SOURCES_GLYPHS)$(SOURCES_DESIGNSPACE),true)
 
 # Read font name from metadata file or guess from repository name
 ifeq ($(CANONICAL),glyphs)
-FamilyNames ?= $(sort $(foreach SOURCE,$(filter %.glyphs,$(SOURCES)),$(call glyphsFamilyNames,$(SOURCE))))
-FontStyles ?= $(sort $(foreach SOURCE,$(filter %.glyphs,$(SOURCES)),$(call glyphsInstances,$(SOURCE))))
-isVariable ?= true
+FamilyNames ?= $(sort $(foreach SOURCE,$(SOURCES_GLYPHS),$(call glyphsFamilyNames,$(SOURCE))))
+FontStyles ?= $(sort $(foreach SOURCE,$(SOURCES_GLYPHS),$(call glyphsInstances,$(SOURCE))))
 endif
 
 ifeq ($(CANONICAL),sfd)
-FamilyNames ?= $(sort $(foreach SOURCE,$(filter %.sfd,$(SOURCES)),$(call sfdFamilyNames,$(SOURCE))))
+FamilyNames ?= $(sort $(foreach SOURCE,$(SOURCES_SFD),$(call sfdFamilyNames,$(SOURCE))))
 # FontStyles ?=
 endif
 
 ifeq ($(CANONICAL),ufo)
 ifeq ($(isVariable),true)
-FamilyNames ?= $(sort $(foreach SOURCE,$(filter %.ufo,$(SOURCES)),$(call designspaceFamilyNames,$(SOURCE))))
-FontStyles ?= $(sort $(foreach SOURCE,$(filter %.designspace,$(SOURCES)),$(call designspaceInstances,$(SOURCE))))
+FamilyNames ?= $(sort $(foreach SOURCE,$(SOURCES_DESIGNSPACE),$(call designspaceFamilyNames,$(SOURCE))))
+FontStyles ?= $(sort $(foreach SOURCE,$(SOURCES_DESIGNSPACE),$(call designspaceInstances,$(SOURCE))))
 else
-FamilyNames ?= $(sort $(foreach SOURCE,$(filter %.ufo,$(SOURCES)),$(call ufoFamilyNames,$(SOURCE))))
-FontStyles ?= $(sort $(foreach SOURCE,$(filter %.ufo,$(SOURCES)),$(call ufoInstances,$(SOURCE))))
+FamilyNames ?= $(sort $(foreach SOURCE,$(SOURCES_UFO),$(call ufoFamilyNames,$(SOURCE))))
+FontStyles ?= $(sort $(foreach SOURCE,$(SOURCES_UFO),$(call ufoInstances,$(SOURCE))))
 endif
 endif
 
@@ -263,7 +264,7 @@ variable-woff2: $$(VARIABLEWOFF2S)
 
 .PHONY: normalize
 normalize: NORMALIZE_MODE = true
-normalize: $(filter %.glyphs %.sfd %.ufo,$(SOURCES))
+normalize: $(SOURCES)
 
 .PHONY: check
 check: $(addsuffix -check,$(SOURCES))
