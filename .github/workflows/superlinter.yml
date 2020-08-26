@@ -12,4 +12,5 @@ jobs:
       - name: Super-Linter
         uses: github/super-linter@v3.6.0
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VALIDATE_EDITORCONFIG: false
+          GITHUB_TOKEN: ${{ github.token }}

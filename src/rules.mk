@@ -1,40 +1,42 @@
-# Defalut to running jobs in parallel, one for each CPU core
-MAKEFLAGS += --jobs=$(shell nproc) --output-sync=target
-# Default to not echoing commands before running
-MAKEFLAGS += --silent
-# Disable as much built in file type builds as possible
-MAKEFLAGS += --no-builtin-rules
-.SUFFIXES:
+# If called using the fontship CLI the init rules will be sources before any
+# project specific ones, then everything will be sourced in order. If people do
+# a manual include to rules they may or may not know to source the
+# initilazation rules first. this is to warn them.
+ifeq ($(FONTSHIPDIR),)
+$(error Please initialize Fontship by sourcing fontship.mk first, then include your project rules, then source this rules.mk file)
+endif
 
-# Run recipies in zsh, and all in one pass
-SHELL := zsh
-.SHELLFLAGS := +o nomatch -e -c
-.ONESHELL:
-.SECONDEXPANSION:
+SOURCES ?= $(shell git ls-files -- '$(SOURCEDIR)/*.glyphs' '$(SOURCEDIR)/*.sfd' '$(SOURCEDIR)/*.ufo/*' '$(SOURCEDIR)/*.designspace' | sed -e '/\.ufo/s,.ufo/.*,.ufo,' | uniq)
+SOURCES_SFD ?= $(filter %.sfd,$(SOURCES))
+SOURCES_UFO ?= $(filter %.ufo,$(SOURCES))
+SOURCES_GLYPHS ?= $(filter %.glyphs,$(SOURCES))
+SOURCES_DESIGNSPACE ?= $(filter %.designspace,$(SOURCES))
+CANONICAL ?= $(or $(and $(SOURCES_GLYPHS),glyphs),$(and $(SOURCES_SFD),sfd),$(and $(SOURCES_UFO),ufo))
 
-# Don't drop intermediate artifacts (saves rebulid time and aids debugging)
-.SECONDARY:
-.PRECIOUS: %
-.DELETE_ON_ERROR:
+isVariable ?= $(and $(SOURCES_GLYPHS)$(SOURCES_DESIGNSPACE),true)
 
-CONTAINERIZED != test -f /.dockerenv && echo true || echo false
+# Read font name from metadata file or guess from repository name
+ifeq ($(CANONICAL),glyphs)
+FamilyNames ?= $(sort $(foreach SOURCE,$(SOURCES_GLYPHS),$(call glyphsFamilyNames,$(SOURCE))))
+FontStyles ?= $(sort $(foreach SOURCE,$(SOURCES_GLYPHS),$(call glyphsInstances,$(SOURCE))))
+endif
 
-# Initial environment setup
-FONTSHIPDIR != cd "$(shell dirname $(lastword $(MAKEFILE_LIST)))/" && pwd
-GITNAME := $(notdir $(or $(shell git remote get-url origin 2> /dev/null | sed 's,^.*/,,;s,.git$$,,' ||:),$(shell git worktree list | head -n1 | awk '{print $$1}')))
-PROJECT ?= $(shell $(PYTHON) $(PYTHONFLAGS) -c 'import re; print(re.sub(r"[-_]", " ", "$(GITNAME)".title()).replace(" ", ""))')
-_PROJECTDIR != cd "$(shell dirname $(firstword $(MAKEFILE_LIST)))/" && pwd
-PROJECTDIR ?= $(_PROJECTDIR)
-PUBDIR ?= $(PROJECTDIR)/pub
-SOURCEDIR ?= sources
+ifeq ($(CANONICAL),sfd)
+FamilyNames ?= $(sort $(foreach SOURCE,$(SOURCES_SFD),$(call sfdFamilyNames,$(SOURCE))))
+# FontStyles ?=
+endif
 
-# Some Makefile shinanigans to avoid aggressive trimming
-space := $() $()
+ifeq ($(CANONICAL),ufo)
+ifeq ($(isVariable),true)
+FamilyNames ?= $(sort $(foreach SOURCE,$(SOURCES_DESIGNSPACE),$(call designspaceFamilyNames,$(SOURCE))))
+FontStyles ?= $(sort $(foreach SOURCE,$(SOURCES_DESIGNSPACE),$(call designspaceInstances,$(SOURCE))))
+else
+FamilyNames ?= $(sort $(foreach SOURCE,$(SOURCES_UFO),$(call ufoFamilyNames,$(SOURCE))))
+FontStyles ?= $(sort $(foreach SOURCE,$(SOURCES_UFO),$(call ufoInstances,$(SOURCE))))
+endif
+endif
 
-SOURCES ?= $(shell git ls-files -- '$(SOURCEDIR)/*.glyphs' '$(SOURCEDIR)/*.sfd' '$(SOURCEDIR)/*.ufo/*' | sed -e '/\.ufo/s,.ufo/.*,.ufo,' | uniq)
-CANONICAL ?= $(or $(and $(filter %.glyphs,$(SOURCES)),glyphs),\
-				$(and $(filter %.sfd,$(SOURCES)),sfd),\
-				$(and $(filter %.ufo,$(SOURCES)),ufo))
+FamilyName ?= $(shell $(CONTAINERIZED) || $(PYTHON) $(PYTHONFLAGS) -c 'print("$(PROJECT)".replace("-", " ").title())')
 
 # Output format selectors
 STATICOTF ?= true
@@ -42,42 +44,9 @@ STATICTTF ?= true
 STATICWOFF ?= true
 STATICWOFF2 ?= true
 VARIABLEOTF ?=
-VARIABLETTF ?= true
-VARIABLEWOFF ?= true
-VARIABLEWOFF2 ?= true
-
-# Allow overriding executables used
-FONTMAKE ?= fontmake
-FONTV ?= font-v
-GFTOOLS ?= gftools
-PYTHON ?= python3
-SFNT2WOFF ?= sfnt2woff-zopfli
-TTFAUTOHINT ?= ttfautohint
-PSAUTOHINT ?= psautohint
-SFDNORMALIZE ?= sfdnormalize
-TTX ?= ttx
-WOFF2COMPRESS ?= woff2_compress
-
-include $(FONTSHIPDIR)/functions.mk
-
-# Read font name from metadata file or guess from repository name
-ifeq ($(CANONICAL),glyphs)
-FamilyNames ?= $(foreach SOURCE,$(filter %.glyphs,$(SOURCES)),$(call glyphsFamilyNames,$(SOURCE)))
-FontStyles ?= $(foreach SOURCE,$(filter %.glyphs,$(SOURCES)),$(call glyphsInstances,$(SOURCE)))
-isVariable ?= true
-endif
-
-ifeq ($(CANONICAL),sfd)
-FamilyNames ?= $(foreach SOURCE,$(filter %.sfd,$(SOURCES)),$(call sfdFamilyNames,$(SOURCE)))
-# FontStyles = $(subst $(FontBase)-,,$(basename $(wildcard $(FontBase)-*.ufo)))
-endif
-
-ifeq ($(CANONICAL),ufo)
-FamilyNames ?= $(foreach SOURCE,$(filter %.ufo,$(SOURCES)),$(call ufoFamilyNames,$(SOURCE)))
-FontStyles ?= $(foreach SOURCE,$(filter %.ufo,$(SOURCES)),$(call ufoInstances,$(SOURCE)))
-endif
-
-FamilyName ?= $(shell $(CONTAINERIZED) || $(PYTHON) $(PYTHONFLAGS) -c 'print("$(PROJECT)".replace("-", " ").title())')
+VARIABLETTF ?= $(isVariable)
+VARIABLEWOFF ?= $(isVariable)
+VARIABLEWOFF2 ?= $(isVariable)
 
 INSTANCES ?= $(foreach FamilyName,$(FamilyNames),$(foreach STYLE,$(FontStyles),$(FamilyName)-$(STYLE)))
 
@@ -175,7 +144,12 @@ debug:
 	echo isTagged = $(isTagged)
 	echo ----------------------------
 	echo CANONICAL = $(CANONICAL)
+	echo isVariable = $(isVariable)
 	echo SOURCES = $(SOURCES)
+	echo SOURCES_SFD = $(SOURCES_SFD)
+	echo SOURCES_GLYPHS = $(SOURCES_GLYPHS)
+	echo SOURCES_UFO = $(SOURCES_UFO)
+	echo SOURCES_DESIGNSPACE = $(SOURCES_DESIGNSPACE)
 	echo INSTANCES = $(INSTANCES)
 	echo STATICOTFS = $(STATICOTFS)
 	echo STATICTTFS = $(STATICTTFS)
@@ -187,7 +161,7 @@ debug:
 	echo VARIABLEWOFF2S = $(VARIABLEWOFF2S)
 
 .PHONY: _gha
-_gha:
+_gha: debug
 	fontship --version
 	echo "::set-output name=PROJECT::$(PROJECT)"
 	echo "::set-output name=font-version::$(FontVersion)"
@@ -256,7 +230,7 @@ variable-woff2: $$(VARIABLEWOFF2S)
 
 .PHONY: normalize
 normalize: NORMALIZE_MODE = true
-normalize: $(filter %.glyphs %.sfd %.ufo,$(SOURCES))
+normalize: $(SOURCES)
 
 .PHONY: check
 check: $(addsuffix -check,$(SOURCES))
