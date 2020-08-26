@@ -64,9 +64,6 @@ GitVersion ?= $(FontVersion)-r$(shell git rev-list --count HEAD)-g$(shell git re
 isTagged :=
 endif
 
-.PHONY: default
-default: all
-
 ifeq ($(DEBUG),true)
 .SHELLFLAGS += +x
 MAKEFLAGS += --no-silent
@@ -78,7 +75,9 @@ TTXFLAGS ?= -v
 WOFF2COMPRESSFLAGS ?=
 GFTOOLSFLAGS ?=
 PYTHONFLAGS ?= -d
+SFDNORMALIZEFLAGS ?=
 SFNT2WOFFFLAGS ?=
+UFONORMALIZERFLAGS ?= -v
 else
 ifeq ($(VERBOSE),true)
 MAKEFLAGS += --no-silent
@@ -87,10 +86,12 @@ FONTVFLAGS ?=
 GFTOOLSFLAGS ?=
 PSAUTOHINTFLAGS ?= -vv
 PYTHONFLAGS ?= -v
+SFDNORMALIZEFLAGS ?=
 SFNT2WOFFFLAGS ?=
 TTFAUTOHINTFLAGS ?= -v
 TTXFLAGS ?= -v
 WOFF2COMPRESSFLAGS ?=
+UFONORMALIZERFLAGS ?= -v
 else
 ifeq ($(QUIET),true)
 FONTMAKEFLAGS ?= --verbose ERROR 2> /dev/null
@@ -98,20 +99,24 @@ FONTVFLAGS ?= 2> /dev/null
 GFTOOLSFLAGS ?= > /dev/null
 PSAUTOHINTFLAGS ?= 2> /dev/null
 PYTHONFLAGS ?= 2> /dev/null
+SFDNORMALIZEFLAGS ?= 2> /dev/null
 SFNT2WOFFFLAGS ?= 2> /dev/null
 TTFAUTOHINTFLAGS ?= 2> /dev/null
 TTXFLAGS ?= 2> /dev/null
 WOFF2COMPRESSFLAGS ?= 2> /dev/null
+UFONORMALIZERFLAGS ?= -q 2> /dev/null
 else
 FONTMAKEFLAGS ?= --verbose WARNING
 FONTVFLAGS ?=
 GFTOOLSFLAGS ?=
 PSAUTOHINTFLAGS ?= -v
 PYTHONFLAGS ?=
+SFDNORMALIZEFLAGS ?=
 SFNT2WOFFFLAGS ?=
 TTFAUTOHINTFLAGS ?=
 TTXFLAGS ?=
 WOFF2COMPRESSFLAGS ?=
+UFONORMALIZERFLAGS ?=
 endif
 endif
 endif
