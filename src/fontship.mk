@@ -45,4 +45,7 @@ WOFF2COMPRESS ?= woff2_compress
 
 include $(FONTSHIPDIR)/functions.mk
 
+.PHONY: default
+default: all
+
 

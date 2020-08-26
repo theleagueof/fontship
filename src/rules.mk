@@ -64,9 +64,6 @@ GitVersion ?= $(FontVersion)-r$(shell git rev-list --count HEAD)-g$(shell git re
 isTagged :=
 endif
 
-.PHONY: default
-default: all
-
 ifeq ($(DEBUG),true)
 .SHELLFLAGS += +x
 MAKEFLAGS += --no-silent
