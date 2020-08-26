@@ -41,14 +41,19 @@ $(BUILDDIR)/%-normalized.ufo: $$(styleToDS) | $(BUILDDIR)
 # UFO -> OTF
 
 define otf_instance_template ?=
+
 $$(BUILDDIR)/$1-%-instance.otf: $(BUILDDIR)/$1-%-normalized.ufo | $$(BUILDDIR)
 	$$(FONTMAKE) $$(FONTMAKEFLAGS) -u $$< -o otf --output-path $$@
+	$$(GFTOOLS) $$(GFTOOLSFLAGS) fix-dsig -f $$@
+
 endef
 
 # UFO -> TTF
 
 define ttf_instance_template ?=
+
 $$(BUILDDIR)/$1-%-instance.ttf: $(BUILDDIR)/$1-%-normalized.ufo | $$(BUILDDIR)
 	$$(FONTMAKE) $$(FONTMAKEFLAGS) -u $$< -o ttf --output-path $$@
-	$$(GFTOOLS) $$(GFTOOLSFLAGS) fix-dsig --autofix $$@
+	$$(GFTOOLS) $$(GFTOOLSFLAGS) fix-dsig -f $$@
+
 endef
