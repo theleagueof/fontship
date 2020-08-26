@@ -14,6 +14,18 @@ $(BUILDDIR)/%-normalized.ufo: $(SOURCEDIR)/%.ufo $$(ufoParts) | $(BUILDDIR)
 	$(call ufoNormalize,$<,$@)
 	touch $@
 
+# TODO: Use an earlier generated map to find the relevant designspace instead of this hack
+fromDS = $(shell <<< "$(*F)X" sed -e 's/Italic/X/;s/-[^X]*//;s/XX/-Italic/;s/X//').designspace
+
+# TODO: When upstream fontmake bug gets fixed do something sane here...
+# https://github.com/googlefonts/fontmake/issues/693
+# $(BUILDDIR)/%-normalized.ufo: FONTMAKEFLAGS += --instance-dir '{tmp}'
+# $(BUILDDIR)/%-normalized.ufo: FONTMAKEFLAGS += --output-dir '$(BUILDDIR)' --output-path $@
+# --output-path $@
+$(BUILDDIR)/%-normalized.ufo: $(SOURCEDIR)/$$(fromDS) | $(BUILDDIR)
+	$(FONTMAKE) $(FONTMAKEFLAGS) -m $< -i "$(call file2family,$(subst -,,$*))" -o ufo
+	$(call ufoNormalize,$(SOURCEDIR)/instance_ufos/$*.ufo,$@)
+
 # UFO -> OTF
 
 define otf_instance_template ?=
