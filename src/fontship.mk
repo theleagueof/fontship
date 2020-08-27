@@ -44,6 +44,8 @@ TTX ?= ttx
 UFONORMALIZER ?= ufonormalizer
 WOFF2COMPRESS ?= woff2_compress
 
+BUILDDIR ?= .fontship
+
 include $(FONTSHIPDIR)/functions.mk
 
 .PHONY: default

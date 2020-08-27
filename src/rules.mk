@@ -242,8 +242,6 @@ normalize: $(SOURCES)
 .PHONY: check
 check: $(addsuffix -check,$(SOURCES))
 
-BUILDDIR ?= .fontship
-
 $(BUILDDIR):
 	mkdir -p $@
 
