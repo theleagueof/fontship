@@ -22,8 +22,13 @@ $(BUILDDIR)/%-VF.ttf: $(SOURCEDIR)/%.designspace | $(BUILDDIR)
 	$(GFTOOLS) $(GFTOOLSFLAGS) fix-unwanted-tables --tables MVAR $@ ||:
 	$(GFTOOLS) $(GFTOOLSFLAGS) fix-dsig -f $@
 
-$(BUILDDIR)/%-hinted.ttf: $(BUILDDIR)/%.ttf
-	$(TTFAUTOHINT) $(TTFAUTOHINTFLAGS) -n $< $@
+$(BUILDDIR)/%-hinted.ttf: $(if $(wildcard $(SOURCEDIR)/*-vtt.ttx),$(BUILDDIR)/%-vtthinted.ttf,$(BUILDDIR)/%.ttf)
+	$(and $(filter %-vtthinted.ttf,$<),$(PYTHON) -m vttLib compile --ship $< $@)
+	$(and $(filter-out %-vtthinted.ttf,$<),$(TTFAUTOHINT) $(TTFAUTOHINTFLAGS) -n $< $@)
+
+$(BUILDDIR)/%-VF-vtthinted.ttf: $(BUILDDIR)/%-VF.ttf $(SOURCEDIR)/%-vtt.ttx
+	cp $< $@
+	python -m vttLib mergefile $(filter %.ttx,$^) $@
 
 $(BUILDDIR)/%-hinted.ttf.fix: $(BUILDDIR)/%-hinted.ttf
 	$(GFTOOLS) $(GFTOOLSFLAGS) fix-hinting $<
