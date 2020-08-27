@@ -19,6 +19,7 @@ isVariable ?= $(and $(SOURCES_GLYPHS)$(SOURCES_DESIGNSPACE),true)
 ifeq ($(CANONICAL),glyphs)
 FamilyNames ?= $(sort $(foreach SOURCE,$(SOURCES_GLYPHS),$(call glyphsFamilyNames,$(SOURCE))))
 FontStyles ?= $(sort $(foreach SOURCE,$(SOURCES_GLYPHS),$(call glyphsInstances,$(SOURCE))))
+FamilyMasters ?= $(sort $(foreach SOURCE,$(SOURCES_GLYPHS),$(call designspaceMasters,$(SOURCE))))
 endif
 
 ifeq ($(CANONICAL),sfd)
@@ -30,6 +31,7 @@ ifeq ($(CANONICAL),ufo)
 ifeq ($(isVariable),true)
 FamilyNames ?= $(sort $(foreach SOURCE,$(SOURCES_DESIGNSPACE),$(call designspaceFamilyNames,$(SOURCE))))
 FontStyles ?= $(sort $(foreach SOURCE,$(SOURCES_DESIGNSPACE),$(call designspaceInstances,$(SOURCE))))
+FamilyMasters ?= $(sort $(foreach SOURCE,$(SOURCES_DESIGNSPACE),$(call designspaceMasters,$(SOURCE))))
 else
 FamilyNames ?= $(sort $(foreach SOURCE,$(SOURCES_UFO),$(call ufoFamilyNames,$(SOURCE))))
 FontStyles ?= $(sort $(foreach SOURCE,$(SOURCES_UFO),$(call ufoInstances,$(SOURCE))))
@@ -126,10 +128,10 @@ STATICTTFS = $(and $(STATICTTF),$(addsuffix .ttf,$(INSTANCES)))
 STATICWOFFS = $(and $(STATICWOFF),$(addsuffix .woff,$(INSTANCES)))
 STATICWOFF2S = $(and $(STATICWOFF2),$(addsuffix .woff2,$(INSTANCES)))
 ifeq ($(isVariable),true)
-VARIABLEOTFS = $(and $(VARIABLEOTF),$(addsuffix -VF.otf,$(FamilyNames)))
-VARIABLETTFS = $(and $(VARIABLETTF),$(addsuffix -VF.ttf,$(FamilyNames)))
-VARIABLEWOFFS = $(and $(VARIABLEWOFF),$(addsuffix -VF.woff,$(FamilyNames)))
-VARIABLEWOFF2S = $(and $(VARIABLEWOFF2),$(addsuffix -VF.woff2,$(FamilyNames)))
+VARIABLEOTFS = $(and $(VARIABLEOTF),$(addsuffix -VF.otf,$(FamilyMasters)))
+VARIABLETTFS = $(and $(VARIABLETTF),$(addsuffix -VF.ttf,$(FamilyMasters)))
+VARIABLEWOFFS = $(and $(VARIABLEWOFF),$(addsuffix -VF.woff,$(FamilyMasters)))
+VARIABLEWOFF2S = $(and $(VARIABLEWOFF2),$(addsuffix -VF.woff2,$(FamilyMasters)))
 endif
 
 .PHONY: debug
@@ -239,8 +241,6 @@ normalize: $(SOURCES)
 
 .PHONY: check
 check: $(addsuffix -check,$(SOURCES))
-
-BUILDDIR ?= .fontship
 
 $(BUILDDIR):
 	mkdir -p $@
