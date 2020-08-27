@@ -2,6 +2,31 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.4.0](https://github.com/theleagueof/fontship/compare/v0.3.4...v0.4.0) (2020-08-27)
+
+
+### Features
+
+* **rules:** Split makefile into init & actually processing ([0f43201](https://github.com/theleagueof/fontship/commit/0f4320191388096e387e19e2e488dbe173aacc84))
+* **sfd:** Allow passing options or otherwise changing sfdnormalizer ([fd8a872](https://github.com/theleagueof/fontship/commit/fd8a872190c08d59ef9e2955e93edba1e20b36d2))
+* **sfd:** Detect family names in FontForge sources ([8d3f645](https://github.com/theleagueof/fontship/commit/8d3f64534979471cc1e142e93daf72e188d70166))
+* **ufo:** Add variable TTF output ([25cb71b](https://github.com/theleagueof/fontship/commit/25cb71bc64c780c98685fac0113e36fd7a45b4cb))
+* **ufo:** Build interpolated instances from designspace ([2b8d41f](https://github.com/theleagueof/fontship/commit/2b8d41fdc07a298b472693abbe2312e33222f91d))
+* **ufo:** Detect variable fonts via designspace file ([28247ce](https://github.com/theleagueof/fontship/commit/28247ce430f79d672a4ddf2af16feb80876a01a6))
+* **ufo:** Hint VF builds using VTT hints if sources present ([8808bc6](https://github.com/theleagueof/fontship/commit/8808bc64245e95e746c0d8f34d2a36b0558a29fb))
+* **ufo:** Iterate instances defined in designspace ([22b20bc](https://github.com/theleagueof/fontship/commit/22b20bc17d7c021e7d97c48c62ba45d7dab30c2b))
+
+
+### Bug Fixes
+
+* **designspace:** Disambiguate instances (statics) from masters (variables) ([1c178c6](https://github.com/theleagueof/fontship/commit/1c178c663a8ca054043b46d31c53237094b86018))
+* **rules:** Move BUILDDIR variable to make default accessible to projects ([60b2f26](https://github.com/theleagueof/fontship/commit/60b2f26cad78d1435b5dcea7d16e514a3f8d7f71))
+* **rules:** Use ‘,’ not ‘#’ as delimiter in sed expression ([#69](https://github.com/theleagueof/fontship/issues/69)) ([66f3aa3](https://github.com/theleagueof/fontship/commit/66f3aa335ecb76c6af60687187d53d8a74b9f7e5))
+* **sfd:** Keep normalizer from touching sources unless we ask ([a46138e](https://github.com/theleagueof/fontship/commit/a46138ec4ffb71ca5e4edb9b35f2e18d82d80c7d))
+* **ufo:** Catch multi-word instance names ([1d5d1ee](https://github.com/theleagueof/fontship/commit/1d5d1ee3c137f63b662b7187ce344e9a4a6b63f5))
+* **ufo:** Detect base package-directory names ([f53bd43](https://github.com/theleagueof/fontship/commit/f53bd43900d382d18d84837d0245fa201955ea7b))
+* **ufo:** Use configurable source directory ([13215d1](https://github.com/theleagueof/fontship/commit/13215d151c2fb8bf6e5646a88f735fe59acf12ac))
+
 ### [0.3.4](https://github.com/theleagueof/fontship/compare/v0.3.3...v0.3.4) (2020-08-22)
 
 
