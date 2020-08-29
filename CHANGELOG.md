@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.4.1](https://github.com/theleagueof/fontship/compare/v0.4.0...v0.4.1) (2020-08-29)
+
+
+### Features
+
+* **build:** Find and package authors, contributors, and fontlog files ([#78](https://github.com/theleagueof/fontship/issues/78)) ([602af28](https://github.com/theleagueof/fontship/commit/602af2814534c687ac21e2be2fd5c7e1b7556c22))
+
 ## [0.4.0](https://github.com/theleagueof/fontship/compare/v0.3.4...v0.4.0) (2020-08-27)
 
 
