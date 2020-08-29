@@ -303,8 +303,9 @@ dist: $(DISTDIR).zip $(DISTDIR).tar.xz
 $(DISTDIR).tar.bz2 $(DISTDIR).tar.gz $(DISTDIR).tar.xz $(DISTDIR).zip $(DISTDIR).tar.zst: install-dist
 	bsdtar -acf $@ $(DISTDIR)
 
-dist_doc_DATA ?= $(wildcard $(foreach B,readme README,$(foreach E,md txt markdown,$(B).$(E))))
-dist_license_DATA ?= $(wildcard $(foreach B,ofl OFL ofl-faq OFL-FAQ license LICENSE copying COPYING,$(foreach E,md txt markdown,$(B).$(E))))
+_E = md txt markdown
+dist_doc_DATA ?= $(wildcard $(foreach B,readme README contributors CONTRIBUTORS fontlog FONTLOG,$(foreach E,$(_E),$(B).$(E))))
+dist_license_DATA ?= $(wildcard $(foreach B,ofl OFL ofl-faq OFL-FAQ license LICENSE copying COPYING copyingn-ofl COPYING-OFL authors AUTHORS,$(foreach E,$(_E),$(B).$(E))))
 
 .PHONY: install-dist
 install-dist: fonts | $(DISTDIR)
