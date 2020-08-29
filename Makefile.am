@@ -23,6 +23,12 @@ dist: fontship-$(VERSION).md
 dist-hook:
 	echo $(VERSION) > $(distdir)/.tarball-version
 
+check: selfcheck
+
+.PHONY: selfcheck
+selfcheck: $(bin_SCRIPTS) | $(BUILT_SOURCES)
+	./$< --version | grep -Ff $(firstword $|)
+
 RELTYPE ?=
 
 .PHONY: tagrelease

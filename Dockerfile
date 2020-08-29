@@ -1,4 +1,4 @@
-FROM docker.io/library/archlinux:20200705 as fontship-base
+FROM docker.io/library/archlinux:20200705 AS fontship-base
 
 # Downgrade coreutils to avoid filesystem bug on DockerHub host kernels
 RUN pacman --noconfirm -U https://archive.archlinux.org/packages/c/coreutils/coreutils-8.31-3-x86_64.pkg.tar.xz
@@ -47,6 +47,7 @@ RUN git fetch --tags ||:
 RUN ./bootstrap.sh
 RUN ./configure
 RUN make
+RUN make check
 RUN make install DESTDIR=/pkgdir
 
 FROM fontship-base AS fontship
@@ -55,6 +56,7 @@ LABEL maintainer="Caleb Maclennan <caleb@alerque.com>"
 LABEL version="$VCS_REF"
 
 COPY --from=fontship-builder /pkgdir /
+RUN fontship --version
 
 WORKDIR /data
 ENTRYPOINT ["fontship"]
