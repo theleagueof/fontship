@@ -40,6 +40,8 @@ endif
 
 FamilyName ?= $(shell $(CONTAINERIZED) || $(PYTHON) $(PYTHONFLAGS) -c 'print("$(PROJECT)".replace("-", " ").title())')
 
+HINT ?= true
+
 # Output format selectors
 STATICOTF ?= true
 STATICTTF ?= true
@@ -262,14 +264,20 @@ $(BUILDDIR)/%-hinted.ttf: $(BUILDDIR)/%-instance.ttf
 $(BUILDDIR)/%-hinted.ttf.fix: $(BUILDDIR)/%-hinted.ttf
 	$(GFTOOLS) $(GFTOOLSFLAGS) fix-hinting $<
 
+ifeq ($(HINT),true)
 $(STATICTTFS): %.ttf: $(BUILDDIR)/%-hinted.ttf.fix $(BUILDDIR)/last-commit
 	cp $< $@
 	$(normalizeVersion)
+else
+$(STATICTTFS): %.ttf: $(BUILDDIR)/%-instance.ttf $(BUILDDIR)/last-commit
+	cp $< $@
+	$(normalizeVersion)
+endif
 
 $(BUILDDIR)/%-hinted.otf: $(BUILDDIR)/%-instance.otf
 	$(PSAUTOHINT) $(PSAUTOHINTFLAGS) $< -o $@
 
-$(BUILDDIR)/%-subr.otf: $(BUILDDIR)/%-hinted.otf
+$(BUILDDIR)/%-subr.otf: $(BUILDDIR)/%-$(if $(HINT),hinted,instance).otf
 	$(PYTHON) -m cffsubr -o $@ $<
 
 $(STATICOTFS): %.otf: $(BUILDDIR)/%-subr.otf $(BUILDDIR)/last-commit
