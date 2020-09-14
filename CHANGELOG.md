@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.4.2](https://github.com/theleagueof/fontship/compare/v0.4.1...v0.4.2) (2020-09-14)
+
+
+### Features
+
+* **rules:** Add mechanism to disable hinting ([#81](https://github.com/theleagueof/fontship/issues/81)) ([f65a96f](https://github.com/theleagueof/fontship/commit/f65a96fd676b74f4c5fa726007cad21732cf36bf))
+
 ### [0.4.1](https://github.com/theleagueof/fontship/compare/v0.4.0...v0.4.1) (2020-08-29)
 
 
