@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.4.3](https://github.com/theleagueof/fontship/compare/v0.4.2...v0.4.3) (2020-09-17)
+
+
+### Bug Fixes
+
+* **glyphs:** Enumerate all instances from sources even with spaces ([4b68de8](https://github.com/theleagueof/fontship/commit/4b68de8e106d3505ca310c80a582bb3b0ecc1d52))
+* **glyphs:** Map all instance names back to source files ([a4d3fce](https://github.com/theleagueof/fontship/commit/a4d3fce386d8b16feadf5be2b13b174e7382f7dd))
+
 ### [0.4.2](https://github.com/theleagueof/fontship/compare/v0.4.1...v0.4.2) (2020-09-14)
 
 
