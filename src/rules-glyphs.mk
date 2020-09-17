@@ -27,10 +27,6 @@ $(BUILDDIR)/%-VF-variable.otf: $(SOURCEDIR)/%.glyphs | $(BUILDDIR)
 	$(GFTOOLS) $(GFTOOLSFLAGS) fix-unwanted-tables --tables MVAR $@ ||:
 	$(GFTOOLS) $(GFTOOLSFLAGS) fix-dsig -f $@
 
-$(VARIABLEOTFS): %.otf: $(BUILDDIR)/%-variable.otf $(BUILDDIR)/last-commit
-	cp $< $@
-	$(normalizeVersion)
-
 # Glyphs -> Varibale TTF
 
 $(BUILDDIR)/%-VF-variable.ttf: $(SOURCEDIR)/%.glyphs | $(BUILDDIR)
@@ -45,10 +41,6 @@ $(BUILDDIR)/%-hinted.ttf: $(BUILDDIR)/%.ttf
 $(BUILDDIR)/%-hinted.ttf.fix: $(BUILDDIR)/%-hinted.ttf
 	$(GFTOOLS) $(GFTOOLSFLAGS) fix-hinting $<
 	$(GFTOOLS) $(GFTOOLSFLAGS) fix-gasp $@
-
-$(VARIABLETTFS): %.ttf: $(BUILDDIR)/%-variable-hinted.ttf.fix $(BUILDDIR)/last-commit
-	cp $< $@
-	$(normalizeVersion)
 
 # Glyphs -> Static OTF
 

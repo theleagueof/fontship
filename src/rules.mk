@@ -268,11 +268,23 @@ ifeq ($(HINT),true)
 $(STATICTTFS): %.ttf: $(BUILDDIR)/%-hinted.ttf.fix $(BUILDDIR)/last-commit
 	cp $< $@
 	$(normalizeVersion)
+
+$(VARIABLETTFS): %.ttf: $(BUILDDIR)/%-variable-hinted.ttf.fix $(BUILDDIR)/last-commit
+	cp $< $@
+	$(normalizeVersion)
 else
 $(STATICTTFS): %.ttf: $(BUILDDIR)/%-instance.ttf $(BUILDDIR)/last-commit
 	cp $< $@
 	$(normalizeVersion)
+
+$(VARIABLETTFS): %.ttf: $(BUILDDIR)/%.ttf $(BUILDDIR)/last-commit
+	cp $< $@
+	$(normalizeVersion)
 endif
+
+$(VARIABLEOTFS): %.otf: $(BUILDDIR)/%-variable.otf $(BUILDDIR)/last-commit
+	cp $< $@
+	$(normalizeVersion)
 
 $(BUILDDIR)/%-hinted.otf: $(BUILDDIR)/%-instance.otf
 	$(PSAUTOHINT) $(PSAUTOHINTFLAGS) $< -o $@
