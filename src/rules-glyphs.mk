@@ -1,4 +1,14 @@
 FONTMAKEFLAGS += --master-dir '{tmp}' --instance-dir '{tmp}'
+instanceToGlyphs = $(_DSF_$(subst -,,$(subst -instance,,$(basename $(notdir $@)))))
+
+define makeVars =
+from glyphsLib import GSFont
+for instance in GSFont("$(SOURCE)").instances: print("_DSI_{1}{0} = {3} {2}\n_DSF_{1}{0} = $(SOURCE)".format(instance.name.replace(" ", ""), instance.familyName.replace(" ", ""), instance.name, instance.familyName))
+endef
+
+_TMP = $(shell local tmp=$$(mktemp vars-XXXXXX.mk); echo $${tmp}; {$(foreach SOURCE,$(SOURCES_GLYPHS),$(PYTHON) -c '$(makeVars)';)} >> $${tmp})
+$(eval $(file < $(_TMP)))
+$(shell rm -f $(_TMP))
 
 %.glyphs: %.ufo
 	$(FONTMAKE) $(FONTMAKEFLAGS) -u $< -o glyphs --output-path $@
@@ -17,10 +27,6 @@ $(BUILDDIR)/%-VF-variable.otf: $(SOURCEDIR)/%.glyphs | $(BUILDDIR)
 	$(GFTOOLS) $(GFTOOLSFLAGS) fix-unwanted-tables --tables MVAR $@ ||:
 	$(GFTOOLS) $(GFTOOLSFLAGS) fix-dsig -f $@
 
-$(VARIABLEOTFS): %.otf: $(BUILDDIR)/%-variable.otf $(BUILDDIR)/last-commit
-	cp $< $@
-	$(normalizeVersion)
-
 # Glyphs -> Varibale TTF
 
 $(BUILDDIR)/%-VF-variable.ttf: $(SOURCEDIR)/%.glyphs | $(BUILDDIR)
@@ -36,16 +42,12 @@ $(BUILDDIR)/%-hinted.ttf.fix: $(BUILDDIR)/%-hinted.ttf
 	$(GFTOOLS) $(GFTOOLSFLAGS) fix-hinting $<
 	$(GFTOOLS) $(GFTOOLSFLAGS) fix-gasp $@
 
-$(VARIABLETTFS): %.ttf: $(BUILDDIR)/%-variable-hinted.ttf.fix $(BUILDDIR)/last-commit
-	cp $< $@
-	$(normalizeVersion)
-
 # Glyphs -> Static OTF
 
 define otf_instance_template ?=
 
-$$(BUILDDIR)/$1-%-instance.otf: $(SOURCEDIR)/$1.glyphs | $$(BUILDDIR)
-	$$(FONTMAKE) $$(FONTMAKEFLAGS) -g $$< -i "$$(call file2family,$1) $$*" -o otf --output-path $$@
+$$(BUILDDIR)/$1-%-instance.otf: $$$$(instanceToGlyphs) | $$(BUILDDIR)
+	$$(FONTMAKE) $$(FONTMAKEFLAGS) -g $$< -i "$$(_DSI_$1$$*)" -o otf --output-path $$@
 	$$(GFTOOLS) $$(GFTOOLSFLAGS) fix-dsig -f $$@
 
 endef
@@ -54,8 +56,8 @@ endef
 
 define ttf_instance_template ?=
 
-$$(BUILDDIR)/$1-%-instance.ttf: $(SOURCEDIR)/$1.glyphs | $$(BUILDDIR)
-	$$(FONTMAKE) $$(FONTMAKEFLAGS) -g $$< -i "$$(call file2family,$1) $$*" -o ttf --output-path $$@
+$$(BUILDDIR)/$1-%-instance.ttf: $$$$(instanceToGlyphs) | $$(BUILDDIR)
+	$$(FONTMAKE) $$(FONTMAKEFLAGS) -g $$< -i "$$(_DSI_$1$$*)" -o ttf --output-path $$@
 	$$(GFTOOLS) $$(GFTOOLSFLAGS) fix-dsig -f $$@
 
 endef

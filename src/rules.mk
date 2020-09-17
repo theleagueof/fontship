@@ -18,23 +18,23 @@ isVariable ?= $(and $(SOURCES_GLYPHS)$(SOURCES_DESIGNSPACE),true)
 # Read font name from metadata file or guess from repository name
 ifeq ($(CANONICAL),glyphs)
 FamilyNames ?= $(sort $(foreach SOURCE,$(SOURCES_GLYPHS),$(call glyphsFamilyNames,$(SOURCE))))
-FontStyles ?= $(sort $(foreach SOURCE,$(SOURCES_GLYPHS),$(call glyphsInstances,$(SOURCE))))
+FontInstances ?= $(sort $(foreach SOURCE,$(SOURCES_GLYPHS),$(call glyphsInstances,$(SOURCE))))
 FamilyMasters ?= $(sort $(foreach SOURCE,$(SOURCES_GLYPHS),$(call designspaceMasters,$(SOURCE))))
 endif
 
 ifeq ($(CANONICAL),sfd)
 FamilyNames ?= $(sort $(foreach SOURCE,$(SOURCES_SFD),$(call sfdFamilyNames,$(SOURCE))))
-# FontStyles ?=
+# FontInstances ?=
 endif
 
 ifeq ($(CANONICAL),ufo)
 ifeq ($(isVariable),true)
 FamilyNames ?= $(sort $(foreach SOURCE,$(SOURCES_DESIGNSPACE),$(call designspaceFamilyNames,$(SOURCE))))
-FontStyles ?= $(sort $(foreach SOURCE,$(SOURCES_DESIGNSPACE),$(call designspaceInstances,$(SOURCE))))
+FontInstances ?= $(sort $(foreach SOURCE,$(SOURCES_DESIGNSPACE),$(call designspaceInstances,$(SOURCE))))
 FamilyMasters ?= $(sort $(foreach SOURCE,$(SOURCES_DESIGNSPACE),$(call designspaceMasters,$(SOURCE))))
 else
 FamilyNames ?= $(sort $(foreach SOURCE,$(SOURCES_UFO),$(call ufoFamilyNames,$(SOURCE))))
-FontStyles ?= $(sort $(foreach SOURCE,$(SOURCES_UFO),$(call ufoInstances,$(SOURCE))))
+FontInstances ?= $(sort $(foreach SOURCE,$(SOURCES_UFO),$(call ufoInstances,$(SOURCE))))
 endif
 endif
 
@@ -52,7 +52,7 @@ VARIABLETTF ?= $(isVariable)
 VARIABLEWOFF ?= $(isVariable)
 VARIABLEWOFF2 ?= $(isVariable)
 
-INSTANCES ?= $(foreach FamilyName,$(FamilyNames),$(foreach STYLE,$(FontStyles),$(FamilyName)-$(STYLE)))
+INSTANCES ?= $(foreach FamilyName,$(FamilyNames),$(foreach STYLE,$(FontInstances),$(FamilyName)-$(STYLE)))
 
 GITVER = --tags --abbrev=6 --match='*[0-9].[0-9][0-9][0-9]'
 # Determine font version automatically from repository git tags
@@ -146,7 +146,7 @@ debug:
 	echo SOURCEDIR = $(SOURCEDIR)
 	echo ----------------------------
 	echo FamilyNames = $(FamilyNames)
-	echo FontStyles = $(FontStyles)
+	echo FontInstances = $(FontInstances)
 	echo FontVersion = $(FontVersion)
 	echo FontVersionMeta = $(FontVersionMeta)
 	echo GitVersion = $(GitVersion)
@@ -268,11 +268,23 @@ ifeq ($(HINT),true)
 $(STATICTTFS): %.ttf: $(BUILDDIR)/%-hinted.ttf.fix $(BUILDDIR)/last-commit
 	cp $< $@
 	$(normalizeVersion)
+
+$(VARIABLETTFS): %.ttf: $(BUILDDIR)/%-variable-hinted.ttf.fix $(BUILDDIR)/last-commit
+	cp $< $@
+	$(normalizeVersion)
 else
 $(STATICTTFS): %.ttf: $(BUILDDIR)/%-instance.ttf $(BUILDDIR)/last-commit
 	cp $< $@
 	$(normalizeVersion)
+
+$(VARIABLETTFS): %.ttf: $(BUILDDIR)/%.ttf $(BUILDDIR)/last-commit
+	cp $< $@
+	$(normalizeVersion)
 endif
+
+$(VARIABLEOTFS): %.otf: $(BUILDDIR)/%-variable.otf $(BUILDDIR)/last-commit
+	cp $< $@
+	$(normalizeVersion)
 
 $(BUILDDIR)/%-hinted.otf: $(BUILDDIR)/%-instance.otf
 	$(PSAUTOHINT) $(PSAUTOHINTFLAGS) $< -o $@
