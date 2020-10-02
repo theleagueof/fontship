@@ -298,11 +298,23 @@ $(STATICOTFS): %.otf: $(BUILDDIR)/%-subr.otf $(BUILDDIR)/last-commit
 
 # Webfont compressions
 
+ifeq ($(STATICOTF),true)
+
+%.woff: %.otf
+	$(SFNT2WOFF) $(SFNT2WOFFFLAGS) $<
+
+%.woff2: %.otf
+	$(WOFF2COMPRESS) $(WOFF2COMPRESSFLAGS) $<
+
+else
+
 %.woff: %.ttf
 	$(SFNT2WOFF) $(SFNT2WOFFFLAGS) $<
 
 %.woff2: %.ttf
 	$(WOFF2COMPRESS) $(WOFF2COMPRESSFLAGS) $<
+
+endif
 
 # Utility stuff
 
