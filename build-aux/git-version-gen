@@ -1,6 +1,6 @@
 #!/bin/sh
 # Print a version string.
-scriptversion=2012-03-18.17; # UTC
+scriptversion=2012-03-18.17 # UTC
 
 # Copyright (C) 2007-2012 Free Software Foundation, Inc.
 #
@@ -69,7 +69,6 @@ scriptversion=2012-03-18.17; # UTC
 # dist-hook:
 #	echo $(VERSION) > $(distdir)/.tarball-version
 
-
 me=$0
 
 version="git-version-gen $scriptversion
@@ -96,31 +95,45 @@ prefix=v
 match="v[0-9]*.[0-9]*.[0-9]*"
 
 while test $# -gt 0; do
-  case $1 in
-    --help) echo "$usage"; exit 0;;
-    --version) echo "$version"; exit 0;;
-    --match) shift; match="$1";;
-    --prefix) shift; prefix="$1";;
-    -*)
-      echo "$0: Unknown option '$1'." >&2
-      echo "$0: Try '--help' for more information." >&2
-      exit 1;;
-    *)
-      if test -z "$tarball_version_file"; then
-        tarball_version_file="$1"
-      elif test -z "$tag_sed_script"; then
-        tag_sed_script="$1"
-      else
-        echo "$0: extra non-option argument '$1'." >&2
-        exit 1
-      fi;;
-  esac
-  shift
+	case $1 in
+	--help)
+		echo "$usage"
+		exit 0
+		;;
+	--version)
+		echo "$version"
+		exit 0
+		;;
+	--match)
+		shift
+		match="$1"
+		;;
+	--prefix)
+		shift
+		prefix="$1"
+		;;
+	-*)
+		echo "$0: Unknown option '$1'." >&2
+		echo "$0: Try '--help' for more information." >&2
+		exit 1
+		;;
+	*)
+		if test -z "$tarball_version_file"; then
+			tarball_version_file="$1"
+		elif test -z "$tag_sed_script"; then
+			tag_sed_script="$1"
+		else
+			echo "$0: extra non-option argument '$1'." >&2
+			exit 1
+		fi
+		;;
+	esac
+	shift
 done
 
 if test -z "$tarball_version_file"; then
-    echo "$usage"
-    exit 1
+	echo "$usage"
+	exit 1
 fi
 
 tag_sed_script="${tag_sed_script:-s/x/x/}"
@@ -134,80 +147,82 @@ v_from_git=
 
 # First see if there is a tarball-only version file.
 # then try "git describe", then default.
-if test -f $tarball_version_file
-then
-    v=`cat $tarball_version_file` || v=
-    case $v in
-        *$nl*) v= ;; # reject multi-line output
-        [0-9]*) ;;
-        *) v= ;;
-    esac
-    test -z "$v" \
-        && echo "$0: WARNING: $tarball_version_file is missing or damaged" 1>&2
+if test -f "$tarball_version_file"; then
+	v=$(cat "$tarball_version_file") || v=
+	case $v in
+	*$nl*) v= ;; # reject multi-line output
+	[0-9]*) ;;
+	*) v= ;;
+	esac
+	test -z "$v" &&
+		echo "$0: WARNING: $tarball_version_file is missing or damaged" 1>&2
 fi
 
-if test -n "$v"
-then
-    : # use $v
+if test -n "$v"; then
+	: # use $v
 # Otherwise, if there is at least one git commit involving the working
 # directory, and "git describe" output looks sensible, use that to
 # derive a version string.
-elif test "`git log -1 --pretty=format:x . 2>/dev/null`" = x \
-    && v=`git describe --tags --abbrev=7 --match="$match" HEAD 2>/dev/null \
-          || git describe --tags --abbrev=7 --match="$prefix*" HEAD 2>/dev/null \
-          || git describe --tags --abbrev=7 HEAD 2>/dev/null \
-          || git log -1 --pretty=format:'v0-HEAD-%h' 2>/dev/null` \
-    && v=`printf '%s\n' "$v" | sed "$tag_sed_script"` \
-    && case $v in
-         $prefix[0-9]*) ;;
-         *) (exit 1) ;;
-       esac
-then
-    # Is this a new git that lists number of commits since the last
-    # tag or the previous older version that did not?
-    #   Newer: v6.10-77-g0f8faeb
-    #   Older: v6.10-g0f8faeb
-    case $v in
-        *-*-*) : git describe is okay three part flavor ;;
-        *-*)
-            : git describe is older two part flavor
-            # Recreate the number of commits and rewrite such that the
-            # result is the same as if we were using the newer version
-            # of git describe.
-            vtag=`echo "$v" | sed 's/-.*//'`
-            commit_list=`git rev-list "$vtag"..HEAD 2>/dev/null` \
-                || { commit_list=failed;
-                     echo "$0: WARNING: git rev-list failed" 1>&2; }
-            numcommits=`echo "$commit_list" | wc -l`
-            v=`echo "$v" | sed "s/\(.*\)-\(.*\)/\1-$numcommits-\2/"`;
-            test "$commit_list" = failed && v=UNKNOWN
-            ;;
-    esac
+elif test "$(git log -1 --pretty=format:x . 2>/dev/null)" = x &&
+	v=$(git describe --tags --abbrev=7 --match="$match" HEAD 2>/dev/null ||
+		git describe --tags --abbrev=7 --match="$prefix*" HEAD 2>/dev/null ||
+		git describe --tags --abbrev=7 HEAD 2>/dev/null ||
+		git log -1 --pretty=format:'v0-HEAD-%h' 2>/dev/null) &&
+	v=$(printf '%s\n' "$v" | sed "$tag_sed_script") &&
+	case $v in
+	${prefix}[0-9]*) ;;
+	*) (exit 1) ;;
+	esac; then
+	# Is this a new git that lists number of commits since the last
+	# tag or the previous older version that did not?
+	#   Newer: v6.10-77-g0f8faeb
+	#   Older: v6.10-g0f8faeb
+	case $v in
+	*-*-*) : git describe is okay three part flavor ;;
+	*-*)
+		: git describe is older two part flavor
+		# Recreate the number of commits and rewrite such that the
+		# result is the same as if we were using the newer version
+		# of git describe.
+		vtag=$(echo "$v" | sed 's/-.*//')
+		commit_list=$(git rev-list "$vtag"..HEAD 2>/dev/null) ||
+			{
+				commit_list=failed
+				echo "$0: WARNING: git rev-list failed" 1>&2
+			}
+		numcommits=$(echo "$commit_list" | wc -l)
+		v=$(echo "$v" | sed "s/\(.*\)-\(.*\)/\1-$numcommits-\2/")
+		test "$commit_list" = failed && v=UNKNOWN
+		;;
+	esac
 
-    v=`echo "$v" | sed 's/-/.r/'`;
-    v_from_git=1
+	v=$(echo "$v" | sed 's/-/.r/')
+	v_from_git=1
 else
-    v=UNKNOWN
+	v=UNKNOWN
 fi
 
-v=`echo "$v" |sed "s/^$prefix//"`
+v=$(echo "$v" | sed "s/^$prefix//")
 
 # Test whether to append the "-dirty" suffix only if the version
 # string we're using came from git.  I.e., skip the test if it's "UNKNOWN"
 # or if it came from .tarball-version.
 if test -n "$v_from_git"; then
-  # Don't declare a version "dirty" merely because a time stamp has changed.
-  git update-index --refresh > /dev/null 2>&1
+	# Don't declare a version "dirty" merely because a time stamp has changed.
+	git update-index --refresh >/dev/null 2>&1
 
-  dirty=`exec 2>/dev/null;git diff-index --name-only HEAD` || dirty=
-  case "$dirty" in
-      '') ;;
-      *) # Append the suffix only if there isn't one already.
-          case $v in
-            *-dirty) ;;
-            *) v="$v-dirty" ;;
-          esac ;;
-  esac
+	dirty=$(
+		exec 2>/dev/null
+		git diff-index --name-only HEAD
+	) || dirty=
+	case "$dirty" in
+	'') ;;
+	*) # Append the suffix only if there isn't one already.
+		case $v in
+		*-dirty) ;;
+		*) v="$v-dirty" ;;
+		esac ;;
+	esac
 fi
 
 # Omit the trailing newline, so that m4_esyscmd can use the result directly.

@@ -2,6 +2,7 @@
 
 [![Build Status](https://img.shields.io/github/workflow/status/theleagueof/fontship/Build?label=Build&logo=Github)](https://github.com/theleagueof/fontship/actions?workflow=Build)
 [![Docker Build Status](https://img.shields.io/docker/cloud/build/theleagueof/fontship?label=Docker%20Build&logo=Docker)](https://hub.docker.com/repository/docker/theleagueof/fontship/builds)
+[![GitHub Workflow Status](https://img.shields.io/github/workflow/status/theleagueof/fontship/Superlinter?label=Linter&logo=Github)](https://github.com/theleagueof/fontship/actions?workflow=Superlinter)
 [![Chat on Gitter](https://img.shields.io/gitter/room/theleagueof/tooling?color=blue&label=Chat&logo=Gitter)](https://gitter.im/theleagueof/tooling?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 A font development toolkit and collaborative work flow developed by [The

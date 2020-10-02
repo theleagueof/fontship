@@ -10,7 +10,12 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
       - name: Super-Linter
-        uses: github/super-linter@v3.6.0
+        uses: github/super-linter@v3
         env:
+          VALIDATE_BASH_EXEC: false
+          VALIDATE_DOCKERFILE_HADOLINT: false
           VALIDATE_EDITORCONFIG: false
+          VALIDATE_PYTHON_FLAKE8: false
+          VALIDATE_PYTHON_PYLINT: false
+          VALIDATE_SHELL_SHFMT: false
           GITHUB_TOKEN: ${{ github.token }}
