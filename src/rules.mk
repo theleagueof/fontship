@@ -298,7 +298,7 @@ $(STATICOTFS): %.otf: $(BUILDDIR)/%-subr.otf $(BUILDDIR)/last-commit
 
 # Webfont compressions
 
-ifeq ($(STATICOTF),true)
+ifneq ($(STATICTTF),true)
 
 %.woff: %.otf
 	$(SFNT2WOFF) $(SFNT2WOFFFLAGS) $<
