@@ -134,9 +134,9 @@ v_from_git=
 
 # First see if there is a tarball-only version file.
 # then try "git describe", then default.
-if test -f $tarball_version_file
+if test -f "$tarball_version_file"
 then
-    v=`cat $tarball_version_file` || v=
+    v=$(cat "$tarball_version_file") || v=
     case $v in
         *$nl*) v= ;; # reject multi-line output
         [0-9]*) ;;
@@ -152,14 +152,14 @@ then
 # Otherwise, if there is at least one git commit involving the working
 # directory, and "git describe" output looks sensible, use that to
 # derive a version string.
-elif test "`git log -1 --pretty=format:x . 2>/dev/null`" = x \
-    && v=`git describe --tags --abbrev=7 --match="$match" HEAD 2>/dev/null \
+elif test "$(git log -1 --pretty=format:x . 2>/dev/null)" = x \
+    && v=$(git describe --tags --abbrev=7 --match="$match" HEAD 2>/dev/null \
           || git describe --tags --abbrev=7 --match="$prefix*" HEAD 2>/dev/null \
           || git describe --tags --abbrev=7 HEAD 2>/dev/null \
-          || git log -1 --pretty=format:'v0-HEAD-%h' 2>/dev/null` \
-    && v=`printf '%s\n' "$v" | sed "$tag_sed_script"` \
+          || git log -1 --pretty=format:'v0-HEAD-%h' 2>/dev/null) \
+    && v=$(printf '%s\n' "$v" | sed "$tag_sed_script") \
     && case $v in
-         $prefix[0-9]*) ;;
+         ${prefix}[0-9]*) ;;
          *) (exit 1) ;;
        esac
 then
@@ -174,23 +174,23 @@ then
             # Recreate the number of commits and rewrite such that the
             # result is the same as if we were using the newer version
             # of git describe.
-            vtag=`echo "$v" | sed 's/-.*//'`
-            commit_list=`git rev-list "$vtag"..HEAD 2>/dev/null` \
+            vtag=$(echo "$v" | sed 's/-.*//')
+            commit_list=$(git rev-list "$vtag"..HEAD 2>/dev/null) \
                 || { commit_list=failed;
                      echo "$0: WARNING: git rev-list failed" 1>&2; }
-            numcommits=`echo "$commit_list" | wc -l`
-            v=`echo "$v" | sed "s/\(.*\)-\(.*\)/\1-$numcommits-\2/"`;
+            numcommits=$(echo "$commit_list" | wc -l)
+            v=$(echo "$v" | sed "s/\(.*\)-\(.*\)/\1-$numcommits-\2/");
             test "$commit_list" = failed && v=UNKNOWN
             ;;
     esac
 
-    v=`echo "$v" | sed 's/-/.r/'`;
+    v=$(echo "$v" | sed 's/-/.r/');
     v_from_git=1
 else
     v=UNKNOWN
 fi
 
-v=`echo "$v" |sed "s/^$prefix//"`
+v=$(echo "$v" |sed "s/^$prefix//")
 
 # Test whether to append the "-dirty" suffix only if the version
 # string we're using came from git.  I.e., skip the test if it's "UNKNOWN"
@@ -199,7 +199,7 @@ if test -n "$v_from_git"; then
   # Don't declare a version "dirty" merely because a time stamp has changed.
   git update-index --refresh > /dev/null 2>&1
 
-  dirty=`exec 2>/dev/null;git diff-index --name-only HEAD` || dirty=
+  dirty=$(exec 2>/dev/null;git diff-index --name-only HEAD) || dirty=
   case "$dirty" in
       '') ;;
       *) # Append the suffix only if there isn't one already.
