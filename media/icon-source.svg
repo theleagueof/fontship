@@ -1,35 +1,34 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<svg width="100%" height="100%" viewBox="0 0 142 107" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linecap:round;stroke-linejoin:round;">
-    <g transform="matrix(1,0,0,1,-611.049,-463.498)">
-        <g transform="matrix(1,0,0,1,194.561,171.385)">
-            <g transform="matrix(6.18575,0,0,6.18575,412.802,276.056)">
-                <rect x="1" y="3" width="15" height="13" style="fill:none;stroke:black;stroke-width:0.81px;"/>
+<?xml version="1.0" encoding="UTF-8"?>
+<svg clip-rule="evenodd" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round" version="1.1" viewBox="0 0 142 107" xml:space="preserve" xmlns="http://www.w3.org/2000/svg">
+    <g transform="translate(-611.05 -463.5)">
+        <g transform="translate(194.56 171.38)">
+            <g transform="matrix(6.1858 0 0 6.1858 412.8 276.06)">
+                <rect x="1" y="3" width="15" height="13" fill="none" stroke="#000" stroke-width=".81px"/>
             </g>
-        </g>
-        <g transform="matrix(1,0,0,1,194.561,171.385)">
-            <g transform="matrix(0.993636,0,0,0.993636,187.451,226.346)">
-                <text x="257.924px" y="136.834px" style="font-family:'FanwoodText-Italic', 'Fanwood Text';font-style:italic;font-size:80.539px;">F</text>
+        
+        
+            <g transform="matrix(.99364 0 0 .99364 187.45 226.35)">
+                <text x="257.924px" y="136.834px" font-family="'FanwoodText-Italic', 'Fanwood Text'" font-size="80.539px" font-style="italic">F</text>
             </g>
-        </g>
-        <g transform="matrix(1,0,0,1,194.561,171.385)">
-            <g transform="matrix(6.18575,0,0,6.18575,412.802,276.056)">
-                <path d="M16,8L20,8C20,8 20.263,8.263 20.633,8.633C22.148,10.148 23,12.204 23,14.348L23,16L16,16L16,8Z" style="fill-rule:nonzero;stroke:black;stroke-width:0.81px;"/>
+        
+        
+            <g transform="matrix(6.1858 0 0 6.1858 412.8 276.06)">
+                <path d="m16 8h4l0.633 0.633c1.515 1.515 2.367 3.571 2.367 5.715v1.652h-7v-8z" fill-rule="nonzero" stroke="#000" stroke-width=".81px"/>
             </g>
-        </g>
-        <g transform="matrix(1,0,0,1,194.561,171.385)">
-            <g transform="matrix(3.8821,0,0,3.8821,11.4031,219.603)">
-                <rect x="130.321" y="29.096" width="5.436" height="4.157"/>
+        
+        
+            <g transform="matrix(3.8821 0 0 3.8821 11.403 219.6)">
+                <rect x="130.32" y="29.096" width="5.436" height="4.157"/>
             </g>
-        </g>
-        <g transform="matrix(1,0,0,1,194.561,171.385)">
-            <g transform="matrix(1,0,0,1,193.303,93.5447)">
-                <path d="M268.027,281.483C268.647,283.155 268.985,284.963 268.985,286.849C268.985,295.384 262.056,302.314 253.521,302.314C244.986,302.314 238.056,295.384 238.056,286.849C238.056,284.963 238.395,283.155 239.014,281.483L268.027,281.483Z" style="stroke:black;stroke-width:5px;"/>
+        
+        
+            <g transform="translate(193.3 93.545)">
+                <path d="m268.03 281.48c0.62 1.672 0.958 3.48 0.958 5.366 0 8.535-6.929 15.465-15.464 15.465s-15.465-6.93-15.465-15.465c0-1.886 0.339-3.694 0.958-5.366h29.013z" stroke="#000" stroke-width="5px"/>
             </g>
-        </g>
-        <g transform="matrix(1,0,0,1,194.561,171.385)">
-            <g transform="matrix(6.18575,0,0,6.18575,413.439,265.957)">
-                <circle cx="18.5" cy="18.5" r="2.5" style="stroke:black;stroke-width:0.81px;"/>
+        
+        
+            <g transform="matrix(6.1858 0 0 6.1858 413.44 265.96)">
+                <circle cx="18.5" cy="18.5" r="2.5" stroke="#000" stroke-width=".81px"/>
             </g>
         </g>
     </g>
