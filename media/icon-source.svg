@@ -1,33 +1,33 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg clip-rule="evenodd" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round" version="1.1" viewBox="0 0 142 107" xml:space="preserve" xmlns="http://www.w3.org/2000/svg">
-    <g transform="translate(-611.05 -463.5)">
-        <g transform="translate(194.56 171.38)">
-            <g transform="matrix(6.1858 0 0 6.1858 412.8 276.06)">
+<svg width="142.2" height="106.25" clip-rule="evenodd" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round" version="1.1" viewBox="0 0 142.2 106.25" xml:space="preserve" xmlns="http://www.w3.org/2000/svg">
+    <g transform="translate(-608.42 -463.49)">
+        <g transform="translate(194.56,171.38)">
+            <g transform="matrix(6.1858 0 -.54119 6.1858 418.85 276.06)">
                 <rect x="1" y="3" width="15" height="13" fill="none" stroke="#000" stroke-width=".81px"/>
             </g>
         
         
             <g transform="matrix(.99364 0 0 .99364 187.45 226.35)">
-                <text x="257.924px" y="136.834px" font-family="'FanwoodText-Italic', 'Fanwood Text'" font-size="80.539px" font-style="italic">F</text>
+                <text x="257.92401" y="136.834" font-family="FanwoodText-Italic, 'Fanwood Text'" font-size="80.539px" font-style="italic">F</text>
             </g>
         
         
-            <g transform="matrix(6.1858 0 0 6.1858 412.8 276.06)">
-                <path d="m16 8h4l0.633 0.633c1.515 1.515 2.367 3.571 2.367 5.715v1.652h-7v-8z" fill-rule="nonzero" stroke="#000" stroke-width=".81px"/>
+            <g transform="matrix(6.1858 0 -.54119 6.1858 418.85 276.06)">
+                <path d="m16 8h4l0.633 0.633c1.515 1.515 2.367 3.571 2.367 5.715v1.652h-7z" fill-rule="nonzero" stroke="#000" stroke-width=".81px"/>
             </g>
         
         
-            <g transform="matrix(3.8821 0 0 3.8821 11.403 219.6)">
+            <g transform="matrix(3.8821 0 -.33964 3.8821 22.395 219.6)">
                 <rect x="130.32" y="29.096" width="5.436" height="4.157"/>
             </g>
         
         
-            <g transform="translate(193.3 93.545)">
-                <path d="m268.03 281.48c0.62 1.672 0.958 3.48 0.958 5.366 0 8.535-6.929 15.465-15.464 15.465s-15.465-6.93-15.465-15.465c0-1.886 0.339-3.694 0.958-5.366h29.013z" stroke="#000" stroke-width="5px"/>
+            <g transform="matrix(1 0 -.087489 1 215.32 93.545)">
+                <path d="m268.03 281.48c0.62 1.672 0.958 3.48 0.958 5.366 0 8.535-6.929 15.465-15.464 15.465s-15.465-6.93-15.465-15.465c0-1.886 0.339-3.694 0.958-5.366z" stroke="#000" stroke-width="5px"/>
             </g>
         
         
-            <g transform="matrix(6.1858 0 0 6.1858 413.44 265.96)">
+            <g transform="matrix(6.1858 0 -.54119 6.1858 420.38 265.96)">
                 <circle cx="18.5" cy="18.5" r="2.5" stroke="#000" stroke-width=".81px"/>
             </g>
         </g>
