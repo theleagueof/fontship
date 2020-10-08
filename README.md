@@ -5,10 +5,15 @@
 [![GitHub Workflow Status](https://img.shields.io/github/workflow/status/theleagueof/fontship/Superlinter?label=Linter&logo=Github)](https://github.com/theleagueof/fontship/actions?workflow=Superlinter)
 [![Chat on Gitter](https://img.shields.io/gitter/room/theleagueof/tooling?color=blue&label=Chat&logo=Gitter)](https://gitter.im/theleagueof/tooling?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
-## About
+## About Fontship
 
-A font development toolkit and collaborative work flow developed by [The
-League of Moveable Type](https://www.theleagueofmoveabletype.com/).
+Fontship is a toolkit for generating fonts and tooling for a collaborative workflow.
+
+Developed at [The League of Moveable Type](https://www.theleagueofmoveabletype.com/) with the needs of open-source font projects in mind, Fontship automates the process of turning your design sources into production ready font files and bundling them for publishing. Yes you could take all the same steps manually. Yes you could write your own scripts to get the same work done. What Fontship brings to the table is a complete bundle of all the tooling you need to gather with most bits wired up already.
+
+One building fonts from sources is completely automated, automatic builds from CI and publishing releases is just a small step away. As an added bonus, everything is carefully organized to make asynchronous remote collaboration via version control systems (such as Git) as easy as possible. Designers don’t even need to be using the same design tools!
+
+Almost every aspect of the build steps and workflow can be tweaked on a per-project basis, but out of the box settings should work to build most font projects.
 
 ## Setup
 
