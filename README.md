@@ -1,25 +1,33 @@
-# Fontship
+# ![Fontship Logo](https://raw.githubusercontent.com/theleagueof/fontship/master/media/logo.svg)
 
 [![Build Status](https://img.shields.io/github/workflow/status/theleagueof/fontship/Build?label=Build&logo=Github)](https://github.com/theleagueof/fontship/actions?workflow=Build)
-[![Docker Build Status](https://img.shields.io/docker/cloud/build/theleagueof/fontship?label=Docker%20Build&logo=Docker)](https://hub.docker.com/repository/docker/theleagueof/fontship/builds)
+[![Docker Build Status](https://img.shields.io/docker/cloud/build/theleagueof/fontship?label=Docker&logo=Docker)](https://hub.docker.com/repository/docker/theleagueof/fontship/builds)
 [![GitHub Workflow Status](https://img.shields.io/github/workflow/status/theleagueof/fontship/Superlinter?label=Linter&logo=Github)](https://github.com/theleagueof/fontship/actions?workflow=Superlinter)
+[![Latest Release](https://img.shields.io/github/v/release/theleagueof/fontship?label=Release&logo=dependabot)](https://github.com/theleagueof/fontship/releases/latest)
 [![Chat on Gitter](https://img.shields.io/gitter/room/theleagueof/tooling?color=blue&label=Chat&logo=Gitter)](https://gitter.im/theleagueof/tooling?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
-A font development toolkit and collaborative work flow developed by [The
-League of Moveable Type](https://www.theleagueofmoveabletype.com/).
+## About Fontship
+
+Fontship is a toolkit for generating fonts and tooling for a collaborative workflow.
+
+Developed at [The League of Moveable Type](https://www.theleagueofmoveabletype.com/) with the needs of open-source font projects in mind, Fontship automates the process of turning your design sources into production ready font files and bundling them for publishing. Yes you could take all the same steps manually. Yes you could write your own scripts to get the same work done. What Fontship brings to the table is a complete bundle of all the tooling you need to gather with most bits wired up already.
+
+One building fonts from sources is completely automated, automatic builds from CI and publishing releases is just a small step away. As an added bonus, everything is carefully organized to make asynchronous remote collaboration via version control systems (such as Git) as easy as possible. Designers don’t even need to be using the same design tools!
+
+Almost every aspect of the build steps and workflow can be tweaked on a per-project basis, but out of the box settings should work to build most font projects.
 
 ## Setup
 
 Fontship can be used in any of four different ways:
 
 1. Remotely via a CI runner that responds to events in a remote Git repository.
-2. Locally via an all-inclusive Docker image for low hastle setup.
+2. Locally via an all-inclusive Docker image for low hassle setup.
 3. Locally via a regular system utility install (provided all the required dependencies are also installed).
 4. By including Fontship’s rules into your project’s existing Makefile (no installation of the CLI tool is required, but dependencies must be provided somehow).
 
 ### CI Setup
 
-Build your fonts without installing or running anything locally! Just push your sources to a repmote Git repository and let Fontship do the rest.
+Build your fonts without installing or running anything locally! Just push your sources to a remote Git repository and let Fontship do the rest.
 
 For use with Github Actions, add a configuration file to your repository such as `.github/workflow/fontship.yml`:
 
@@ -41,7 +49,7 @@ jobs:
         uses: docker://theleagueof/fontship:latest
 ```
 
-Note that this example workflow used the syntax to pull a container from Docker Hub because it is much faster to pull an existing container than to use Github Action's default method which rebuilds a new container at runtime on every invocation. If you'd prefer to wait the couple extra minutes you may also use the default invocation suggested by Github by substituting this line:
+Note that this example workflow used the syntax to pull a container from Docker Hub because it is much faster to pull an existing container than to use Github Action’s default method which rebuilds a new container at runtime on every invocation. If you’d prefer to wait the couple extra minutes you may also use the default invocation suggested by Github by substituting this line:
 
 ```yaml
         uses: docker://theleagueof/fontship:latest
@@ -103,13 +111,13 @@ $ sudo make install
 
 ### Makefile Setup
 
-If ⓐ your system has all the dependencies and ⓑ your project already has a `Makefile`, you can extend your existing makefile with fontship’s targets my including it:
+If ⓐ your system has all the dependencies and ⓑ your project already has a `Makefile`, you can extend your existing makefile with Fontship’s targets my including it:
 
 ```makefile
 include path/to/fontship/src/rules.mk
 ```
 
-This may reference a path to fontship as a git submodule (useful for locking the fontship version to your project’s build), or just a relative path to somewhere you have the fontship source.
+This may reference a path to Fontship as a git submodule (useful for locking the Fontship version to your project’s build), or just a relative path to somewhere you have the Fontship source.
 
 Note: When using this mode, the CLI tool is not available but your project’s Makefile will be extended with all the targets it uses. Instead of running for example `fontship make otf`, just run `make otf`.
 
