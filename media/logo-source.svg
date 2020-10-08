@@ -1,35 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg width="470.25" height="112.35" clip-rule="evenodd" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round" version="1.1" viewBox="0 0 470.25 112.35" xml:space="preserve" xmlns="http://www.w3.org/2000/svg">
-    <g transform="translate(-608.42 -463.49)">
-        <g transform="translate(194.56,171.38)">
-            <g transform="matrix(6.1858 0 -.54119 6.1858 418.85 276.06)">
-                <rect x="1" y="3" width="15" height="13" fill="none" stroke="#000" stroke-width=".81px"/>
-            </g>
-        
-        
-            <g transform="matrix(.99364 0 0 .99364 187.45 226.35)">
+    <g id="F" transform="matrix(.99364 0 0 .99364 -226.41 -65.76)">
                 <text x="257.92401" y="136.834" font-family="FanwoodText-Italic, 'Fanwood Text'" font-size="80.539px" font-style="italic">F</text>
-            </g>
-        
-        
-            <g transform="matrix(6.1858 0 -.54119 6.1858 418.85 276.06)">
+            </g><g id="truck"><g transform="matrix(6.1858 0 -.54119 6.1858 4.99 -16.05)" fill="none">
+                <rect id="cargo" x="1" y="3" width="15" height="13" fill="none" stroke="#000"/>
+            </g><g transform="matrix(6.1858 0 -.54119 6.1858 4.99 -16.05)">
                 <path d="m16 8h4l0.633 0.633c1.515 1.515 2.367 3.571 2.367 5.715v1.652h-7z" fill-rule="nonzero" stroke="#000" stroke-width=".81px"/>
-            </g>
-        
-        
-            <g transform="matrix(3.8821 0 -.33964 3.8821 22.395 219.6)">
+            </g><g transform="matrix(3.8821 0 -.33964 3.8821 -391.46 -72.51)">
                 <rect x="130.32" y="29.096" width="5.436" height="4.157"/>
-            </g>
-        
-        
-            <g transform="matrix(1 0 -.087489 1 215.32 93.545)">
+            </g><g transform="matrix(1 0 -.087489 1 -198.54 -198.56)">
                 <path d="m268.03 281.48c0.62 1.672 0.958 3.48 0.958 5.366 0 8.535-6.929 15.465-15.464 15.465s-15.465-6.93-15.465-15.465c0-1.886 0.339-3.694 0.958-5.366z" stroke="#000" stroke-width="5px"/>
-            </g>
-        
-        
-            <g transform="matrix(6.1858 0 -.54119 6.1858 420.38 265.96)">
+            </g><g transform="matrix(6.1858 0 -.54119 6.1858 6.52 -26.15)">
                 <circle cx="18.5" cy="18.5" r="2.5" stroke="#000" stroke-width=".81px"/>
-            </g>
-        <g stroke-width=".99364" aria-label="F"><path d="m549.7 374.84v2.6992c0.55353 0.0121 0.79366 9e-3 1.4844 0.0273 2.0274 0.1067 3.3331 0.16016 3.9199 0.16016 0.32011 0 0.53393-0.0535 0.64063-0.16016 0.16005-0.10671 0.24023-0.24034 0.24023-0.40039 0.0533-0.2134 0.0801-0.5589 0.0801-1.0391 0-0.53352-0.0534-0.88097-0.16016-1.041-0.1067-0.16005-0.37397-0.24023-0.80078-0.24023h-5.3613c-0.0168 0-0.0272-5e-3 -0.043-6e-3z" stroke-width=".99364"/></g><text x="569.80811" y="377.58521" fill="#000000" font-family="sans-serif" font-size="96px" style="line-height:1.25" xml:space="preserve"><tspan x="569.80811" y="377.58521" font-family="Fanwood" font-size="96px" font-style="italic">Fontship</tspan></text></g>
-    </g>
+            </g><g transform="translate(-413.86,-292.11)" stroke-width=".99364" aria-label="F"><path d="m549.7 374.84v2.6992c0.55353 0.0121 0.79366 9e-3 1.4844 0.0273 2.0274 0.1067 3.3331 0.16016 3.9199 0.16016 0.32011 0 0.53393-0.0535 0.64063-0.16016 0.16005-0.10671 0.24023-0.24034 0.24023-0.40039 0.0533-0.2134 0.0801-0.5589 0.0801-1.0391 0-0.53352-0.0534-0.88097-0.16016-1.041-0.1067-0.16005-0.37397-0.24023-0.80078-0.24023h-5.3613c-0.0168 0-0.0272-5e-3 -0.043-6e-3z" stroke-width=".99364"/></g></g><text id="Fontship" x="155.9481" y="85.475204" fill="#000000" font-family="sans-serif" font-size="96px" style="line-height:1.25" xml:space="preserve"><tspan x="155.9481" y="85.475204" font-family="Fanwood" font-size="96px" font-style="italic">Fontship</tspan></text>
 </svg>
