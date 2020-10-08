@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.5.0](https://github.com/theleagueof/fontship/compare/v0.4.3...v0.5.0) (2020-10-08)
+
+
+### Features
+
+* **woff:** Generate webfonts from OTF if possible, fallback to TTF ([#85](https://github.com/theleagueof/fontship/issues/85)) ([dfcc300](https://github.com/theleagueof/fontship/commit/dfcc3000c965a90c8ed1bb31dabe13928de3512b))
+* Add logo svg files ([cc9a213](https://github.com/theleagueof/fontship/commit/cc9a2139e0a43a289e0b9712af405a550d1f3b11))
+* Add source logo vector file ([62d4e9f](https://github.com/theleagueof/fontship/commit/62d4e9f4222f09ad023e8779d14d2a0bfb537cb5))
+
 ### [0.4.3](https://github.com/theleagueof/fontship/compare/v0.4.2...v0.4.3) (2020-09-17)
 
 
