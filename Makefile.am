@@ -48,6 +48,15 @@ release-preview:
 .PHONY: release
 release: tagrelease
 
+media/logo.svg: media/logo-source.svg
+	cp $< $@
+
+media/emblum.svg: media/logo-source.svg
+	cp $< $@
+
+media/icon.svg: media/logo-source.svg
+	cp $< $@
+
 fontship-%.md: CHANGELOG.md
 	sed -e '/\.\.\.v$*/,/\.\.\.v/!d' $< | \
 		sed -e '1,3d;N;$$!P;$$!D;$$d' > $@
