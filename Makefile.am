@@ -48,6 +48,42 @@ release-preview:
 .PHONY: release
 release: tagrelease
 
+_svg_cleanup = select-all;object-to-path;vacuum-defs
+_scour_args = --quiet --set-precision=4 --remove-metadata --enable-id-stripping --strip-xml-prolog --strip-xml-space --no-line-breaks --no-renderer-workaround
+
+.PHONY: media
+media: media/logo.svg media/emblum.svg media/icon.svg media_badge
+
+media/logo.svg: media/logo-source.svg
+	inkscape --batch-process \
+		--actions "select-by-id:F;EditDelete;$(_svg_cleanup)" \
+		$< -o $@
+	scour $(_scour_args) $@ /dev/stdout | sponge $@
+
+media/emblum.svg: media/logo-source.svg
+	inkscape --batch-process \
+		--actions "select-by-id:Fontship;EditDelete;select-by-id:truck;FitCanvasToSelection;$(_svg_cleanup)" \
+		$< -o $@
+	scour $(_scour_args) $@ /dev/stdout | sponge $@
+
+media/icon.svg: media/logo-source.svg
+	inkscape --batch-process \
+		--actions "select-by-id:F,Fontship;EditDelete;select-by-id:truck;FitCanvasToSelection;select-by-id:cargo;object-set-attribute:fill,#000;$(_svg_cleanup)" \
+		$< -o $@
+	scour $(_scour_args) $@ /dev/stdout | sponge $@
+
+media/badge.svg: media/logo-source.svg
+	inkscape --batch-process \
+		--actions "select-by-id:F,Fontship;EditDelete;select-by-id:truck;FitCanvasToSelection;$(_svg_cleanup);select-all;object-set-attribute:stroke,#FFF;object-set-attribute:fill,#FFF" \
+		$< -o $@
+	scour $(_scour_args) $@ /dev/stdout | sponge $@
+
+.PHONY: media_badge
+media_badge: media/badge.svg
+	@echo =================
+	@svgo --datauri base64 --multipass --quiet -i $< -o -
+	@echo =================
+
 fontship-%.md: CHANGELOG.md
 	sed -e '/\.\.\.v$*/,/\.\.\.v/!d' $< | \
 		sed -e '1,3d;N;$$!P;$$!D;$$d' > $@
