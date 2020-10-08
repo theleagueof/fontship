@@ -20,13 +20,13 @@ Almost every aspect of the build steps and workflow can be tweaked on a per-proj
 Fontship can be used in any of four different ways:
 
 1. Remotely via a CI runner that responds to events in a remote Git repository.
-2. Locally via an all-inclusive Docker image for low hastle setup.
+2. Locally via an all-inclusive Docker image for low hassle setup.
 3. Locally via a regular system utility install (provided all the required dependencies are also installed).
 4. By including Fontship’s rules into your project’s existing Makefile (no installation of the CLI tool is required, but dependencies must be provided somehow).
 
 ### CI Setup
 
-Build your fonts without installing or running anything locally! Just push your sources to a repmote Git repository and let Fontship do the rest.
+Build your fonts without installing or running anything locally! Just push your sources to a remote Git repository and let Fontship do the rest.
 
 For use with Github Actions, add a configuration file to your repository such as `.github/workflow/fontship.yml`:
 
@@ -48,7 +48,7 @@ jobs:
         uses: docker://theleagueof/fontship:latest
 ```
 
-Note that this example workflow used the syntax to pull a container from Docker Hub because it is much faster to pull an existing container than to use Github Action's default method which rebuilds a new container at runtime on every invocation. If you'd prefer to wait the couple extra minutes you may also use the default invocation suggested by Github by substituting this line:
+Note that this example workflow used the syntax to pull a container from Docker Hub because it is much faster to pull an existing container than to use Github Action’s default method which rebuilds a new container at runtime on every invocation. If you’d prefer to wait the couple extra minutes you may also use the default invocation suggested by Github by substituting this line:
 
 ```yaml
         uses: docker://theleagueof/fontship:latest
@@ -110,13 +110,13 @@ $ sudo make install
 
 ### Makefile Setup
 
-If ⓐ your system has all the dependencies and ⓑ your project already has a `Makefile`, you can extend your existing makefile with fontship’s targets my including it:
+If ⓐ your system has all the dependencies and ⓑ your project already has a `Makefile`, you can extend your existing makefile with Fontship’s targets my including it:
 
 ```makefile
 include path/to/fontship/src/rules.mk
 ```
 
-This may reference a path to fontship as a git submodule (useful for locking the fontship version to your project’s build), or just a relative path to somewhere you have the fontship source.
+This may reference a path to Fontship as a git submodule (useful for locking the Fontship version to your project’s build), or just a relative path to somewhere you have the Fontship source.
 
 Note: When using this mode, the CLI tool is not available but your project’s Makefile will be extended with all the targets it uses. Instead of running for example `fontship make otf`, just run `make otf`.
 
