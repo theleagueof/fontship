@@ -6,7 +6,7 @@ from glyphsLib import GSFont
 for instance in GSFont("$(SOURCE)").instances: print("_DSI_{1}{0} = {3} {2}\n_DSF_{1}{0} = $(SOURCE)".format(instance.name.replace(" ", ""), instance.familyName.replace(" ", ""), instance.name, instance.familyName))
 endef
 
-_TMP = $(shell local tmp=$$(mktemp vars-XXXXXX.mk); echo $${tmp}; {$(foreach SOURCE,$(SOURCES_GLYPHS),$(PYTHON) -c '$(makeVars)';)} >> $${tmp})
+_TMP := $(shell local tmp=$$(mktemp vars-XXXXXX.mk); echo $${tmp}; {$(foreach SOURCE,$(SOURCES_GLYPHS),$(PYTHON) -c '$(makeVars)';)} >> $${tmp})
 $(eval $(file < $(_TMP)))
 $(shell rm -f $(_TMP))
 

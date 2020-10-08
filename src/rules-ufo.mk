@@ -11,7 +11,7 @@ for instance in designspace.instances: print("_DSI_{1}{0} = {1} {2}\n_DSF_{1}{0}
 endef
 
 ifneq ($(SOURCES_DESIGNSPACE),)
-_TMP = $(shell local tmp=$$(mktemp vars-XXXXXX.mk); echo $${tmp}; {$(foreach SOURCE,$(SOURCES_DESIGNSPACE),$(PYTHON) -c '$(makeVars)';)} >> $${tmp})
+_TMP := $(shell local tmp=$$(mktemp vars-XXXXXX.mk); echo $${tmp}; {$(foreach SOURCE,$(SOURCES_DESIGNSPACE),$(PYTHON) -c '$(makeVars)';)} >> $${tmp})
 $(eval $(file < $(_TMP)))
 $(shell rm -f $(_TMP))
 endif
