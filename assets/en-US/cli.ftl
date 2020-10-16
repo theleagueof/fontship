@@ -15,7 +15,7 @@ help-flags-verbose =
   Enable extra verbose output from tooling
 
 help-subcommand-make =
-  Build specified target(s)
+  Build specified target(s) with `make`
 
 help-subcommand-make-target =
   Target as defined in Fontship or project rules
@@ -31,3 +31,15 @@ error-invalid-language =
 
 error-invalid-resources =
   Could not find valid BCP47 resource files.
+
+welcome =
+  Welcome to Fontship version { $version }!
+
+make-header =
+  Building target(s) with `make`…
+
+setup-header =
+  Configuring repository for use with Fontship…
+
+status-header =
+  Project status report…

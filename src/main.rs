@@ -12,6 +12,7 @@ fn main() -> Result<(), Box<dyn error::Error>> {
     CONFIG.defaults()?;
     CONFIG.from_env()?;
     CONFIG.from_args(&args)?;
+    fontship::show_welcome();
     match args.subcommand {
         Subcommand::Make { target } => make::run(target),
         Subcommand::Setup {} => setup::run(),

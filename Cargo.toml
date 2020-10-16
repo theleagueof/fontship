@@ -10,6 +10,7 @@ license = "AGPL-3"
 build = "build.rs"
 
 [dependencies]
+colored = "1.9.3"
 config = "0.10.1"
 fluent = "0.12.0"
 fluent-fallback = "0.0.4"

@@ -6,6 +6,7 @@ type Result<T> = result::Result<T, Box<dyn error::Error>>;
 
 /// Build specified target(s)
 pub fn run(target: Vec<String>) -> Result<()> {
+    crate::header("make-header");
     let mut process = Exec::cmd("make").args(&target);
     if CONFIG.get_bool("debug")? {
         process = process.env("DEBUG", "true");

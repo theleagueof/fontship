@@ -2,6 +2,7 @@
 extern crate lazy_static;
 
 use crate::config::CONFIG;
+use colored::Colorize;
 use i18n::LocalText;
 use std::{error, fmt};
 
@@ -49,4 +50,16 @@ impl error::Error for Error {
     fn description(&self) -> &str {
         &self.details
     }
+}
+
+/// Output welcome header at start of run before moving on to actual commands
+pub fn show_welcome() {
+    let welcome = LocalText::new("welcome").arg("version", VERSION);
+    eprintln!("{} {}", "┏━".cyan(), welcome.fmt().cyan());
+}
+
+/// Output header before starting work on a subcommand
+pub fn header(key: &str) {
+    let text = LocalText::new(key);
+    eprintln!("{} {}", "┣━".cyan(), text.fmt().yellow());
 }
