@@ -3,19 +3,31 @@ use fontship::cli::{Cli, Subcommand};
 use fontship::config::CONFIG;
 use fontship::VERSION;
 use fontship::{make, setup, status};
-use std::error;
+use std::{env, error};
 
 fn main() -> Result<(), Box<dyn error::Error>> {
-    let app = Cli::into_app().version(VERSION);
-    let matches = app.get_matches();
-    let args = Cli::from_arg_matches(&matches);
     CONFIG.defaults()?;
     CONFIG.from_env()?;
-    CONFIG.from_args(&args)?;
-    fontship::show_welcome();
-    match args.subcommand {
-        Subcommand::Make { target } => make::run(target),
-        Subcommand::Setup { path } => setup::run(path),
-        Subcommand::Status {} => status::run(),
+    // Workaround for Github Actions usage to make the prebuilt Docker image
+    // invocation interchangeable with the default run-time built invocation we
+    // need to set some default arguments. These are not used by the regular CLI.
+    // See the action.yml file for matching arguments for run-time invocations.
+    let invocation: Vec<String> = env::args().collect();
+    if status::is_gha()? && invocation.len() == 1 {
+        CONFIG.set_str("language", "en-US")?;
+        fontship::show_welcome();
+        let target = vec![String::from("_gha"), String::from("dist")];
+        make::run(target)
+    } else {
+        let app = Cli::into_app().version(VERSION);
+        let matches = app.get_matches();
+        let args = Cli::from_arg_matches(&matches);
+        CONFIG.from_args(&args)?;
+        fontship::show_welcome();
+        match args.subcommand {
+            Subcommand::Make { target } => make::run(target),
+            Subcommand::Setup { path } => setup::run(path),
+            Subcommand::Status {} => status::run(),
+        }
     }
 }
