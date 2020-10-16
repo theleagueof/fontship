@@ -38,8 +38,32 @@ welcome =
 make-header =
   Building target(s) with `make`…
 
+status-true =
+  Yes
+
+status-false =
+  No
+
+status-good =
+  Everything ship shape!
+
+status-bad =
+  Not everything is seaworthy, run `fontship setup`.
+
 setup-header =
   Configuring repository for use with Fontship…
 
 status-header =
   Project status report…
+
+status-is-repo =
+  Are we in a Git repository?
+
+status-is-writable =
+  Can we write to the project base directory?
+
+status-is-make-executable =
+ Can we execute the system's `make`?
+
+status-is-make-gnu =
+  Is the system's `make` GNU Make?
