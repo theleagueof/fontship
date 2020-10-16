@@ -29,19 +29,19 @@ pub struct Cli {
 
 #[derive(Clap, Debug)]
 pub enum Subcommand {
-    /// Build specified target(s)
+    /// Build specified target(s) with `make`
     Make {
         /// Target as defined in Fontship or project rules
         target: Vec<String>,
     },
 
     /// Configure a font project repository
-    Setup {},
-
-    /// Show information about setup and build status
-    Status {
+    Setup {
         /// Path to project repository
         #[clap(default_value = "./")]
         path: path::PathBuf,
     },
+
+    /// Show information about setup and build status
+    Status {},
 }
