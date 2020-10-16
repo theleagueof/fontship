@@ -7,7 +7,7 @@ use std::path;
 #[clap(bin_name = "fontship")]
 #[clap(setting = AppSettings::InferSubcommands)]
 pub struct Cli {
-    /// Enable debug mode flags
+    /// Enable extra debug output from tooling
     #[clap(short, long)]
     pub debug: bool,
 
@@ -35,7 +35,7 @@ pub enum Subcommand {
         target: Vec<String>,
     },
 
-    /// Setup Fontship for use on a new Font project
+    /// Configure a font project repository
     Setup {},
 
     /// Show information about setup and build status

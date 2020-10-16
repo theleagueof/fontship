@@ -1,3 +1,4 @@
+use crate::i18n::LocalText;
 use git2::Repository;
 use std::{error, fs, io, path, result};
 
@@ -12,12 +13,12 @@ pub fn run(path: path::PathBuf) -> Result<()> {
             Ok(_repo) => Ok(()),
             Err(_error) => Err(Box::new(io::Error::new(
                 io::ErrorKind::InvalidInput,
-                "No Git repository detected!",
+                LocalText::new("setup-error-not-git").fmt(),
             ))),
         },
         false => Err(Box::new(io::Error::new(
             io::ErrorKind::InvalidInput,
-            "Not a directory",
+            LocalText::new("setup-error-not-dir").fmt(),
         ))),
     }
 }
