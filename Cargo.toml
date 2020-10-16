@@ -10,6 +10,7 @@ license = "AGPL-3"
 build = "build.rs"
 
 [dependencies]
+lazy_static = "1.4.0"
 
 [dependencies.clap]
 version = "3.0.0-beta.2"
