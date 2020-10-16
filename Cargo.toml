@@ -1,0 +1,11 @@
+[package]
+name = "fontship"
+version = "0.5.0"
+authors = ["Caleb Maclennan <caleb@alerque.com>"]
+edition = "2018"
+description = "A font development toolkit and collaborative work flow"
+homepage = "https://github.com/theleagueof/fontship"
+repository = "https://github.com/theleagueof/fontship"
+license = "AGPL-3"
+
+[dependencies]
