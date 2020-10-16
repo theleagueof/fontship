@@ -25,6 +25,12 @@ pub struct Cli {
 
 #[derive(Clap, Debug)]
 pub enum Subcommand {
+    /// Build specified target(s)
+    Make {
+        /// Target as defined in Fontship or project rules
+        target: Vec<String>,
+    },
+
     /// Setup Fontship for use on a new Font project
     Setup {},
 
