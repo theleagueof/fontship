@@ -1,7 +1,7 @@
 use clap::{FromArgMatches, IntoApp};
 use fontship::cli::{Cli, Subcommand};
-use fontship::setup;
 use fontship::VERSION;
+use fontship::{setup, status};
 use std::error;
 
 fn main() -> Result<(), Box<dyn error::Error>> {
@@ -10,5 +10,6 @@ fn main() -> Result<(), Box<dyn error::Error>> {
     let args = Cli::from_arg_matches(&matches);
     match args.subcommand {
         Subcommand::Setup {} => setup::run(),
+        Subcommand::Status { path } => status::run(path),
     }
 }

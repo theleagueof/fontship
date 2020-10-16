@@ -1,4 +1,5 @@
 use clap::{AppSettings, Clap};
+use std::path;
 
 /// The command line interface to Fontship,
 /// A font development toolkit and collaborative work flow.
@@ -26,4 +27,11 @@ pub struct Cli {
 pub enum Subcommand {
     /// Setup Fontship for use on a new Font project
     Setup {},
+
+    /// Show information about setup and build status
+    Status {
+        /// Path to project repository
+        #[clap(default_value = "./")]
+        path: path::PathBuf,
+    },
 }
