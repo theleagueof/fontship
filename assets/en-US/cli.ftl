@@ -59,6 +59,9 @@ status-header =
 status-is-repo =
   Are we in a Git repository?
 
+status-is-gha =
+  Are we running as a GitHub Action?
+
 status-is-writable =
   Can we write to the project base directory?
 

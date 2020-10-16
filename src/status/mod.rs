@@ -32,6 +32,16 @@ fn run_as() -> RunAsMode {
     RunAsMode::RunAsDocker {}
 }
 
+/// Check to see if we're running in GitHub Actions
+pub fn is_gha() -> Result<bool> {
+    let ret = match env::var("GITHUB_ACTIONS") {
+        Ok(_) => true,
+        Err(_) => false,
+    };
+    display_check("status-is-gha", ret);
+    Ok(ret)
+}
+
 /// Evaluate whether this project is properly configured
 pub fn is_setup() -> Result<bool> {
     let results = Arc::new(RwLock::new(Vec::new()));
