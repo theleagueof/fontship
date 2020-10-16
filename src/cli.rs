@@ -17,4 +17,13 @@ pub struct Cli {
     /// Enable extra verbose output from tooling
     #[clap(short, long)]
     pub verbose: bool,
+
+    #[clap(subcommand)]
+    pub subcommand: Subcommand,
+}
+
+#[derive(Clap, Debug)]
+pub enum Subcommand {
+    /// Setup Fontship for use on a new Font project
+    Setup {},
 }
