@@ -4,6 +4,7 @@ use std::{error, fs, io, path, result};
 
 type Result<T> = result::Result<T, Box<dyn error::Error>>;
 
+// FTL: help-subcommand-setup
 /// Setup Fontship for use on a new Font project
 pub fn run(path: path::PathBuf) -> Result<()> {
     crate::header("setup-header");

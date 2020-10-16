@@ -21,7 +21,7 @@ help-subcommand-make-target =
   Target as defined in Fontship or project rules
 
 help-subcommand-setup =
-  Configure a font project repository
+  Show status information about setup, configuration, and build state
 
 help-subcommand-setup-path =
   Path to font project repository
