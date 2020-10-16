@@ -1,3 +1,5 @@
+$(and $(word 2,$(MAKEFILE_LIST)),$(error This is not the makefile you should include in your project to run Fontship, please use 'rules/fontship.mk' instead.))
+
 licensedir = $(datarootdir)/licenses/fontship
 datadir = $(datarootdir)/fontship
 
