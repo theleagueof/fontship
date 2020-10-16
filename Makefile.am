@@ -1,12 +1,14 @@
 $(and $(word 2,$(MAKEFILE_LIST)),$(error This is not the makefile you should include in your project to run Fontship, please use 'rules/fontship.mk' instead.))
 
-licensedir = $(datarootdir)/licenses/fontship
-datadir = $(datarootdir)/fontship
+_fontship = $(shell sed -e "$(program_transform_name)" <<< fontship)
 
-bin_SCRIPTS = fontship
-python_PYTHON = fontship.py
+licensedir = $(datarootdir)/licenses/$(_fontship)
+datadir = $(datarootdir)/$(_fontship)
+
+bin_SCRIPTS = $(_fontship)
+python_PYTHON = $(_fontship).py
 dist_doc_DATA = README.md CHANGELOG.md
-dist_man_MANS = fontship.1
+dist_man_MANS = $(_fontship).1
 dist_license_DATA = LICENSE
 dist_data_DATA = rules/fontship.mk rules/rules.mk rules/functions.mk rules/glyphs.mk rules/sfd.mk rules/ufo.mk
 EXTRA_DIST = .version Dockerfile
