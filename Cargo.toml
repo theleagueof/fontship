@@ -7,5 +7,18 @@ description = "A font development toolkit and collaborative work flow"
 homepage = "https://github.com/theleagueof/fontship"
 repository = "https://github.com/theleagueof/fontship"
 license = "AGPL-3"
+build = "build.rs"
 
 [dependencies]
+
+[dependencies.clap]
+version = "3.0.0-beta.2"
+features = ["wrap_help"]
+
+[build-dependencies]
+clap = "3.0.0-beta.2"
+clap_generate = "3.0.0-beta.2"
+vergen = "3.1.0"
+
+[profile.release]
+lto = true
