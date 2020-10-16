@@ -38,6 +38,9 @@ impl CONFIG {
         if args.verbose {
             self.set_bool("verbose", true)?;
         }
+        if let Some(language) = &args.language {
+            self.set_str("language", &language)?;
+        };
         Ok(())
     }
 

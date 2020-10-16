@@ -11,6 +11,10 @@ pub struct Cli {
     #[clap(short, long)]
     pub debug: bool,
 
+    /// Set language
+    #[clap(short, long, env = "LANG")]
+    pub language: Option<String>,
+
     /// Discard all non-error output messages
     #[clap(short, long)]
     pub quiet: bool,

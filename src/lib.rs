@@ -2,10 +2,12 @@
 extern crate lazy_static;
 
 use crate::config::CONFIG;
+use i18n::LocalText;
 use std::{error, fmt};
 
 pub mod cli;
 pub mod config;
+pub mod i18n;
 
 // Subcommands
 pub mod make;
@@ -16,6 +18,9 @@ pub mod status;
 pub static CONFIGURE_PREFIX: &'static str = env!["CONFIGURE_PREFIX"];
 pub static CONFIGURE_BINDIR: &'static str = env!["CONFIGURE_BINDIR"];
 pub static CONFIGURE_DATADIR: &'static str = env!["CONFIGURE_DATADIR"];
+
+/// If all else fails, use this BCP-47 locale
+pub static DEFAULT_LOCALE: &'static str = "en-US";
 
 /// Fontship version number as detected by `git describe --tags` at build time
 pub static VERSION: &'static str = env!("VERGEN_SEMVER_LIGHTWEIGHT");
@@ -29,7 +34,7 @@ pub struct Error {
 impl Error {
     pub fn new(key: &str) -> Error {
         Error {
-            details: key.to_string(),
+            details: LocalText::new(key).fmt(),
         }
     }
 }
