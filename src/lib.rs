@@ -1,6 +1,7 @@
 #[macro_use]
 extern crate lazy_static;
 
+use crate::config::CONFIG;
 use std::{error, fmt};
 
 pub mod cli;
