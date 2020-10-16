@@ -10,6 +10,7 @@ license = "AGPL-3"
 build = "build.rs"
 
 [dependencies]
+config = "0.10.1"
 git2 = "0.13.6"
 lazy_static = "1.4.0"
 subprocess = "0.2.6"
