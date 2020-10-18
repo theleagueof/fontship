@@ -48,7 +48,7 @@ status-false =
   No
 
 status-good =
-  Everything ship shape!
+  Everything seems to be ship shape!
 
 status-bad =
   Not everything is seaworthy, run `fontship setup`.
