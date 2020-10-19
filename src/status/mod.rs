@@ -78,7 +78,7 @@ pub fn is_setup() -> Result<bool> {
     let msg = LocalText::new(if ret { "status-good" } else { "status-bad" }).fmt();
     eprintln!(
         "{} {}",
-        "┗━".cyan(),
+        "┠─".cyan(),
         if ret { msg.green() } else { msg.red() }
     );
     Ok(ret)

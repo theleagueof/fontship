@@ -35,6 +35,9 @@ error-invalid-resources =
 welcome =
   Welcome to Fontship version { $version }!
 
+outro =
+  Finished Fontship run.
+
 make-header =
   Building target(s) with `make`…
 

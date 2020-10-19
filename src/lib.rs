@@ -58,6 +58,12 @@ pub fn show_welcome() {
     eprintln!("{} {}", "┏━".cyan(), welcome.fmt().cyan());
 }
 
+/// Output welcome header at start of run before moving on to actual commands
+pub fn show_outro() {
+    let outro = LocalText::new("outro");
+    eprintln!("{} {}", "┗━".cyan(), outro.fmt().cyan());
+}
+
 /// Output header before starting work on a subcommand
 pub fn header(key: &str) {
     let text = LocalText::new(key);
