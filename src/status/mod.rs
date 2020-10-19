@@ -1,4 +1,5 @@
 use crate::i18n::LocalText;
+use crate::CONFIG;
 use colored::{ColoredString, Colorize};
 use git2::Repository;
 use std::io::prelude::*;
@@ -12,6 +13,7 @@ type Result<T> = result::Result<T, Box<dyn error::Error>>;
 /// Show status information about setup, configuration, and build state
 pub fn run() -> Result<()> {
     crate::header("status-header");
+    CONFIG.set_bool("verbose", true)?;
     is_setup()?;
     Ok(())
 }
@@ -130,12 +132,14 @@ pub fn is_make_gnu() -> Result<bool> {
 }
 
 fn display_check(key: &str, val: bool) {
-    eprintln!(
-        "{} {} {}",
-        "┠─".cyan(),
-        LocalText::new(key).fmt(),
-        fmt_t_f(val)
-    );
+    if CONFIG.get_bool("debug").unwrap() || CONFIG.get_bool("verbose").unwrap() {
+        eprintln!(
+            "{} {} {}",
+            "┠─".cyan(),
+            LocalText::new(key).fmt(),
+            fmt_t_f(val)
+        );
+    };
 }
 
 /// Format a localized string just for true / false status prints
