@@ -26,7 +26,7 @@ fn main() -> Result<(), Box<dyn error::Error>> {
         fontship::show_welcome();
         match args.subcommand {
             Subcommand::Make { target } => make::run(target),
-            Subcommand::Setup { path } => setup::run(path),
+            Subcommand::Setup {} => setup::run(),
             Subcommand::Status {} => status::run(),
         }
     };

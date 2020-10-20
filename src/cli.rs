@@ -18,6 +18,11 @@ pub struct Cli {
     #[clap(short, long, env = "LANG")]
     pub language: Option<String>,
 
+    // FTL: help-flags-path
+    /// Set project root path
+    #[clap(short, long, default_value = "./")]
+    pub path: path::PathBuf,
+
     // FTL: help-flags-quiet
     /// Discard all non-error output messages
     #[clap(short, long)]
@@ -43,11 +48,7 @@ pub enum Subcommand {
 
     // FTL: help-subcommand-setup
     /// Configure a font project repository
-    Setup {
-        /// Path to project repository
-        #[clap(default_value = "./")]
-        path: path::PathBuf,
-    },
+    Setup {},
 
     // FTL: help-subcommand-status
     /// Show status information about setup, configuration, and build state

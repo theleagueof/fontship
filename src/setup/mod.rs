@@ -1,13 +1,15 @@
 use crate::i18n::LocalText;
+use crate::CONFIG;
 use git2::Repository;
-use std::{error, fs, io, path, result};
+use std::{error, fs, io, result};
 
 type Result<T> = result::Result<T, Box<dyn error::Error>>;
 
 // FTL: help-subcommand-setup
 /// Setup Fontship for use on a new Font project
-pub fn run(path: path::PathBuf) -> Result<()> {
+pub fn run() -> Result<()> {
     crate::header("setup-header");
+    let path = CONFIG.get_string("path")?;
     let metadata = fs::metadata(&path)?;
     match metadata.is_dir() {
         true => match Repository::open(path) {

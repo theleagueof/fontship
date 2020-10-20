@@ -17,7 +17,8 @@ impl CONFIG {
             .expect(ERROR_CONFIG_WRITE)
             .set_default("debug", false)?
             .set_default("quiet", false)?
-            .set_default("verbose", false)?;
+            .set_default("verbose", false)?
+            .set_default("path", "./")?;
         Ok(())
     }
 
@@ -37,6 +38,9 @@ impl CONFIG {
         }
         if args.verbose {
             self.set_bool("verbose", true)?;
+        }
+        if let Some(path) = &args.path.to_str() {
+            self.set_str("path", path)?;
         }
         if let Some(language) = &args.language {
             self.set_str("language", &language)?;
