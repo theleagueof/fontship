@@ -20,4 +20,6 @@ else
     ./build-aux/git-version-gen .tarball-version > .version
 fi
 
-autoreconf --install -W none
+autoreconf --symlink --install --warnings=none
+aclocal --force -W none
+automake --force-missing --add-missing -W none
