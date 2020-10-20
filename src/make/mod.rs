@@ -36,6 +36,9 @@ pub fn run(target: Vec<String>) -> Result<()> {
     if CONFIG.get_bool("verbose")? {
         process = process.env("VERBOSE", "true");
     };
+    let repo = status::get_repo()?;
+    let workdir = repo.workdir().unwrap();
+    process = process.cwd(workdir);
     process.join()?;
     Ok(())
 }
