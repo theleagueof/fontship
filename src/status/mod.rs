@@ -86,16 +86,14 @@ pub fn is_setup() -> Result<bool> {
 
 /// Are we in a git repo?
 pub fn is_repo() -> Result<bool> {
-    let cwd = env::current_dir()?;
-    let ret = Repository::discover(cwd).is_ok();
+    let ret = get_repo().is_ok();
     display_check("status-is-repo", ret);
     Ok(ret)
 }
 
 /// Is the git repo we are in writable?
 pub fn is_writable() -> Result<bool> {
-    let cwd = env::current_dir()?;
-    let repo = Repository::discover(cwd)?;
+    let repo = get_repo()?;
     let workdir = repo.workdir().unwrap();
     let testfile = workdir.join(".fontship-write-test");
     let mut file = fs::File::create(&testfile)?;
@@ -129,6 +127,12 @@ pub fn is_make_gnu() -> Result<bool> {
     let ret = out.starts_with("GNU Make 4.");
     display_check("status-is-make-gnu", ret);
     Ok(true)
+}
+
+/// Get repository object
+pub fn get_repo() -> Result<Repository> {
+    let path = CONFIG.get_string("path")?;
+    Ok(Repository::discover(path)?)
 }
 
 fn display_check(key: &str, val: bool) {
