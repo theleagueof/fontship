@@ -4,7 +4,7 @@ use colored::{ColoredString, Colorize};
 use git2::Repository;
 use std::io::prelude::*;
 use std::sync::{Arc, RwLock};
-use std::{env, error, fs, result};
+use std::{env, error, fs, io, path, result};
 use subprocess::{Exec, NullFile, Redirection};
 
 type Result<T> = result::Result<T, Box<dyn error::Error>>;
@@ -133,6 +133,27 @@ pub fn is_make_gnu() -> Result<bool> {
 pub fn get_repo() -> Result<Repository> {
     let path = CONFIG.get_string("path")?;
     Ok(Repository::discover(path)?)
+}
+
+/// Scan for existing makefiles with Fontship rules
+pub fn get_rules() -> Result<Vec<path::PathBuf>> {
+    if !is_setup()? {
+        return Err(Box::new(io::Error::new(
+            io::ErrorKind::InvalidInput,
+            LocalText::new("error-not-setup").fmt(),
+        )));
+    };
+    let repo = get_repo()?;
+    let root = repo.workdir().unwrap();
+    let files = vec!["GNUMakefile", "makefile", "Makefile", "rules.mk"];
+    let mut rules = Vec::new();
+    for file in &files {
+        let p = root.join(file);
+        if p.exists() {
+            rules.push(p);
+        }
+    }
+    Ok(rules)
 }
 
 fn display_check(key: &str, val: bool) {

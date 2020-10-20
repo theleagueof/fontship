@@ -26,6 +26,10 @@ help-subcommand-setup =
 help-subcommand-setup-path =
   Path to font project repository
 
+error-not-setup =
+  Project not setup for use with Fontship, run `fontship status` for details or
+  `fontship setup` to initialize.
+
 error-invalid-language =
   Could not parse BCP47 language tag.
 
