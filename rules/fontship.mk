@@ -6,12 +6,6 @@ MAKEFLAGS += --silent
 MAKEFLAGS += --no-builtin-rules
 .SUFFIXES:
 
-# Run recipies in zsh, and all in one pass
-SHELL := zsh
-.SHELLFLAGS := +o nomatch -e -c
-.ONESHELL:
-.SECONDEXPANSION:
-
 # Don't drop intermediate artifacts (saves rebulid time and aids debugging)
 .SECONDARY:
 .PRECIOUS: %
@@ -27,6 +21,12 @@ _PROJECTDIR != pwd
 PROJECTDIR ?= $(_PROJECTDIR)
 PUBDIR ?= $(PROJECTDIR)/pub
 SOURCEDIR ?= sources
+
+# Run recipies in zsh wrapper, and all in one pass
+SHELL := $(FONTSHIPDIR)/make-shell.zsh
+.SHELLFLAGS = target=$@
+.ONESHELL:
+.SECONDEXPANSION:
 
 # Some Makefile shinanigans to avoid aggressive trimming
 space := $() $()
