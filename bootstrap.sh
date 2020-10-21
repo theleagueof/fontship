@@ -2,10 +2,10 @@
 set -e
 
 incomplete_source () {
-    echo -e "$1. Please either:\n" \
-            "* $2,\n" \
-            "* or use the source packages instead of a repo archive\n" \
-            "* or use a full Git clone.\n" >&2
+    echo "$1. Please either:" >&2
+    echo "* $2," >&2
+    echo '* or use the source packages instead of a repo archive' >&2
+    echo '* or use a full Git clone.' >&2
     exit 1
 }
 
