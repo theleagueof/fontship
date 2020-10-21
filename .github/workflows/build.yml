@@ -40,6 +40,10 @@ jobs:
       - name: Build
         run: |
           export PATH="$HOME/.local/bin:$PATH"
+          make
+      - name: Build source package
+        run: |
+          export PATH="$HOME/.local/bin:$PATH"
           make dist
           echo ::set-env name=ISRELEASETAG::$(grep -Pqx '\d+\.\d+\.\d+' .version && echo true || echo false)
       - name: Upload Artifacts
