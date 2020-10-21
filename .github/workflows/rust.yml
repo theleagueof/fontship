@@ -1,0 +1,78 @@
+name: Rust
+
+on:
+  pull_request: {}
+  push:
+    branches:
+      - master
+
+jobs:
+
+  test:
+    strategy:
+      fail-fast: false
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Fetch tags
+        run: |
+          git fetch --prune --tags ||:
+      - name: Install Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+      - name: Cache cargo
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target
+          key: cargo-test-${{ hashFiles('**/Cargo.lock') }}
+      - name: Run cargo test
+        run: |
+          cargo test --locked
+
+  rustfmt:
+    strategy:
+      fail-fast: false
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Install Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+      - name: Run rustfmt
+        run: |
+          git ls-files '*.rs' | xargs rustfmt --check
+
+  cargo_bloat:
+    if: false
+    strategy:
+      fail-fast: false
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Install Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          override: true
+      - name: Cache cargo
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target
+          key: bloat-cargo-${{ hashFiles('**/Cargo.lock') }}
+      - name: Run cargo bloat
+        uses: orf/cargo-bloat-action@v1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}

@@ -1,22 +1,63 @@
-licensedir = $(datarootdir)/licenses/fontship
-datadir = $(datarootdir)/fontship
+$(and $(word 2,$(MAKEFILE_LIST)),$(error This is not the makefile you should include in your project to run Fontship, please use 'rules/fontship.mk' instead.))
 
-bin_SCRIPTS = fontship
-python_PYTHON = fontship.py
+_fontship = $(shell sed -e "$(program_transform_name)" <<< fontship)
+
+licensedir = $(datarootdir)/licenses/$(_fontship)
+datadir = $(datarootdir)/$(_fontship)
+
 dist_doc_DATA = README.md CHANGELOG.md
-dist_man_MANS = fontship.1
+dist_man_MANS = $(_fontship).1
 dist_license_DATA = LICENSE
-dist_data_DATA = src/fontship.mk src/rules.mk src/functions.mk src/rules-glyphs.mk src/rules-sfd.mk src/rules-ufo.mk
+nobase_dist_data_DATA = rules/fontship.mk rules/rules.mk rules/functions.mk rules/glyphs.mk rules/sfd.mk rules/ufo.mk
 EXTRA_DIST = .version Dockerfile
+
+bin_PROGRAMS = fontship
+
+_fontship_libs = src/lib.rs src/cli.rs src/config.rs src/i18n.rs
+_fontship_modules = src/make/mod.rs src/setup/mod.rs src/status/mod.rs
+_fontship_assets = assets/en-US/cli.ftl
+fontship_SOURCES = Cargo.toml build.rs src/main.rs $(_fontship_libs) $(_fontship_modules) $(_fontship_assets)
+EXTRA_fontship_SOURCES = Cargo.lock
 
 BUILT_SOURCES = .version
 
-CLEANFILES = $(BUILT_SOURCES) $(bin_SCRIPTS)
+CLEANFILES = $(BUILT_SOURCES) $(bin_PROGRAMS)
 
 .version: $(shell test -e .git && awk '{print ".git/" $$2}' .git/HEAD)
 	mv $@{,-prev} 2>/dev/null || touch $@-prev
 	( test -e .git && ./build-aux/git-version-gen .tarball-version || echo $(VERSION) ) > $@
 	cmp -s $@{,-prev} || autoreconf configure.ac --force -W none
+
+if DEBUG_RELEASE
+CARGO_RELEASE_ARGS=--locked --all-features
+else
+CARGO_RELEASE_ARGS=--release --locked --all-features
+endif
+
+export FONTSHIP_VERSION = v$(VERSION)
+
+# Leave some tips for cargo to use so CLI knows where it is
+export CONFIGURE_PREFIX = $(prefix)/
+export CONFIGURE_DATADIR = $(datadir)/
+export CONFIGURE_BINDIR = $(bindir)/
+
+CARGO_VERBOSE = $(cargo_verbose_$(V))
+cargo_verbose_ = $(cargo_verbose_$(AM_DEFAULT_VERBOSITY))
+cargo_verbose_0 =
+cargo_verbose_1 = --verbose
+
+CARGO_TARGET = target/release/fontship
+
+fontship$(EXEEXT): $(CARGO_TARGET)
+	cp -bf $< $@
+
+$(CARGO_TARGET): $(fontship_SOURCES) clean-embedded-assets
+	cargo build $(CARGO_VERBOSE) $(CARGO_RELEASE_ARGS)
+
+.PHONY: clean-embedded-assets
+clean-embedded-assets:
+	[[ -d .git  ]] || exit 0
+	git clean -dxf assets
 
 dist: fontship-$(VERSION).md
 
@@ -26,7 +67,7 @@ dist-hook:
 check: selfcheck
 
 .PHONY: selfcheck
-selfcheck: $(bin_SCRIPTS) | $(BUILT_SOURCES)
+selfcheck: $(_fontship) | $(BUILT_SOURCES)
 	./$< --version | grep -Ff $(firstword $|)
 
 RELTYPE ?=

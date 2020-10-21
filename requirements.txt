@@ -1,14 +1,12 @@
 babelfont==0.0.2
 cffsubr==0.2.7
-click==7.1.2
 defcon==0.7.2
 font-v==1.0.3
 fontmake==2.2.1
 fonttools[lxml,ufo,unicode,woff]==4.16.1
-gftools==0.4.4
-pcpp==1.21.0
+gftools==0.4.5
+pcpp==1.22.0
 psautohint==2.1.1
-pygit2==1.3.0
 git+git://github.com/alif-type/sfdLib.git@v1.0.6#egg=sfdLib
 sfdnormalize==0.3.0
 skia-pathops==0.5.1

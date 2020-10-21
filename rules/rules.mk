@@ -251,7 +251,7 @@ ifeq ($(PROJECT),Data)
 $(warning We cannot read the Project’s name inside Docker. Please manually specify it by adding PROJECT='Name' as an agument to your command invocation)
 endif
 
--include $(FONTSHIPDIR)/rules-$(CANONICAL).mk
+-include $(FONTSHIPDIR)/$(CANONICAL).mk
 
 $(foreach FamilyName,$(FamilyNames),$(eval $(call otf_instance_template,$(FamilyName))))
 $(foreach FamilyName,$(FamilyNames),$(eval $(call ttf_instance_template,$(FamilyName))))

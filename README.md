@@ -98,8 +98,9 @@ Otherwise to install and use locally from source, you’ll need some dependencie
 * Git,
 * GNU core utilities plus `diffutils`, `bsdtar`, `entr`, `zsh`,
 * GNU `make` (4.2+) with corresponding autoconf tools,
-* Python 3 plus assorted modules, see *requirements.txt* file.
-* A handfull of other font related CLI utilities, namely: `sfn2woff-zopfli`, `psautohint`, `ttfautohint`, and `woff2_compress`.
+* Python 3 plus assorted modules, see *requirements.txt* file,
+* Rust tools including `cargo` and `rustc` to build the CLI,
+* And a handfull of other font related CLI utilities, namely: `sfn2woff-zopfli`, `psautohint`, `ttfautohint`, and `woff2_compress`.
 
 To install the software to your computer, either clone this repository and run `./bootstrap.sh` or [download and extract the latest release](https://github.com/theleagueof/fontship/releases), then run:
 
@@ -111,10 +112,16 @@ $ sudo make install
 
 ### Makefile Setup
 
-If ⓐ your system has all the dependencies and ⓑ your project already has a `Makefile`, you can extend your existing makefile with Fontship’s targets my including it:
+If ⓐ your system has all the dependencies and ⓑ your project already has a `Makefile`, you can extend your existing makefile with Fontship’s targets my including the pre & post rules files at the top and bottom of your existing targets:
 
 ```makefile
-include path/to/fontship/src/rules.mk
+# At the top
+include path/to/fontship/rules/fontship.mk
+
+# Your Makefile content here
+
+# At the bottom
+include path/to/fontship/rules/rules.mk
 ```
 
 This may reference a path to Fontship as a git submodule (useful for locking the Fontship version to your project’s build), or just a relative path to somewhere you have the Fontship source.

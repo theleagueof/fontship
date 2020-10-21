@@ -1,0 +1,36 @@
+[package]
+name = "fontship"
+version = "0.5.0"
+authors = ["Caleb Maclennan <caleb@alerque.com>"]
+edition = "2018"
+description = "A font development toolkit and collaborative work flow"
+homepage = "https://github.com/theleagueof/fontship"
+repository = "https://github.com/theleagueof/fontship"
+license = "AGPL-3"
+build = "build.rs"
+
+[dependencies]
+colored = "1.9.3"
+config = "0.10.1"
+fluent = "0.12.0"
+fluent-fallback = "0.0.4"
+fluent-langneg = "0.13.0"
+git2 = "0.13.6"
+lazy_static = "1.4.0"
+rayon = "1.3.1"
+regex = "1.4.1"
+rust-embed = "5.6.0"
+subprocess = "0.2.6"
+unic-langid = "0.9.0"
+
+[dependencies.clap]
+version = "3.0.0-beta.2"
+features = ["wrap_help"]
+
+[build-dependencies]
+clap = "3.0.0-beta.2"
+clap_generate = "3.0.0-beta.2"
+vergen = "3.1.0"
+
+[profile.release]
+lto = true

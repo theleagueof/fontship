@@ -25,14 +25,14 @@ RUN pacman --needed --noconfirm -Syuq && yes | pacman -Sccq
 # Install fontship run-time dependecies (increment cache var above)
 RUN pacman --needed --noconfirm -Syq \
 		diffutils entr font-v gftools git libarchive make psautohint python sfd2ufo sfdnormalize sfnt2woff-zopfli ttfautohint woff2 zsh \
-		python-{babelfont,brotli,cffsubr,click,defcon,font{make,tools},fs,lxml,pcpp,pygit2,skia-pathops,ufo{2ft,lib2,normalizer},unicodedata2,zopfli,vttlib} \
+		python-{babelfont,brotli,cffsubr,defcon,font{make,tools},fs,lxml,pcpp,skia-pathops,ufo{2ft,lib2,normalizer},unicodedata2,zopfli,vttlib} \
 	&& yes | pacman -Sccq
 
 # Setup separate image to build fontship so we don't bloat the final image
 FROM fontship-base AS fontship-builder
 
 # Install build time dependecies
-RUN pacman --needed --noconfirm -Syq base-devel && yes | pacman -Sccq
+RUN pacman --needed --noconfirm -Syq base-devel cargo rust && yes | pacman -Sccq
 
 # Set at build time, forces Docker's layer caching to reset at this point
 ARG VCS_REF=0
