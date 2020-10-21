@@ -17,13 +17,14 @@
   },
   "homepage": "https://github.com/theleagueof/fontship",
   "devDependencies": {
-    "@commitlint/cli": "^9.1.2",
-    "@commitlint/config-conventional": "^9.1.2",
-    "@commitlint/prompt": "^9.1.2",
-    "commitizen": "^4.1.2",
+    "@commitlint/cli": "^11.0.0",
+    "@commitlint/config-conventional": "^11.0.0",
+    "@commitlint/prompt": "^11.0.0",
+    "commitizen": "^4.2.2",
     "conventional-changelog-cli": "^2.0.34",
-    "husky": "^4.2.5",
-    "standard-version": "^9.0.0"
+    "husky": "^4.3.0",
+    "standard-version": "^9.0.0",
+    "@iarna/toml": "2.2.5"
   },
   "config": {
     "commitizen": {
@@ -36,6 +37,16 @@
     }
   },
   "standard-version": {
+    "bumpFiles": [
+      {
+        "filename": "package.json",
+        "type": "json"
+      },
+      {
+        "filename": "Cargo.toml",
+        "updater": "build-aux/cargo-updater.js"
+      }
+    ],
     "infile": "CHANGELOG.md",
     "types": [
       {
