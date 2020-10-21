@@ -8,7 +8,7 @@ on:
 
 jobs:
 
-  build:
+  test:
     strategy:
       fail-fast: false
     runs-on: ubuntu-latest
@@ -18,7 +18,8 @@ jobs:
         with:
           fetch-depth: 0
       - name: Fetch tags
-        run: git fetch --tags
+        run: |
+          git fetch --prune --tags ||:
       - name: Install Rust
         uses: actions-rs/toolchain@v1
         with:
@@ -26,14 +27,11 @@ jobs:
       - name: Cache cargo
         uses: actions/cache@v2
         with:
-          path:
-            - ~/.cargo/registry
-            - ~/.cargo/git
-            - target
-          key: build-cargo-${{ hashFiles('**/Cargo.lock') }}
-      - name: Run cargo build
-        run: |
-          cargo build --locked
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target
+          key: cargo-test-${{ hashFiles('**/Cargo.lock') }}
       - name: Run cargo test
         run: |
           cargo test --locked
@@ -69,10 +67,10 @@ jobs:
       - name: Cache cargo
         uses: actions/cache@v2
         with:
-          path:
-            - ~/.cargo/registry
-            - ~/.cargo/git
-            - target
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target
           key: bloat-cargo-${{ hashFiles('**/Cargo.lock') }}
       - name: Run cargo bloat
         uses: orf/cargo-bloat-action@v1

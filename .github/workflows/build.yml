@@ -15,7 +15,19 @@ jobs:
         run: |
           git fetch --prune --tags ||:
       - name: Setup system dependencies
-        run: sudo apt-get install cargo rustc sfnt2woff-zopfli ttfautohint woff2 zsh
+        run: sudo apt-get install sfnt2woff-zopfli ttfautohint woff2 zsh
+      - name: Install Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+      - name: Cache cargo
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target
+          key: cargo-build-${{ hashFiles('**/Cargo.lock') }}
       - name: Setup Python
         uses: actions/setup-python@v2
       - name: Setup Python dependencies
