@@ -24,7 +24,7 @@ pub static CONFIGURE_DATADIR: &'static str = env!["CONFIGURE_DATADIR"];
 pub static DEFAULT_LOCALE: &'static str = "en-US";
 
 /// Fontship version number as detected by `git describe --tags` at build time
-pub static VERSION: &'static str = env!("FONTSHIP_VERSION");
+pub static VERSION: &'static str = env!("VERGEN_SEMVER_LIGHTWEIGHT");
 
 /// A type for our internal whoops
 #[derive(Debug)]

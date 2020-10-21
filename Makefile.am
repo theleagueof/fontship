@@ -34,7 +34,7 @@ else
 CARGO_RELEASE_ARGS=--release --locked --all-features
 endif
 
-export FONTSHIP_VERSION = $(VERSION)
+export FONTSHIP_VERSION = v$(VERSION)
 
 # Leave some tips for cargo to use so CLI knows where it is
 export CONFIGURE_PREFIX = $(prefix)/
