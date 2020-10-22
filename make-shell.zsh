@@ -1,26 +1,24 @@
 #!/usr/bin/env zsh
 
-set +o nomatch
+set -o nomatch
+set -o pipefail
 
-local fifo() {
-  (
-    [[ -v FONTSHIP_FIFO && -p $FONTSHIP_FIFO ]] && exec >> $FONTSHIP_FIFO
-    echo $@
-  )
+local status() {
+  echo -e "$@"
 }
 
 local pre_hook() {
-  fifo START $target
+  status "FONTSHIPSTART$target"
 }
 
 local post_hook() {
-  fifo END $2 $target
+  status "FONTSHIPEND$2$target"
 }
 
 local process_recipe() {
   pre_hook $target
   {
-    ( set -e; eval $@ )
+    ( set -e; eval $@ | sed -e "s/^/FONTSHIPLINES$target: /" )
   } always {
     post_hook $target $?
   }

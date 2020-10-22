@@ -1,5 +1,6 @@
 use crate::CONFIG;
 use crate::{status, CONFIGURE_DATADIR};
+use regex::Regex;
 use std::io::prelude::*;
 use std::{error, ffi::OsString, io, result};
 use subprocess::{Exec, Redirection};
@@ -42,8 +43,28 @@ pub fn run(target: Vec<String>) -> Result<()> {
     process = process.cwd(workdir);
     let out = process.stderr(Redirection::Merge).stream_stdout()?;
     let buf = io::BufReader::new(out);
+    let mut backlog: Vec<String> = Vec::new();
+    // let re = Regex::new(r"FONTSHIP (\k+").unwrap();
+    let seps = Regex::new(r"").unwrap();
     for line in buf.lines() {
-        crate::show_line(line.unwrap());
+        let text: &str = &line.unwrap();
+        // eprintln!("foo—{}", String::from(text));
+        // backlog.push(String::from(text));
+        let fields: Vec<&str> = seps.splitn(text, 4).collect();
+        match fields[0] {
+            "FONTSHIP" => match fields[1] {
+                "START" => crate::show_start(fields[2]),
+                "LINES" => {
+                    backlog.push(String::from(fields[2]));
+                }
+                "END" => match fields[2] {
+                    "0" => crate::show_end(fields[3]),
+                    _ => crate::show_err(fields[3]),
+                },
+                _ => panic!("Fontship's make returned an unknown action code!"),
+            },
+            _ => backlog.push(String::from(fields[0])),
+        }
     }
     Ok(())
 }
