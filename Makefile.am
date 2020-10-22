@@ -28,6 +28,21 @@ CLEANFILES = $(BUILT_SOURCES) $(bin_PROGRAMS)
 	( test -e .git && ./build-aux/git-version-gen .tarball-version || echo $(VERSION) ) > $@
 	cmp -s $@{,-prev} || autoreconf configure.ac --force -W none
 
+if ENABLE_BASH_COMPLETION
+bashcompletiondir = $(BASH_COMPLETION_DIR)
+dist_bashcompletion_DATA = $(COMPLETIONS_OUT_DIR)/$(_fontship)
+endif
+
+if ENABLE_FISH_COMPLETION
+fishcompletiondir = $(FISH_COMPLETION_DIR)
+dist_fishcompletion_DATA = $(COMPLETIONS_OUT_DIR)/$(_fontship).fish
+endif
+
+if ENABLE_ZSH_COMPLETION
+zshcompletiondir = $(ZSH_COMPLETION_DIR)
+dist_zshcompletion_DATA = $(COMPLETIONS_OUT_DIR)/_$(_fontship)
+endif
+
 if DEBUG_RELEASE
 CARGO_RELEASE_ARGS=--locked --all-features
 else
@@ -47,9 +62,25 @@ cargo_verbose_0 =
 cargo_verbose_1 = --verbose
 
 CARGO_TARGET = target/release/fontship
+COMPLETIONS_OUT_DIR = target/release/completions
 
 fontship$(EXEEXT): $(CARGO_TARGET)
 	cp -bf $< $@
+
+$(COMPLETIONS_OUT_DIR)/$(_fontship): $(CARGO_TARGET)
+	cp -bf $(COMPLETIONS_OUT_DIR)/fontship.bash $@
+
+$(COMPLETIONS_OUT_DIR)/$(_fontship).elv: $(CARGO_TARGET)
+	cp -bf $(COMPLETIONS_OUT_DIR)/fontship.elv $@
+
+$(COMPLETIONS_OUT_DIR)/$(_fontship).fish: $(CARGO_TARGET)
+	cp -bf $(COMPLETIONS_OUT_DIR)/fontship.fish $@
+
+$(COMPLETIONS_OUT_DIR)/_$(_fontship).ps1: $(CARGO_TARGET)
+	cp -bf $(COMPLETIONS_OUT_DIR)/_fontship.ps1 $@
+
+$(COMPLETIONS_OUT_DIR)/_$(_fontship): $(CARGO_TARGET)
+	cp -bf $(COMPLETIONS_OUT_DIR)/_fontship $@
 
 $(CARGO_TARGET): $(fontship_SOURCES) clean-embedded-assets
 	cargo build $(CARGO_VERBOSE) $(CARGO_RELEASE_ARGS)
