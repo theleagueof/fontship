@@ -58,7 +58,7 @@ GITVER = --tags --abbrev=6 --match='*[0-9].[0-9][0-9][0-9]'
 # Determine font version automatically from repository git tags
 FontVersion ?= $(shell git describe $(GITVER) 2> /dev/null | sed 's/^v//;s/-.*//g')
 ifneq ($(FontVersion),)
-FontVersionMeta ?= $(shell git describe --always --long $(GITVER) | sed 's/^v//;s/-[0-9]\+/\\;/;s/-g/[/')]
+FontVersionMeta ?= $(shell git describe --always --long $(GITVER) | sed 's/^v//;s/-[0-9]\+/;/;s/-g/[/')]
 GitVersion ?= $(shell git describe $(GITVER) | sed 's/^v//;s/-/-r/')
 isTagged := $(if $(subst $(FontVersion),,$(GitVersion)),,true)
 else
@@ -138,36 +138,36 @@ endif
 
 .PHONY: debug
 debug:
-	echo FONTSHIPDIR = $(FONTSHIPDIR)
-	echo GITNAME = $(GITNAME)
-	echo PROJECT = $(PROJECT)
-	echo PROJECTDIR = $(PROJECTDIR)
-	echo PUBDIR = $(PUBDIR)
-	echo SOURCEDIR = $(SOURCEDIR)
-	echo ----------------------------
-	echo FamilyNames = $(FamilyNames)
-	echo FontInstances = $(FontInstances)
-	echo FontVersion = $(FontVersion)
-	echo FontVersionMeta = $(FontVersionMeta)
-	echo GitVersion = $(GitVersion)
-	echo isTagged = $(isTagged)
-	echo ----------------------------
-	echo CANONICAL = $(CANONICAL)
-	echo isVariable = $(isVariable)
-	echo SOURCES = $(SOURCES)
-	echo SOURCES_SFD = $(SOURCES_SFD)
-	echo SOURCES_GLYPHS = $(SOURCES_GLYPHS)
-	echo SOURCES_UFO = $(SOURCES_UFO)
-	echo SOURCES_DESIGNSPACE = $(SOURCES_DESIGNSPACE)
-	echo INSTANCES = $(INSTANCES)
-	echo STATICOTFS = $(STATICOTFS)
-	echo STATICTTFS = $(STATICTTFS)
-	echo STATICWOFFS = $(STATICWOFFS)
-	echo STATICWOFF2S = $(STATICWOFF2S)
-	echo VARIABLEOTFS = $(VARIABLEOTFS)
-	echo VARIABLETTFS = $(VARIABLETTFS)
-	echo VARIABLEWOFFS = $(VARIABLEWOFFS)
-	echo VARIABLEWOFF2S = $(VARIABLEWOFF2S)
+	echo "FONTSHIPDIR = $(FONTSHIPDIR)"
+	echo "GITNAME = $(GITNAME)"
+	echo "PROJECT = $(PROJECT)"
+	echo "PROJECTDIR = $(PROJECTDIR)"
+	echo "PUBDIR = $(PUBDIR)"
+	echo "SOURCEDIR = $(SOURCEDIR)"
+	echo "----------------------------"
+	echo "FamilyNames = $(FamilyNames)"
+	echo "FontInstances = $(FontInstances)"
+	echo "FontVersion = $(FontVersion)"
+	echo "FontVersionMeta = $(FontVersionMeta)"
+	echo "GitVersion = $(GitVersion)"
+	echo "isTagged = $(isTagged)"
+	echo "----------------------------"
+	echo "CANONICAL = $(CANONICAL)"
+	echo "isVariable = $(isVariable)"
+	echo "SOURCES = $(SOURCES)"
+	echo "SOURCES_SFD = $(SOURCES_SFD)"
+	echo "SOURCES_GLYPHS = $(SOURCES_GLYPHS)"
+	echo "SOURCES_UFO = $(SOURCES_UFO)"
+	echo "SOURCES_DESIGNSPACE = $(SOURCES_DESIGNSPACE)"
+	echo "INSTANCES = $(INSTANCES)"
+	echo "STATICOTFS = $(STATICOTFS)"
+	echo "STATICTTFS = $(STATICTTFS)"
+	echo "STATICWOFFS = $(STATICWOFFS)"
+	echo "STATICWOFF2S = $(STATICWOFF2S)"
+	echo "VARIABLEOTFS = $(VARIABLEOTFS)"
+	echo "VARIABLETTFS = $(VARIABLETTFS)"
+	echo "VARIABLEWOFFS = $(VARIABLEWOFFS)"
+	echo "VARIABLEWOFF2S = $(VARIABLEWOFF2S)"
 
 .PHONY: _gha
 _gha: debug
