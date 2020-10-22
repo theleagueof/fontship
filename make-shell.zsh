@@ -2,12 +2,19 @@
 
 set +o nomatch
 
+local fifo() {
+  (
+    [[ -v FONTSHIP_FIFO && -p $FONTSHIP_FIFO ]] && exec >> $FONTSHIP_FIFO
+    echo $@
+  )
+}
+
 local pre_hook() {
-  :
+  fifo START $target
 }
 
 local post_hook() {
-  :
+  fifo END $2 $target
 }
 
 local process_recipe() {

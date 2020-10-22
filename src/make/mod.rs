@@ -1,7 +1,8 @@
 use crate::CONFIG;
 use crate::{status, CONFIGURE_DATADIR};
-use std::{error, ffi::OsString, result};
-use subprocess::Exec;
+use std::io::prelude::*;
+use std::{error, ffi::OsString, io, result};
+use subprocess::{Exec, Redirection};
 
 type Result<T> = result::Result<T, Box<dyn error::Error>>;
 
@@ -39,6 +40,10 @@ pub fn run(target: Vec<String>) -> Result<()> {
     let repo = status::get_repo()?;
     let workdir = repo.workdir().unwrap();
     process = process.cwd(workdir);
-    process.join()?;
+    let out = process.stderr(Redirection::Merge).stream_stdout()?;
+    let buf = io::BufReader::new(out);
+    for line in buf.lines() {
+        crate::show_line(line.unwrap());
+    }
     Ok(())
 }

@@ -69,3 +69,8 @@ pub fn header(key: &str) {
     let text = LocalText::new(key);
     eprintln!("{} {}", "┣━".cyan(), text.fmt().yellow());
 }
+
+/// Relay STDOUT/STDERR streams from internal commands
+pub fn show_line(line: String) {
+    eprintln!("{} {}", "┃ ".cyan(), line);
+}
