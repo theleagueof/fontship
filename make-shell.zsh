@@ -18,7 +18,13 @@ local post_hook() {
 local process_recipe() {
   pre_hook $target
   {
-    ( set -e; eval $@ | sed -e "s/^/FONTSHIPLINES$target: /" )
+    (
+      set -e
+      eval $@ |
+        while read line; do
+          echo -e "FONTSHIPLINES$target$line"
+        done
+    )
   } always {
     post_hook $target $?
   }
