@@ -76,6 +76,9 @@ make-error-unknown-code =
   binary.  Needless to say this should not have happened. If you are not
   currently hacking on Fontship itself please report this as a bug.
 
+make-error-failed =
+  Foo
+
 status-true =
   Yes
 

@@ -47,6 +47,7 @@ pub fn run(target: Vec<String>) -> Result<()> {
     let buf = io::BufReader::new(out);
     let mut backlog: Vec<String> = Vec::new();
     let seps = Regex::new(r"").unwrap();
+    let mut ret: i32 = 0;
     for line in buf.lines() {
         let text: &str = &line.unwrap();
         let fields: Vec<&str> = seps.splitn(text, 4).collect();
@@ -63,9 +64,9 @@ pub fn run(target: Vec<String>) -> Result<()> {
                     "0" => {
                         report_end(fields[3]);
                     }
-                    _ => {
-                        dump_backlog(&backlog);
+                    val => {
                         report_fail(fields[3]);
+                        ret = val.parse().unwrap_or(1);
                     }
                 },
                 _ => {
@@ -76,7 +77,16 @@ pub fn run(target: Vec<String>) -> Result<()> {
             _ => backlog.push(String::from(fields[0])),
         }
     }
-    Ok(())
+    match ret {
+        0 => Ok(()),
+        _ => {
+            dump_backlog(&backlog);
+            Err(Box::new(io::Error::new(
+                io::ErrorKind::InvalidInput,
+                LocalText::new("make-error-failed").fmt(),
+            )))
+        }
+    }
 }
 
 fn dump_backlog(backlog: &Vec<String>) {
