@@ -34,7 +34,8 @@ local process_recipe() {
   {
     (
       set -e
-      eval $@ >(report_stdout) 2>(report_stdout)
+      exec > >(report_stdout) 2> >(report_stderr)
+      eval "$@"
     )
   } always {
     post_hook $target $?
@@ -42,7 +43,10 @@ local process_recipe() {
 }
 
 local process_shell() {
-  ( set -e; eval $@ )
+  (
+    set -e
+    eval "$@"
+  )
 }
 
 eval $1
