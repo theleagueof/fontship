@@ -1,5 +1,7 @@
+use crate::i18n::LocalText;
 use crate::CONFIG;
 use crate::{status, CONFIGURE_DATADIR};
+use colored::Colorize;
 use regex::Regex;
 use std::io::prelude::*;
 use std::{error, ffi::OsString, io, result};
@@ -44,27 +46,66 @@ pub fn run(target: Vec<String>) -> Result<()> {
     let out = process.stderr(Redirection::Merge).stream_stdout()?;
     let buf = io::BufReader::new(out);
     let mut backlog: Vec<String> = Vec::new();
-    // let re = Regex::new(r"FONTSHIP (\k+").unwrap();
     let seps = Regex::new(r"").unwrap();
     for line in buf.lines() {
         let text: &str = &line.unwrap();
-        // eprintln!("foo—{}", String::from(text));
-        // backlog.push(String::from(text));
         let fields: Vec<&str> = seps.splitn(text, 4).collect();
         match fields[0] {
             "FONTSHIP" => match fields[1] {
-                "START" => crate::show_start(fields[2]),
-                "LINES" => {
+                "PRE" => report_start(fields[2]),
+                "STDOUT" => {
                     backlog.push(String::from(fields[2]));
                 }
-                "END" => match fields[2] {
-                    "0" => crate::show_end(fields[3]),
-                    _ => crate::show_err(fields[3]),
+                "STDERR" => {
+                    backlog.push(String::from(fields[2]));
+                }
+                "POST" => match fields[2] {
+                    "0" => {
+                        report_end(fields[2]);
+                    }
+                    _ => {
+                        dump_backlog(&backlog);
+                        report_fail(fields[2]);
+                    }
                 },
-                _ => panic!("Fontship's make returned an unknown action code!"),
+                _ => {
+                    let errmsg = LocalText::new("make-error-unknown-code").fmt();
+                    panic!(errmsg)
+                }
             },
             _ => backlog.push(String::from(fields[0])),
         }
     }
     Ok(())
+}
+
+fn dump_backlog(backlog: &Vec<String>) {
+    let start = LocalText::new("make-backlog-start").fmt();
+    eprintln!("{} {}", "┖┄".cyan(), start);
+    for line in backlog.iter() {
+        eprintln!("{}", line);
+    }
+    let end = LocalText::new("make-backlog-end").fmt();
+    eprintln!("{} {}", "┎┄".cyan(), end);
+}
+
+fn report_start(target: &str) {
+    let text = LocalText::new("make-report-start")
+        .arg("target", target)
+        .fmt();
+    eprintln!("{} {}", "┠┄".cyan(), text.yellow());
+}
+
+fn report_end(target: &str) {
+    let text = LocalText::new("make-report-end")
+        .arg("target", target)
+        .fmt();
+    eprintln!("{} {}", "┠┄".cyan(), text.green());
+}
+
+fn report_fail(target: &str) {
+    let text = LocalText::new("make-report-fail")
+        .arg("target", target)
+        .fmt();
+    eprintln!("{} {}", "┠┄".cyan(), text.red());
 }

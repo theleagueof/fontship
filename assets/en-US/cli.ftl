@@ -45,6 +45,21 @@ outro =
 make-header =
   Building target(s) with `make`…
 
+make-report-start =
+  Start make job for { $target }
+
+make-report-end =
+  Completed make job for { $target }
+
+make-report-fail =
+  Failed make job for { $target }
+
+make-backlog-start =
+  Dumping backlog
+
+make-backlog-end =
+  End backlog dump
+
 status-true =
   Yes
 

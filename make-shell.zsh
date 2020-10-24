@@ -8,11 +8,25 @@ local status() {
 }
 
 local pre_hook() {
-  status "FONTSHIPSTART$target"
+  status "FONTSHIPPRE$target"
 }
 
 local post_hook() {
-  status "FONTSHIPEND$2$target"
+  status "FONTSHIPPOST$2$target"
+}
+
+local report_stdout() {
+  cat - |
+    while read line; do
+      echo -e "FONTSHIPSTDOUT$target$line"
+    done
+}
+
+local report_stderr() {
+  cat - |
+    while read line; do
+      echo -e "FONTSHIPSTDERR$target$line" >&2
+    done
 }
 
 local process_recipe() {
@@ -20,10 +34,7 @@ local process_recipe() {
   {
     (
       set -e
-      eval $@ |
-        while read line; do
-          echo -e "FONTSHIPLINES$target$line"
-        done
+      eval $@ >(report_stdout) 2>(report_stdout)
     )
   } always {
     post_hook $target $?
