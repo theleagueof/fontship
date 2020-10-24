@@ -61,11 +61,11 @@ pub fn run(target: Vec<String>) -> Result<()> {
                 }
                 "POST" => match fields[2] {
                     "0" => {
-                        report_end(fields[2]);
+                        report_end(fields[3]);
                     }
                     _ => {
                         dump_backlog(&backlog);
-                        report_fail(fields[2]);
+                        report_fail(fields[3]);
                     }
                 },
                 _ => {
@@ -91,21 +91,21 @@ fn dump_backlog(backlog: &Vec<String>) {
 
 fn report_start(target: &str) {
     let text = LocalText::new("make-report-start")
-        .arg("target", target)
+        .arg("target", target.white().bold())
         .fmt();
     eprintln!("{} {}", "┠┄".cyan(), text.yellow());
 }
 
 fn report_end(target: &str) {
     let text = LocalText::new("make-report-end")
-        .arg("target", target)
+        .arg("target", target.white().bold())
         .fmt();
     eprintln!("{} {}", "┠┄".cyan(), text.green());
 }
 
 fn report_fail(target: &str) {
     let text = LocalText::new("make-report-fail")
-        .arg("target", target)
+        .arg("target", target.white().bold())
         .fmt();
     eprintln!("{} {}", "┠┄".cyan(), text.red());
 }
