@@ -9,7 +9,7 @@ dist_doc_DATA = README.md CHANGELOG.md
 dist_man_MANS = $(_fontship).1
 dist_license_DATA = LICENSE
 nobase_dist_data_DATA = rules/fontship.mk rules/rules.mk rules/functions.mk rules/glyphs.mk rules/sfd.mk rules/ufo.mk
-EXTRA_DIST = .version Dockerfile
+EXTRA_DIST = .version Dockerfile build-aux/cargo-updater.js
 
 bin_PROGRAMS = fontship
 
