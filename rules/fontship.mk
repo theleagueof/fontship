@@ -13,6 +13,11 @@ MAKEFLAGS += --no-builtin-rules
 
 CONTAINERIZED != test -f /.dockerenv && echo true || echo false
 
+# Deprecate direct usage under `make` without the CLI
+ifeq ($(FONTSHIP_CLI),)
+$(warning Use of fontship rule file inclusion outside of the CLI is deprecated! You are on your own mate.)
+endif
+
 # Initial environment setup
 FONTSHIPDIR != cd "$(shell dirname $(lastword $(MAKEFILE_LIST)))/../" && pwd
 GITNAME := $(notdir $(or $(shell git remote get-url origin 2> /dev/null | sed 's,^.*/,,;s,.git$$,,' ||:),$(shell git worktree list | head -n1 | awk '{print $$1}')))

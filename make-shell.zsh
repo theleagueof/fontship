@@ -34,6 +34,7 @@ local process_recipe() {
   {
     (
       set -e
+      [[ ! -v _debug ]] || set -x
       exec > >(report_stdout) 2> >(report_stderr)
       eval "$@"
     )
@@ -45,12 +46,19 @@ local process_recipe() {
 local process_shell() {
   (
     set -e
+    [[ ! -v _debug ]] || set -x
     eval "$@"
   )
 }
 
 eval $1
 shift
+
+if [[ $1 = "+x" ]]; then
+  _debug=true
+  shift
+fi
+
 if [[ -n $target && -v MAKELEVEL ]]; then
   process_recipe $@
 else
