@@ -32,7 +32,7 @@ RUN pacman --needed --noconfirm -Syq \
 FROM fontship-base AS fontship-builder
 
 # Install build time dependecies
-RUN pacman --needed --noconfirm -Syq base-devel cargo rust && yes | pacman -Sccq
+RUN pacman --needed --noconfirm -Syq base-devel cargo jq rust && yes | pacman -Sccq
 
 # Set at build time, forces Docker's layer caching to reset at this point
 ARG VCS_REF=0
@@ -40,9 +40,9 @@ ARG VCS_REF=0
 COPY ./ /src
 WORKDIR /src
 
-RUN git clean -dxf ||:
-RUN git fetch --unshallow ||:
-RUN git fetch --tags ||:
+# GitHub Actions builder stopped providing git history :(
+# See feature request at https://github.com/actions/runner/issues/767
+RUN build-aux/bootstrap-docker.sh
 
 RUN ./bootstrap.sh
 RUN ./configure
