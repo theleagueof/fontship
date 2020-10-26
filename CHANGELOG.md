@@ -2,6 +2,31 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.6.0](https://github.com/theleagueof/fontship/compare/v0.5.0...v0.6.0) (2020-10-26)
+
+
+### ⚠ BREAKING CHANGES
+
+* **cli:** Deprecate direct inclusion of rule files (non-CLI based usage)
+
+### Features
+
+* **build:** Allow name transformations during build ([0fc24d6](https://github.com/theleagueof/fontship/commit/0fc24d6ec05b20dfc918fbfd375cca7b98e7197f))
+* **build:** Package CLI built from Rust instead of Python sources ([58ce700](https://github.com/theleagueof/fontship/commit/58ce7008021b54f6d9fa41450184f42fd673ffee))
+* **cli:** Capture STDOUT/STDERR from make subprocess ([07c4e0e](https://github.com/theleagueof/fontship/commit/07c4e0edcdc0e41c3802db1624f9e3441060c23a))
+* **cli:** Deprecate direct inclusion of rule files (non-CLI based usage) ([7dfd6c1](https://github.com/theleagueof/fontship/commit/7dfd6c1328edcc530ad72fa8afdee5be3ffcc12f))
+* **cli:** Generate shell completion routines ([#101](https://github.com/theleagueof/fontship/issues/101)) ([3ce84dd](https://github.com/theleagueof/fontship/commit/3ce84dd56831f66bc8303e67aa6a02017646685d))
+* **rules:** Wrap make targets in shell scripts with hooks ([9989776](https://github.com/theleagueof/fontship/commit/998977682184b54c4945e1cdad7576f2364bccd4))
+
+
+### Bug Fixes
+
+* **actions:** Manage GH Actions builds where no version info available ([a74480d](https://github.com/theleagueof/fontship/commit/a74480d44d96e4dabf0c11beeaa29a3b2c340e48))
+* **build:** Add used but undefined error function ([cc48078](https://github.com/theleagueof/fontship/commit/cc480783eb691daa1626c562801094889c1ac106))
+* **rules:** Account for locating projects that don't have local rules ([12ce56c](https://github.com/theleagueof/fontship/commit/12ce56c30f2a974ad47d2aebba259295534b1f12))
+* **rules:** Remove the same TMP file we create, not a different one ([#92](https://github.com/theleagueof/fontship/issues/92)) ([a01fba3](https://github.com/theleagueof/fontship/commit/a01fba3ad0619588af6d64d412fd7e0c28b07b5a))
+* **rules:** Use more robust value quoting/escaping method ([85c7061](https://github.com/theleagueof/fontship/commit/85c7061dae9c2f8c464da2b1be98017a1f12e072))
+
 ## [0.5.0](https://github.com/theleagueof/fontship/compare/v0.4.3...v0.5.0) (2020-10-08)
 
 
