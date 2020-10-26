@@ -18,12 +18,13 @@ Almost every aspect of the build steps and workflow can be tweaked on a per-proj
 
 ## Setup
 
-Fontship can be used in any of four different ways:
+Fontship can be used in any of three different ways:
 
 1. Remotely via a CI runner that responds to events in a remote Git repository.
 2. Locally via an all-inclusive Docker image for low hassle setup.
 3. Locally via a regular system utility install (provided all the required dependencies are also installed).
-4. By including Fontship’s rules into your project’s existing Makefile (no installation of the CLI tool is required, but dependencies must be provided somehow).
+
+*Note:* a fourth method supported through v0.5.0, direct inclusion of Fontship’s rule files into your project’s existing Makefile, has been deprecated. Depending on your project, such usage may or may not continue to function with limitations for the time being, but new features added to the CLI will be *assumed* in the rules going forward.
 
 ### CI Setup
 
@@ -109,24 +110,6 @@ $ ./configure
 $ make
 $ sudo make install
 ```
-
-### Makefile Setup
-
-If ⓐ your system has all the dependencies and ⓑ your project already has a `Makefile`, you can extend your existing makefile with Fontship’s targets my including the pre & post rules files at the top and bottom of your existing targets:
-
-```makefile
-# At the top
-include path/to/fontship/rules/fontship.mk
-
-# Your Makefile content here
-
-# At the bottom
-include path/to/fontship/rules/rules.mk
-```
-
-This may reference a path to Fontship as a git submodule (useful for locking the Fontship version to your project’s build), or just a relative path to somewhere you have the Fontship source.
-
-Note: When using this mode, the CLI tool is not available but your project’s Makefile will be extended with all the targets it uses. Instead of running for example `fontship make otf`, just run `make otf`.
 
 ## Usage
 
