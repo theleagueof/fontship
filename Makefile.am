@@ -6,7 +6,7 @@ licensedir = $(datarootdir)/licenses/$(_fontship)
 datadir = $(datarootdir)/$(_fontship)
 pkgdatadir = $(datadir)
 
-pkgdata_SCRIPTS = make-shell.zsh
+dist_pkgdata_SCRIPTS = make-shell.zsh
 dist_doc_DATA = README.md CHANGELOG.md
 dist_man_MANS = $(_fontship).1
 dist_license_DATA = LICENSE
@@ -89,8 +89,7 @@ $(CARGO_TARGET): $(fontship_SOURCES) clean-embedded-assets
 
 .PHONY: clean-embedded-assets
 clean-embedded-assets:
-	[[ -d .git  ]] || exit 0
-	git clean -dxf assets ||:
+	[[ ! -e .git  ]] || git clean -dxf assets
 
 dist: fontship-$(VERSION).md
 
@@ -107,9 +106,9 @@ RELTYPE ?=
 
 .PHONY: tagrelease
 tagrelease:
-	test -z $$(git tag --points-at HEAD) || exit 0 # end if we are already on a release tag
-	git diff-index --quiet --cached HEAD || exit 1 # die if anything staged but not committed
-	git diff-files --quiet || exit 1 # die if any tracked files have unstagged changes
+	test -z $$(git tag --points-at HEAD) || \
+	git diff-index --quiet --cached HEAD && \
+	git diff-files --quiet && \
 	npm run release -- $(and $(RELTYPE),--release-as $(RELTYPE))
 
 .PHONY: prerelease
