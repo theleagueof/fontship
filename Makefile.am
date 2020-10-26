@@ -4,7 +4,9 @@ _fontship = $(shell sed -e "$(program_transform_name)" <<< fontship)
 
 licensedir = $(datarootdir)/licenses/$(_fontship)
 datadir = $(datarootdir)/$(_fontship)
+pkgdatadir = $(datadir)
 
+pkgdata_SCRIPTS = make-shell.zsh
 dist_doc_DATA = README.md CHANGELOG.md
 dist_man_MANS = $(_fontship).1
 dist_license_DATA = LICENSE

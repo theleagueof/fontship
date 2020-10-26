@@ -1,16 +1,10 @@
 # Defalut to running jobs in parallel, one for each CPU core
-MAKEFLAGS += --jobs=$(shell nproc) --output-sync=target
+MAKEFLAGS += --jobs=$(shell nproc) --output-sync=none
 # Default to not echoing commands before running
 MAKEFLAGS += --silent
 # Disable as much built in file type builds as possible
 MAKEFLAGS += --no-builtin-rules
 .SUFFIXES:
-
-# Run recipies in zsh, and all in one pass
-SHELL := zsh
-.SHELLFLAGS := +o nomatch -e -c
-.ONESHELL:
-.SECONDEXPANSION:
 
 # Don't drop intermediate artifacts (saves rebulid time and aids debugging)
 .SECONDARY:
@@ -20,13 +14,19 @@ SHELL := zsh
 CONTAINERIZED != test -f /.dockerenv && echo true || echo false
 
 # Initial environment setup
-FONTSHIPDIR != cd "$(shell dirname $(lastword $(MAKEFILE_LIST)))/" && pwd
+FONTSHIPDIR != cd "$(shell dirname $(lastword $(MAKEFILE_LIST)))/../" && pwd
 GITNAME := $(notdir $(or $(shell git remote get-url origin 2> /dev/null | sed 's,^.*/,,;s,.git$$,,' ||:),$(shell git worktree list | head -n1 | awk '{print $$1}')))
 PROJECT ?= $(shell $(PYTHON) $(PYTHONFLAGS) -c 'import re; print(re.sub(r"[-_]", " ", "$(GITNAME)".title()).replace(" ", ""))')
 _PROJECTDIR != pwd
 PROJECTDIR ?= $(_PROJECTDIR)
 PUBDIR ?= $(PROJECTDIR)/pub
 SOURCEDIR ?= sources
+
+# Run recipies in zsh wrapper, and all in one pass
+SHELL := $(FONTSHIPDIR)/make-shell.zsh
+.SHELLFLAGS = target=$@
+.ONESHELL:
+.SECONDEXPANSION:
 
 # Some Makefile shinanigans to avoid aggressive trimming
 space := $() $()
@@ -46,7 +46,7 @@ WOFF2COMPRESS ?= woff2_compress
 
 BUILDDIR ?= .fontship
 
-include $(FONTSHIPDIR)/functions.mk
+include $(FONTSHIPDIR)/rules/functions.mk
 
 .PHONY: default
 default: all
