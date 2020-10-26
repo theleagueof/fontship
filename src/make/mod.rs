@@ -57,10 +57,18 @@ pub fn run(target: Vec<String>) -> Result<()> {
             "FONTSHIP" => match fields[1] {
                 "PRE" => report_start(fields[2]),
                 "STDOUT" => {
-                    backlog.push(String::from(fields[2]));
+                    if CONFIG.get_bool("verbose")? {
+                        report_line(fields[3]);
+                    } else {
+                        backlog.push(String::from(fields[3]));
+                    }
                 }
                 "STDERR" => {
-                    backlog.push(String::from(fields[2]));
+                    if CONFIG.get_bool("verbose")? {
+                        report_line(fields[3]);
+                    } else {
+                        backlog.push(String::from(fields[3]));
+                    }
                 }
                 "POST" => match fields[2] {
                     "0" => {
@@ -82,7 +90,9 @@ pub fn run(target: Vec<String>) -> Result<()> {
     match ret {
         0 => Ok(()),
         _ => {
-            dump_backlog(&backlog);
+            if !CONFIG.get_bool("verbose")? {
+                dump_backlog(&backlog);
+            }
             Err(Box::new(io::Error::new(
                 io::ErrorKind::InvalidInput,
                 LocalText::new("make-error-failed").fmt(),
@@ -99,6 +109,10 @@ fn dump_backlog(backlog: &Vec<String>) {
     }
     let end = LocalText::new("make-backlog-end").fmt();
     eprintln!("{} {}", "┎┄".cyan(), end);
+}
+
+fn report_line(line: &str) {
+    eprintln!("{} {}", "┠╎".cyan(), line.dimmed());
 }
 
 fn report_start(target: &str) {
