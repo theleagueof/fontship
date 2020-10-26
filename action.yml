@@ -15,5 +15,5 @@ runs:
     - _gha
     - dist
 branding:
-  icon: package
+  icon: truck
   color: green
