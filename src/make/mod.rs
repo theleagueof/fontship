@@ -57,7 +57,9 @@ pub fn run(target: Vec<String>) -> Result<()> {
             "FONTSHIP" => match fields[1] {
                 "PRE" => report_start(fields[2]),
                 "STDOUT" => {
-                    if CONFIG.get_bool("verbose")? {
+                    if fields[2] == "_gha" {
+                        println!("{}", fields[3]);
+                    } else if CONFIG.get_bool("verbose")? {
                         report_line(fields[3]);
                     } else {
                         backlog.push(String::from(fields[3]));
