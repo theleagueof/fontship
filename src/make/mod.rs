@@ -5,7 +5,7 @@ use colored::Colorize;
 use regex::Regex;
 use std::io::prelude::*;
 use std::{error, ffi::OsString, io, result};
-use subprocess::{Exec, Redirection};
+use subprocess::{Exec, ExitStatus, Redirection};
 
 type Result<T> = result::Result<T, Box<dyn error::Error>>;
 
@@ -45,11 +45,12 @@ pub fn run(target: Vec<String>) -> Result<()> {
     let repo = status::get_repo()?;
     let workdir = repo.workdir().unwrap();
     process = process.cwd(workdir);
-    let out = process.stderr(Redirection::Merge).stream_stdout()?;
-    let buf = io::BufReader::new(out);
+    let process = process.stderr(Redirection::Merge).stdout(Redirection::Pipe);
+    let mut popen = process.popen()?;
+    let buf = io::BufReader::new(popen.stdout.as_mut().unwrap());
     let mut backlog: Vec<String> = Vec::new();
     let seps = Regex::new(r"").unwrap();
-    let mut ret: i32 = 0;
+    let mut ret: u32 = 0;
     for line in buf.lines() {
         let text: &str = &line.unwrap();
         let fields: Vec<&str> = seps.splitn(text, 4).collect();
@@ -89,17 +90,27 @@ pub fn run(target: Vec<String>) -> Result<()> {
             _ => backlog.push(String::from(fields[0])),
         }
     }
-    match ret {
-        0 => Ok(()),
-        _ => {
-            if !CONFIG.get_bool("verbose")? {
-                dump_backlog(&backlog);
+    let status = popen.wait();
+    match status {
+        Ok(ExitStatus::Exited(int)) => {
+            let foo = int + ret;
+            match foo {
+                0 => Ok(()),
+                _ => {
+                    if !CONFIG.get_bool("verbose")? {
+                        dump_backlog(&backlog);
+                    }
+                    Err(Box::new(io::Error::new(
+                        io::ErrorKind::InvalidInput,
+                        LocalText::new("make-error-failed").fmt(),
+                    )))
+                }
             }
-            Err(Box::new(io::Error::new(
-                io::ErrorKind::InvalidInput,
-                LocalText::new("make-error-failed").fmt(),
-            )))
         }
+        _ => Err(Box::new(io::Error::new(
+            io::ErrorKind::InvalidInput,
+            LocalText::new("make-error-process").fmt(),
+        ))),
     }
 }
 
