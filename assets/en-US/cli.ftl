@@ -21,7 +21,7 @@ help-flags-verbose =
 
 # Currently hard coded, see clap issue #1880
 help-subcommand-make =
-  Build specified target(s) with `make`
+  Build specified target(s) with ‘make’
 
 # Currently hard coded, see clap issue #1880
 help-subcommand-make-target =
@@ -37,7 +37,7 @@ help-subcommand-setup-path =
 
 error-not-setup =
   This project path (if it is a project path) is not setup for use with
-  Fontship.  Please run run `fontship status` for details or `fontship setup`
+  Fontship.  Please run run ‘fontship status’ for details or ‘fontship setup’
   to initialize it properly.
 
 error-invalid-language =
@@ -53,7 +53,7 @@ outro =
   Fontship run complete
 
 make-header =
-  Building target(s) using `make`
+  Building target(s) using ‘make’
 
 make-report-start =
   Starting make job for target: { $target }
@@ -65,7 +65,7 @@ make-report-fail =
   Failed make job for target: { $target }
 
 make-backlog-start =
-  Dumping captured output of `make`
+  Dumping captured output of ‘make’
 
 make-backlog-end =
   End dump
@@ -89,7 +89,7 @@ status-good =
   Everything seems to be ship shape, anchors up!
 
 status-bad =
-  Something isn’t seaworthy, run `fontship setup`
+  Something isn’t seaworthy, run ‘fontship setup’
 
 setup-header =
   Configuring repository for use with Fontship
@@ -107,7 +107,7 @@ status-is-writable =
   Can we write to the project base directory?
 
 status-is-make-executable =
-  Is the system’s `make` executable?
+  Is the system’s ‘make’ executable?
 
 status-is-make-gnu =
-  Is the system’s `make` a supported version of GNU Make?
+  Is the system’s ‘make’ a supported version of GNU Make?
