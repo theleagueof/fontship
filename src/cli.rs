@@ -40,7 +40,7 @@ pub struct Cli {
 #[derive(Clap, Debug)]
 pub enum Subcommand {
     // FTL: help-subcommand-make
-    /// Build specified target(s) with `make`
+    /// Build specified target(s) with ‘make’
     Make {
         /// Target as defined in Fontship or project rules
         target: Vec<String>,
