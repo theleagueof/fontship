@@ -170,8 +170,7 @@ debug:
 	echo "VARIABLEWOFF2S = $(VARIABLEWOFF2S)"
 
 .PHONY: _gha
-_gha: debug
-	fontship --version
+_gha:
 	echo "::set-output name=PROJECT::$(PROJECT)"
 	echo "::set-output name=font-version::$(FontVersion)"
 	echo "::set-output name=DISTDIR::$(DISTDIR)"
