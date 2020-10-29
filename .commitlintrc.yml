@@ -27,22 +27,23 @@ rules:
     - cirrus
     - cli
     - debug
-    - docker
     - deps
+    - docker
     - github
+    - glyphs
+    - i18n
     - manpage
     - manual
+    - otf
     - readme
     - release
+    - rules
+    - sfd
     - shaper
     - tooling
     - travis
-    - rules
-    - ufo
-    - glyphs
-    - sfd
-    - otf
     - ttf
+    - ufo
     - woff
 help: |
   **Possible types**:
