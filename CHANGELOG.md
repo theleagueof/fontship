@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.6.2](https://github.com/theleagueof/fontship/compare/v0.6.1...v0.6.2) (2020-10-29)
+
+
+### Bug Fixes
+
+* **actions:** Don't capture strings read by GHA ([27a8494](https://github.com/theleagueof/fontship/commit/27a8494ab0c12f4de1f51fadcd6860b326466f6f))
+* **cli:** Don’t use backticks to unbreak zsh compdef ([#108](https://github.com/theleagueof/fontship/issues/108)) ([50c9a53](https://github.com/theleagueof/fontship/commit/50c9a537ee96d4028a4dd7da39f86af4bd459ab2))
+* **cli:** Return error code if make itself dies ([7197ac5](https://github.com/theleagueof/fontship/commit/7197ac5fb692487a9be406d8b57f11df9dc399f1))
+
 ### [0.6.1](https://github.com/theleagueof/fontship/compare/v0.6.0...v0.6.1) (2020-10-26)
 
 
