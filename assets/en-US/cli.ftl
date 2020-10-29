@@ -77,7 +77,10 @@ make-error-unknown-code =
   currently hacking on Fontship itself please report this as a bug.
 
 make-error-failed =
-  Foo
+  Make failed to execute a recipe.
+
+make-error-process =
+  Make failed to execute a build plan.
 
 status-true =
   Yes
