@@ -240,6 +240,30 @@ variable-woff2: $$(VARIABLEWOFF2S)
 normalize: NORMALIZE_MODE = true
 normalize: $(SOURCES)
 
+.gitignore:
+	$(abort_if_not_clean)
+	$(call addline,.fontship)
+	$(call addline,$(PROJECT)-*)
+	$(call addline,!*/$(PROJECT)-*)
+	$(call addline,.DS_Store)
+	$(call addline,$(SOURCEDIR)/*$(lparen)Autosaved$(rparen).glyphs)
+	$(call addline,$(SOURCEDIR)/*_backups)
+ifneq ($(CANONICAL),glyphs)
+	$(call addline,$(SOURCEDIR)/*.glyphs)
+else
+	$(call delline,$(SOURCEDIR)/*.glyphs)
+endif
+ifneq ($(CANONICAL),sfd)
+	$(call addline,$(SOURCEDIR)/*.sfd)
+else
+	$(call delline,$(SOURCEDIR)/*.sfd)
+endif
+ifneq ($(CANONICAL),ufo)
+	$(call addline,$(SOURCEDIR)/*.ufo)
+else
+	$(call delline,$(SOURCEDIR)/*.ufo)
+endif
+
 .PHONY: check
 check: $(addsuffix -check,$(SOURCES))
 

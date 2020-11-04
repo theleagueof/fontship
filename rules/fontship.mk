@@ -35,6 +35,8 @@ SHELL := $(FONTSHIPDIR)/make-shell.zsh
 
 # Some Makefile shinanigans to avoid aggressive trimming
 space := $() $()
+lparen := (
+rparen := )
 
 # Allow overriding executables used
 FONTMAKE ?= fontmake
