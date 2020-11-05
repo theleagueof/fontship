@@ -2,7 +2,7 @@ use crate::i18n::LocalText;
 use crate::make;
 use crate::CONFIG;
 use colored::Colorize;
-use git2::Repository;
+use git2::{Repository, Status};
 use std::{error, fs, io, path::Path, result};
 
 type Result<T> = result::Result<T, Box<dyn error::Error>>;
@@ -35,13 +35,22 @@ fn regen_gitignore(repo: Repository) -> Result<()> {
     let mut index = repo.index()?;
     index.add_path(path)?;
     let oid = index.write_tree()?;
-    let text = LocalText::new("setup-commiting-gitignore").fmt();
-    eprintln!("{} {}", "┠┄".cyan(), text);
-    match crate::commit(repo, oid, "Update .gitignore") {
-        Ok(_) => {
-            index.write()?;
+    match repo.status_file(path) {
+        Ok(Status::CURRENT) => {
+            let text = LocalText::new("setup-gitignore-fresh").fmt();
+            eprintln!("{} {}", "┠┄".cyan(), text);
             Ok(())
         }
-        Err(foo) => Err(Box::new(foo)),
+        _ => {
+            let text = LocalText::new("setup-gitignore-committing").fmt();
+            eprintln!("{} {}", "┠┄".cyan(), text);
+            match crate::commit(repo, oid, "Update .gitignore") {
+                Ok(_) => {
+                    index.write()?;
+                    Ok(())
+                }
+                Err(foo) => Err(Box::new(foo)),
+            }
+        }
     }
 }
