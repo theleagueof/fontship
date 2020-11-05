@@ -240,9 +240,13 @@ variable-woff2: $$(VARIABLEWOFF2S)
 normalize: NORMALIZE_MODE = true
 normalize: $(SOURCES)
 
-.gitignore:
+.gitignore: force
 	$(abort_if_not_clean)
 	$(call addline,.fontship)
+	$(call addline,*.otf)
+	$(call addline,*.ttf)
+	$(call addline,*.woff)
+	$(call addline,*.woff2)
 	$(call addline,$(PROJECT)-*)
 	$(call addline,!*/$(PROJECT)-*)
 	$(call addline,.DS_Store)
