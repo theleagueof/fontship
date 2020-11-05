@@ -1,6 +1,7 @@
 use crate::i18n::LocalText;
 use crate::make;
 use crate::CONFIG;
+use colored::Colorize;
 use git2::Repository;
 use std::{error, fs, io, path::Path, result};
 
@@ -34,6 +35,8 @@ fn regen_gitignore(repo: Repository) -> Result<()> {
     let mut index = repo.index()?;
     index.add_path(path)?;
     let oid = index.write_tree()?;
+    let text = LocalText::new("setup-commiting-gitignore").fmt();
+    eprintln!("{} {}", "┠┄".cyan(), text);
     match crate::commit(repo, oid, "Update .gitignore") {
         Ok(_) => {
             index.write()?;

@@ -97,6 +97,9 @@ status-bad =
 setup-header =
   Configuring repository for use with Fontship
 
+setup-commiting-gitignore =
+  Commiting updated .gitignore file
+
 status-header =
   Scanning project status
 
