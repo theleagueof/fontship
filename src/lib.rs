@@ -3,8 +3,9 @@ extern crate lazy_static;
 
 use crate::config::CONFIG;
 use colored::Colorize;
+use git2::{Oid, Repository, Signature};
 use i18n::LocalText;
-use std::{error, fmt};
+use std::{error, fmt, result, str};
 
 pub mod cli;
 pub mod config;
@@ -50,6 +51,23 @@ impl error::Error for Error {
     fn description(&self) -> &str {
         &self.details
     }
+}
+
+pub fn commit(repo: Repository, oid: Oid, msg: &str) -> result::Result<Oid, git2::Error> {
+    let prefix = "[fontship]";
+    let commiter = repo.signature()?;
+    let author = Signature::now("Fontship", commiter.email().unwrap())?;
+    let parent = repo.head()?.peel_to_commit()?;
+    let tree = repo.find_tree(oid)?;
+    let parents = [&parent];
+    repo.commit(
+        Some("HEAD"),
+        &author,
+        &commiter,
+        &[prefix, msg].join(" "),
+        &tree,
+        &parents,
+    )
 }
 
 /// Output welcome header at start of run before moving on to actual commands
