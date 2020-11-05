@@ -15,5 +15,18 @@ define normalizeVersion ?=
 	$(FONTV) $(FONTVFLAGS) write --ver=$(FontVersion) $(if $(isTagged),--rel,--dev --sha1) $@
 endef
 
+define abort_if_not_clean ?=
+	git diff-index --quiet --cached HEAD -- $@ || exit 1 # die if anything is staged
+	git diff-files --quiet -- $@ || exit 1 # die if unstaged changes
+endef
+
+define addline ?=
+	grep -Fxq "$1" $@ || echo "$1" >> $@
+endef
+
+define delline ?=
+	grep -Fxv "$1" $@ | sponge $@
+endef
+
 # Useful for testing secondary expanstions in dependencies
 ifTrue ?= $(and $1,$2)
