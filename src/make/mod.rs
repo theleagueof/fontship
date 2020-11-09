@@ -34,7 +34,8 @@ pub fn run(target: Vec<String>) -> Result<()> {
     // Start deprecating non-CLI usage
     process = process
         .env("FONTSHIP_CLI", "true")
-        .env("FONTSHIPDIR", CONFIGURE_DATADIR);
+        .env("FONTSHIPDIR", CONFIGURE_DATADIR)
+        .env("GITNAME", status::get_gitname()?);
     if CONFIG.get_bool("debug")? {
         process = process.env("DEBUG", "true");
     };

@@ -2,6 +2,7 @@ use crate::i18n::LocalText;
 use crate::CONFIG;
 use colored::{ColoredString, Colorize};
 use git2::Repository;
+use regex::Regex;
 use std::io::prelude::*;
 use std::sync::{Arc, RwLock};
 use std::{env, error, fs, io, path, result};
@@ -133,6 +134,32 @@ pub fn is_make_gnu() -> Result<bool> {
 pub fn get_repo() -> Result<Repository> {
     let path = CONFIG.get_string("path")?;
     Ok(Repository::discover(path)?)
+}
+
+pub fn get_gitname() -> Result<String> {
+    fn origin() -> Result<String> {
+        let repo = get_repo()?;
+        let remote = repo.find_remote("origin")?;
+        let url = remote.url().unwrap();
+        let re = Regex::new(r"^(.*/)([^/]+)(/?\.git/?)$").unwrap();
+        let name = re
+            .captures(url)
+            .ok_or(crate::Error::new("error-no-remote"))?
+            .get(2)
+            .ok_or(crate::Error::new("error-no-remote"))?
+            .as_str();
+        Ok(String::from(name))
+    }
+    fn path() -> Result<String> {
+        let path = &CONFIG.get_string("path")?;
+        let file = path::Path::new(path)
+            .file_name()
+            .ok_or(crate::Error::new("error-no-path"))?
+            .to_str();
+        Ok(file.unwrap().to_string())
+    }
+    let default = Ok(String::from("fontship"));
+    origin().or(path().or(default))
 }
 
 /// Scan for existing makefiles with Fontship rules

@@ -19,7 +19,6 @@ $(error Use of fontship rule file inclusion outside of the CLI is deprecated!)
 endif
 
 # Initial environment setup
-GITNAME := $(notdir $(or $(shell git remote get-url origin 2> /dev/null | sed 's,^.*/,,;s,.git$$,,' ||:),$(shell git worktree list | head -n1 | awk '{print $$1}')))
 PROJECT ?= $(shell $(PYTHON) $(PYTHONFLAGS) -c 'import re; print(re.sub(r"[-_]", " ", "$(GITNAME)".title()).replace(" ", ""))')
 _PROJECTDIR != pwd
 PROJECTDIR ?= $(_PROJECTDIR)
