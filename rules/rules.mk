@@ -142,7 +142,6 @@ debug:
 	echo "GITNAME = $(GITNAME)"
 	echo "PROJECT = $(PROJECT)"
 	echo "PROJECTDIR = $(PROJECTDIR)"
-	echo "PUBDIR = $(PUBDIR)"
 	echo "SOURCEDIR = $(SOURCEDIR)"
 	echo "----------------------------"
 	echo "FamilyNames = $(FamilyNames)"

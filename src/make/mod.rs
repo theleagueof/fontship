@@ -32,7 +32,9 @@ pub fn run(target: Vec<String>) -> Result<()> {
     )));
     let mut process = Exec::cmd("make").args(&makefiles).args(&target);
     // Start deprecating non-CLI usage
-    process = process.env("FONTSHIP_CLI", "true");
+    process = process
+        .env("FONTSHIP_CLI", "true")
+        .env("FONTSHIPDIR", CONFIGURE_DATADIR);
     if CONFIG.get_bool("debug")? {
         process = process.env("DEBUG", "true");
     };
