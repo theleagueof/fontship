@@ -18,7 +18,8 @@ impl CONFIG {
             .set_default("debug", false)?
             .set_default("quiet", false)?
             .set_default("verbose", false)?
-            .set_default("path", "./")?;
+            .set_default("path", "./")?
+            .set_default("sourcedir", "sources")?;
         Ok(())
     }
 
