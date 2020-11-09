@@ -32,10 +32,12 @@ pub fn run(target: Vec<String>) -> Result<()> {
     )));
     let mut process = Exec::cmd("make").args(&makefiles).args(&target);
     // Start deprecating non-CLI usage
+    let gitname = status::get_gitname()?;
     process = process
         .env("FONTSHIP_CLI", "true")
         .env("FONTSHIPDIR", CONFIGURE_DATADIR)
-        .env("GITNAME", status::get_gitname()?)
+        .env("GITNAME", &gitname)
+        .env("PROJECT", crate::pname(&gitname))
         .env("PROJECTDIR", CONFIG.get_string("path")?)
         .env("SOURCEDIR", CONFIG.get_string("sourcedir")?);
     if CONFIG.get_bool("debug")? {

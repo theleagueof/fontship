@@ -5,6 +5,8 @@ use crate::config::CONFIG;
 use colored::Colorize;
 use git2::{Oid, Repository, Signature};
 use i18n::LocalText;
+use inflector::Inflector;
+use regex::Regex;
 use std::{error, fmt, result, str};
 
 pub mod cli;
@@ -51,6 +53,13 @@ impl error::Error for Error {
     fn description(&self) -> &str {
         &self.details
     }
+}
+
+pub fn pname(input: &str) -> String {
+    let seps = Regex::new(r"[-_]").unwrap();
+    let spaces = Regex::new(r" ").unwrap();
+    let title = seps.replace(input, " ").to_title_case();
+    spaces.replace(&title, "").to_string()
 }
 
 pub fn commit(repo: Repository, oid: Oid, msg: &str) -> result::Result<Oid, git2::Error> {

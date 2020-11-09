@@ -18,9 +18,6 @@ ifeq ($(FONTSHIP_CLI),)
 $(error Use of fontship rule file inclusion outside of the CLI is deprecated!)
 endif
 
-# Initial environment setup
-PROJECT ?= $(shell $(PYTHON) $(PYTHONFLAGS) -c 'import re; print(re.sub(r"[-_]", " ", "$(GITNAME)".title()).replace(" ", ""))')
-
 # Run recipies in zsh wrapper, and all in one pass
 SHELL := $(FONTSHIPDIR)/make-shell.zsh
 .SHELLFLAGS = target=$@
