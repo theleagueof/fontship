@@ -35,7 +35,8 @@ pub fn run(target: Vec<String>) -> Result<()> {
     process = process
         .env("FONTSHIP_CLI", "true")
         .env("FONTSHIPDIR", CONFIGURE_DATADIR)
-        .env("GITNAME", status::get_gitname()?);
+        .env("GITNAME", status::get_gitname()?)
+        .env("PROJECTDIR", CONFIG.get_string("path")?);
     if CONFIG.get_bool("debug")? {
         process = process.env("DEBUG", "true");
     };

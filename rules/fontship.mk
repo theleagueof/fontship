@@ -20,8 +20,6 @@ endif
 
 # Initial environment setup
 PROJECT ?= $(shell $(PYTHON) $(PYTHONFLAGS) -c 'import re; print(re.sub(r"[-_]", " ", "$(GITNAME)".title()).replace(" ", ""))')
-_PROJECTDIR != pwd
-PROJECTDIR ?= $(_PROJECTDIR)
 SOURCEDIR ?= sources
 
 # Run recipies in zsh wrapper, and all in one pass
