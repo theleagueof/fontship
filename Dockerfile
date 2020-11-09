@@ -24,7 +24,7 @@ RUN pacman --needed --noconfirm -Syuq && yes | pacman -Sccq
 
 # Install fontship run-time dependecies (increment cache var above)
 RUN pacman --needed --noconfirm -Syq \
-		diffutils entr font-v gftools git libarchive make psautohint python sfd2ufo sfdnormalize sfnt2woff-zopfli ttfautohint woff2 zsh \
+		diffutils entr font-v gftools git libarchive libgit2 make psautohint python sfd2ufo sfdnormalize sfnt2woff-zopfli ttfautohint woff2 zsh \
 		python-{babelfont,brotli,cffsubr,defcon,font{make,tools},fs,lxml,pcpp,skia-pathops,ufo{2ft,lib2,normalizer},unicodedata2,zopfli,vttlib} \
 	&& yes | pacman -Sccq
 
