@@ -15,7 +15,7 @@ CONTAINERIZED != test -f /.dockerenv && echo true || echo false
 
 # Deprecate direct usage under `make` without the CLI
 ifeq ($(FONTSHIP_CLI),)
-$(warning Use of fontship rule file inclusion outside of the CLI is deprecated! You are on your own mate.)
+$(error Use of fontship rule file inclusion outside of the CLI is deprecated!)
 endif
 
 # Initial environment setup
