@@ -5,7 +5,7 @@ use git2::Repository;
 use regex::Regex;
 use std::io::prelude::*;
 use std::sync::{Arc, RwLock};
-use std::{env, error, fs, io, path, result};
+use std::{env, error, fs, path, result};
 use subprocess::{Exec, NullFile, Redirection};
 
 type Result<T> = result::Result<T, Box<dyn error::Error>>;
@@ -165,10 +165,7 @@ pub fn get_gitname() -> Result<String> {
 /// Scan for existing makefiles with Fontship rules
 pub fn get_rules() -> Result<Vec<path::PathBuf>> {
     if !is_setup()? {
-        return Err(Box::new(io::Error::new(
-            io::ErrorKind::InvalidInput,
-            LocalText::new("error-not-setup").fmt(),
-        )));
+        return Err(Box::new(crate::Error::new("error-not-setup")));
     };
     let repo = get_repo()?;
     let root = repo.workdir().unwrap();
