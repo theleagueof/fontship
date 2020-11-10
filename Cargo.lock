@@ -289,6 +289,7 @@ dependencies = [
  "fluent-langneg",
  "git2",
  "lazy_static",
+ "num_cpus",
  "rayon",
  "regex",
  "rust-embed",
