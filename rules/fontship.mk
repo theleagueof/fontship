@@ -11,8 +11,6 @@ MAKEFLAGS += --no-builtin-rules
 .PRECIOUS: %
 .DELETE_ON_ERROR:
 
-CONTAINERIZED != test -f /.dockerenv && echo true || echo false
-
 # Deprecate direct usage under `make` without the CLI
 ifeq ($(FONTSHIP_CLI),)
 $(error Use of fontship rule file inclusion outside of the CLI is deprecated!)

@@ -36,6 +36,7 @@ pub fn run(target: Vec<String>) -> Result<()> {
     process = process
         .env("FONTSHIP_CLI", "true")
         .env("FONTSHIPDIR", CONFIGURE_DATADIR)
+        .env("CONTAINERIZED", status::is_container().to_string())
         .env("GITNAME", &gitname)
         .env("PROJECT", crate::pname(&gitname))
         .env("PROJECTDIR", CONFIG.get_string("path")?)

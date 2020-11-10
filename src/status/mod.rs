@@ -130,6 +130,12 @@ pub fn is_make_gnu() -> Result<bool> {
     Ok(true)
 }
 
+/// Figure out if we're running inside Docker or another container
+pub fn is_container() -> bool {
+    let dockerenv = path::Path::new("/.dockerenv");
+    dockerenv.exists()
+}
+
 /// Get repository object
 pub fn get_repo() -> Result<Repository> {
     let path = CONFIG.get_string("path")?;
