@@ -288,6 +288,7 @@ dependencies = [
  "fluent-fallback",
  "fluent-langneg",
  "git2",
+ "itertools",
  "lazy_static",
  "num_cpus",
  "rayon",
@@ -385,6 +386,15 @@ checksum = "6c271cdb1f12a9feb3a017619c3ee681f971f270f6757341d6abe1f9f7a98bc3"
 dependencies = [
  "tinystr",
  "unic-langid",
+]
+
+[[package]]
+name = "itertools"
+version = "0.9.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "284f18f85651fe11e8a991b2adb42cb078325c996ed026d994719efcfca1d54b"
+dependencies = [
+ "either",
 ]
 
 [[package]]
