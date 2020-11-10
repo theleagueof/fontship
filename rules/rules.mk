@@ -6,7 +6,6 @@ ifeq ($(FONTSHIPDIR),)
 $(error Please initialize Fontship by sourcing fontship.mk first, then include your project rules, then source this rules.mk file)
 endif
 
-SOURCES ?= $(shell git ls-files -- '$(SOURCEDIR)/*.glyphs' '$(SOURCEDIR)/*.sfd' '$(SOURCEDIR)/*.ufo/*' '$(SOURCEDIR)/*.designspace' | sed -e '/\.ufo/s,.ufo/.*,.ufo,' | uniq)
 SOURCES_SFD ?= $(filter %.sfd,$(SOURCES))
 SOURCES_UFO ?= $(filter %.ufo,$(SOURCES))
 SOURCES_GLYPHS ?= $(filter %.glyphs,$(SOURCES))

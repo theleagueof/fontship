@@ -186,6 +186,42 @@ pub fn get_rules() -> Result<Vec<path::PathBuf>> {
     Ok(rules)
 }
 
+/// Scan for sources
+pub fn get_sources() -> Result<Vec<path::PathBuf>> {
+    if !is_setup()? {
+        return Err(Box::new(crate::Error::new("error-not-setup")));
+    };
+    let repo = get_repo()?;
+    let index = repo.index()?;
+    let mut sources = vec![];
+    let sourcedir = CONFIG.get_string("sourcedir")?;
+    let sourcedir = path::Path::new(&sourcedir);
+    let sourceexts = Regex::new(r"\.(sfd|glyphs|designspace)$").unwrap();
+    let ufoexts = Regex::new(r"\.ufo$").unwrap();
+    for entry in index.iter() {
+        let rawpath = &entry.path;
+        let path = crate::bytes2path(rawpath);
+        if !path.exists() {
+            continue;
+        }
+        if let Ok(part) = path.strip_prefix(&sourcedir) {
+            let mut components = part.components();
+            if let Some(path::Component::Normal(name)) = components.next() {
+                let n = name.to_str().unwrap().clone();
+                if let Some(_) = sourceexts.find(n) {
+                    sources.push(path.to_path_buf());
+                } else if let Some(_) = ufoexts.find(n) {
+                    let mut p = sourcedir.to_path_buf();
+                    p.push(name);
+                    sources.push(p);
+                }
+            }
+        }
+    }
+    sources.dedup();
+    Ok(sources)
+}
+
 fn display_check(key: &str, val: bool) {
     if CONFIG.get_bool("debug").unwrap() || CONFIG.get_bool("verbose").unwrap() {
         eprintln!(

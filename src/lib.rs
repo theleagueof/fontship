@@ -8,7 +8,8 @@ use git2::{Oid, Repository, Signature};
 use i18n::LocalText;
 use inflector::Inflector;
 use regex::Regex;
-use std::{error, fmt, result, str};
+use std::ffi::OsStr;
+use std::{error, fmt, path, result, str};
 
 pub mod cli;
 pub mod config;
@@ -96,4 +97,15 @@ pub fn show_outro() {
 pub fn header(key: &str) {
     let text = LocalText::new(key);
     eprintln!("{} {}", "┣━".cyan(), text.fmt().yellow());
+}
+
+#[cfg(unix)]
+pub fn bytes2path(b: &[u8]) -> &path::Path {
+    use std::os::unix::prelude::*;
+    path::Path::new(OsStr::from_bytes(b))
+}
+#[cfg(windows)]
+pub fn bytes2path(b: &[u8]) -> &path::Path {
+    use std::str;
+    path::Path::new(str::from_utf8(b).unwrap())
 }

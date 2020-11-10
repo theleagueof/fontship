@@ -2,6 +2,7 @@ use crate::i18n::LocalText;
 use crate::CONFIG;
 use crate::{status, CONFIGURE_DATADIR};
 use colored::Colorize;
+use itertools::Itertools;
 use regex::Regex;
 use std::io::prelude::*;
 use std::{error, ffi::OsString, io, result};
@@ -39,6 +40,13 @@ pub fn run(target: Vec<String>) -> Result<()> {
         .args(&target);
     // Start deprecating non-CLI usage
     let gitname = status::get_gitname()?;
+    let sources = status::get_sources()?;
+    let sources_str = format!(
+        "{}",
+        sources
+            .iter()
+            .format_with(" ", |p, f| f(&p.to_str().unwrap()))
+    );
     process = process
         .env("FONTSHIP_CLI", "true")
         .env("FONTSHIPDIR", CONFIGURE_DATADIR)
@@ -46,7 +54,8 @@ pub fn run(target: Vec<String>) -> Result<()> {
         .env("GITNAME", &gitname)
         .env("PROJECT", crate::pname(&gitname))
         .env("PROJECTDIR", CONFIG.get_string("path")?)
-        .env("SOURCEDIR", CONFIG.get_string("sourcedir")?);
+        .env("SOURCEDIR", CONFIG.get_string("sourcedir")?)
+        .env("SOURCES", sources_str);
     if CONFIG.get_bool("debug")? {
         process = process.env("DEBUG", "true");
     };
