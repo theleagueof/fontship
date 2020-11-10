@@ -37,8 +37,6 @@ FontInstances ?= $(sort $(foreach SOURCE,$(SOURCES_UFO),$(call ufoInstances,$(SO
 endif
 endif
 
-FamilyName ?= $(shell $(CONTAINERIZED) || $(PYTHON) $(PYTHONFLAGS) -c 'print("$(PROJECT)".replace("-", " ").title())')
-
 HINT ?= true
 
 # Output format selectors
