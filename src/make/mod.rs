@@ -13,6 +13,9 @@ type Result<T> = result::Result<T, Box<dyn error::Error>>;
 /// Build specified target(s)
 pub fn run(target: Vec<String>) -> Result<()> {
     crate::header("make-header");
+    let mut makeflags: Vec<OsString> = Vec::new();
+    let cpus = num_cpus::get();
+    makeflags.push(OsString::from(format!("--jobs={}", cpus)));
     let mut makefiles: Vec<OsString> = Vec::new();
     makefiles.push(OsString::from("-f"));
     makefiles.push(OsString::from(format!(
@@ -30,7 +33,10 @@ pub fn run(target: Vec<String>) -> Result<()> {
         "{}{}",
         CONFIGURE_DATADIR, "rules/rules.mk"
     )));
-    let mut process = Exec::cmd("make").args(&makefiles).args(&target);
+    let mut process = Exec::cmd("make")
+        .args(&makeflags)
+        .args(&makefiles)
+        .args(&target);
     // Start deprecating non-CLI usage
     let gitname = status::get_gitname()?;
     process = process

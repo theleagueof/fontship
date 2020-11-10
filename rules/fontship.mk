@@ -1,5 +1,5 @@
 # Defalut to running jobs in parallel, one for each CPU core
-MAKEFLAGS += --jobs=$(shell nproc) --output-sync=none
+MAKEFLAGS += --output-sync=none
 # Default to not echoing commands before running
 MAKEFLAGS += --silent
 # Disable as much built in file type builds as possible
