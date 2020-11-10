@@ -81,6 +81,19 @@ pub fn commit(repo: Repository, oid: Oid, msg: &str) -> result::Result<Oid, git2
     )
 }
 
+pub fn format_font_version(version: String) -> String {
+    let re = Regex::new(r"-r.*$").unwrap();
+    String::from(re.replace(version.as_str(), ""))
+}
+
+pub fn format_meta_version(version: String) -> String {
+    let re = Regex::new(r"-\d+/$").unwrap();
+    let a = re.replace(version.as_str(), ";");
+    let re = Regex::new(r"-g").unwrap();
+    let b = re.replace(&a, "[");
+    String::from(b + "]")
+}
+
 /// Output welcome header at start of run before moving on to actual commands
 pub fn show_welcome() {
     let welcome = LocalText::new("welcome").arg("version", VERSION);

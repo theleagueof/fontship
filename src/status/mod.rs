@@ -1,7 +1,7 @@
 use crate::i18n::LocalText;
 use crate::CONFIG;
 use colored::{ColoredString, Colorize};
-use git2::Repository;
+use git2::{DescribeFormatOptions, DescribeOptions, Repository};
 use regex::Regex;
 use std::io::prelude::*;
 use std::sync::{Arc, RwLock};
@@ -214,6 +214,32 @@ pub fn get_sources() -> Result<Vec<path::PathBuf>> {
     }
     sources.dedup();
     Ok(sources)
+}
+
+/// Figure out version string from repo tags
+pub fn get_git_version() -> String {
+    let zero_version = String::from("0.000");
+    let repo = get_repo().unwrap();
+    let mut opts = DescribeOptions::new();
+    opts.describe_tags().pattern("*[0-9].[0-9][0-9][0-9]");
+    let desc = match repo.describe(&opts) {
+        Ok(a) => {
+            let mut fmt = DescribeFormatOptions::new();
+            fmt.abbreviated_size(6).always_use_long_format(true);
+            a.format(Some(&fmt)).unwrap()
+        }
+        Err(_) => {
+            let head = repo.revparse("HEAD").unwrap();
+            let mut revwalk = repo.revwalk().unwrap();
+            revwalk.push_head().unwrap();
+            let ahead = revwalk.count();
+            let sha = head.from().unwrap().short_id().unwrap();
+            format!("{}-{}-g{}", zero_version, ahead, sha.as_str().unwrap())
+        }
+    };
+    let prefix = Regex::new(r"^v").unwrap();
+    let sep = Regex::new(r"-").unwrap();
+    String::from(sep.replace(&prefix.replace(desc.as_str(), ""), "-r"))
 }
 
 fn display_check(key: &str, val: bool) {

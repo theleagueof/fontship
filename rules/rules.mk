@@ -51,19 +51,7 @@ VARIABLEWOFF2 ?= $(isVariable)
 
 INSTANCES ?= $(foreach FamilyName,$(FamilyNames),$(foreach STYLE,$(FontInstances),$(FamilyName)-$(STYLE)))
 
-GITVER = --tags --abbrev=6 --match='*[0-9].[0-9][0-9][0-9]'
-# Determine font version automatically from repository git tags
-FontVersion ?= $(shell git describe $(GITVER) 2> /dev/null | sed 's/^v//;s/-.*//g')
-ifneq ($(FontVersion),)
-FontVersionMeta ?= $(shell git describe --always --long $(GITVER) | sed 's/^v//;s/-[0-9]\+/;/;s/-g/[/')]
-GitVersion ?= $(shell git describe $(GITVER) | sed 's/^v//;s/-/-r/')
-isTagged := $(if $(subst $(FontVersion),,$(GitVersion)),,true)
-else
-FontVersion = 0.000
-FontVersionMeta ?= $(FontVersion)\;[$(shell git rev-parse --short=6 HEAD)]
-GitVersion ?= $(FontVersion)-r$(shell git rev-list --count HEAD)-g$(shell git rev-parse --short=6 HEAD)
-isTagged :=
-endif
+isTagged := $(and $(findstring -r0-,$(GitVersion)),true)
 
 ifeq ($(DEBUG),true)
 .SHELLFLAGS += +x
