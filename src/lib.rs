@@ -87,11 +87,9 @@ pub fn format_font_version(version: String) -> String {
 }
 
 pub fn format_meta_version(version: String) -> String {
-    let re = Regex::new(r"-\d+/$").unwrap();
-    let a = re.replace(version.as_str(), ";");
-    let re = Regex::new(r"-g").unwrap();
-    let b = re.replace(&a, "[");
-    String::from(b + "]")
+    let re = Regex::new(r"-\d+-g").unwrap();
+    let a = re.replace(version.as_str(), ";[");
+    String::from(a + "]")
 }
 
 /// Output welcome header at start of run before moving on to actual commands
