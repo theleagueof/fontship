@@ -170,9 +170,6 @@ pub fn get_gitname() -> Result<String> {
 
 /// Scan for existing makefiles with Fontship rules
 pub fn get_rules() -> Result<Vec<path::PathBuf>> {
-    if !is_setup()? {
-        return Err(Box::new(crate::Error::new("error-not-setup")));
-    };
     let repo = get_repo()?;
     let root = repo.workdir().unwrap();
     let files = vec!["GNUMakefile", "makefile", "Makefile", "rules.mk"];
@@ -188,9 +185,6 @@ pub fn get_rules() -> Result<Vec<path::PathBuf>> {
 
 /// Scan for sources
 pub fn get_sources() -> Result<Vec<path::PathBuf>> {
-    if !is_setup()? {
-        return Err(Box::new(crate::Error::new("error-not-setup")));
-    };
     let repo = get_repo()?;
     let index = repo.index()?;
     let mut sources = vec![];

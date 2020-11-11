@@ -13,6 +13,7 @@ type Result<T> = result::Result<T, Box<dyn error::Error>>;
 // FTL: help-subcommand-make
 /// Build specified target(s)
 pub fn run(target: Vec<String>) -> Result<()> {
+    status::is_setup()?;
     crate::header("make-header");
     let mut makeflags: Vec<OsString> = Vec::new();
     let cpus = num_cpus::get();
