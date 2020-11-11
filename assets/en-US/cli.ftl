@@ -109,6 +109,9 @@ setup-gitignore-committing =
 setup-gitignore-fresh =
   Existing .gitignore file is up to date
 
+setup-short-shas =
+  Set default length of short SHA hashes in repository
+
 status-header =
   Scanning project status
 

@@ -225,7 +225,7 @@ pub fn get_git_version() -> String {
     let desc = match repo.describe(&opts) {
         Ok(a) => {
             let mut fmt = DescribeFormatOptions::new();
-            fmt.abbreviated_size(7).always_use_long_format(true);
+            fmt.always_use_long_format(true);
             a.format(Some(&fmt)).unwrap()
         }
         Err(_) => {
