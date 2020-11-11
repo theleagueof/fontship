@@ -17,7 +17,7 @@ RUN pacman-key --recv-keys 63CC496475267693 && pacman-key --lsign-key 63CC496475
 # because it saves a lot of time for local builds, but it does periodically
 # need a poke. Incrementing this when changing dependencies or just when the
 # remote Docker Hub builds die should be enough.
-ARG DOCKER_HUB_CACHE=1
+ARG DOCKER_HUB_CACHE=2
 
 # Freshen all base system packages
 RUN pacman --needed --noconfirm -Syuq && yes | pacman -Sccq
