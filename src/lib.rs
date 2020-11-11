@@ -86,12 +86,6 @@ pub fn format_font_version(version: String) -> String {
     String::from(re.replace(version.as_str(), ""))
 }
 
-pub fn format_meta_version(version: String) -> String {
-    let re = Regex::new(r"-\d+-g").unwrap();
-    let a = re.replace(version.as_str(), ";[");
-    String::from(a + "]")
-}
-
 /// Output welcome header at start of run before moving on to actual commands
 pub fn show_welcome() {
     let welcome = LocalText::new("welcome").arg("version", VERSION);

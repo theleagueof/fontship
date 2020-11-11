@@ -133,7 +133,6 @@ debug:
 	echo "FamilyNames = $(FamilyNames)"
 	echo "FontInstances = $(FontInstances)"
 	echo "FontVersion = $(FontVersion)"
-	echo "FontVersionMeta = $(FontVersionMeta)"
 	echo "GitVersion = $(GitVersion)"
 	echo "isTagged = $(isTagged)"
 	echo "isVariable = $(isVariable)"

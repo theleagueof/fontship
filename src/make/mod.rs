@@ -50,7 +50,6 @@ pub fn run(target: Vec<String>) -> Result<()> {
     );
     let git_version = status::get_git_version();
     let font_version = crate::format_font_version(git_version.clone());
-    let meta_version = crate::format_meta_version(git_version.clone());
     process = process
         .env("FONTSHIP_CLI", "true")
         .env("FONTSHIPDIR", CONFIGURE_DATADIR)
@@ -60,7 +59,6 @@ pub fn run(target: Vec<String>) -> Result<()> {
         .env("PROJECTDIR", CONFIG.get_string("path")?)
         .env("GitVersion", git_version)
         .env("FontVersion", font_version)
-        .env("FontVersionMeta", meta_version)
         .env("SOURCEDIR", CONFIG.get_string("sourcedir")?)
         .env("SOURCES", sources_str);
     if CONFIG.get_bool("debug")? {
