@@ -46,6 +46,12 @@ error-invalid-language =
 error-invalid-resources =
   Could not find valid BCP47 resource files.
 
+error-no-remote =
+  Git repository does not have a working remote named 'origin'.
+
+error-no-path =
+  Cannot parse directory path.
+
 welcome =
   Welcome to Fontship { $version }
 
@@ -102,6 +108,9 @@ setup-gitignore-committing =
 
 setup-gitignore-fresh =
   Existing .gitignore file is up to date
+
+setup-short-shas =
+  Set default length of short SHA hashes in repository
 
 status-header =
   Scanning project status

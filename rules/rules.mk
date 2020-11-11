@@ -6,7 +6,6 @@ ifeq ($(FONTSHIPDIR),)
 $(error Please initialize Fontship by sourcing fontship.mk first, then include your project rules, then source this rules.mk file)
 endif
 
-SOURCES ?= $(shell git ls-files -- '$(SOURCEDIR)/*.glyphs' '$(SOURCEDIR)/*.sfd' '$(SOURCEDIR)/*.ufo/*' '$(SOURCEDIR)/*.designspace' | sed -e '/\.ufo/s,.ufo/.*,.ufo,' | uniq)
 SOURCES_SFD ?= $(filter %.sfd,$(SOURCES))
 SOURCES_UFO ?= $(filter %.ufo,$(SOURCES))
 SOURCES_GLYPHS ?= $(filter %.glyphs,$(SOURCES))
@@ -38,8 +37,6 @@ FontInstances ?= $(sort $(foreach SOURCE,$(SOURCES_UFO),$(call ufoInstances,$(SO
 endif
 endif
 
-FamilyName ?= $(shell $(CONTAINERIZED) || $(PYTHON) $(PYTHONFLAGS) -c 'print("$(PROJECT)".replace("-", " ").title())')
-
 HINT ?= true
 
 # Output format selectors
@@ -54,19 +51,7 @@ VARIABLEWOFF2 ?= $(isVariable)
 
 INSTANCES ?= $(foreach FamilyName,$(FamilyNames),$(foreach STYLE,$(FontInstances),$(FamilyName)-$(STYLE)))
 
-GITVER = --tags --abbrev=6 --match='*[0-9].[0-9][0-9][0-9]'
-# Determine font version automatically from repository git tags
-FontVersion ?= $(shell git describe $(GITVER) 2> /dev/null | sed 's/^v//;s/-.*//g')
-ifneq ($(FontVersion),)
-FontVersionMeta ?= $(shell git describe --always --long $(GITVER) | sed 's/^v//;s/-[0-9]\+/;/;s/-g/[/')]
-GitVersion ?= $(shell git describe $(GITVER) | sed 's/^v//;s/-/-r/')
-isTagged := $(if $(subst $(FontVersion),,$(GitVersion)),,true)
-else
-FontVersion = 0.000
-FontVersionMeta ?= $(FontVersion)\;[$(shell git rev-parse --short=6 HEAD)]
-GitVersion ?= $(FontVersion)-r$(shell git rev-list --count HEAD)-g$(shell git rev-parse --short=6 HEAD)
-isTagged :=
-endif
+isTagged := $(and $(findstring -r0-,$(GitVersion)),true)
 
 ifeq ($(DEBUG),true)
 .SHELLFLAGS += +x
@@ -142,18 +127,17 @@ debug:
 	echo "GITNAME = $(GITNAME)"
 	echo "PROJECT = $(PROJECT)"
 	echo "PROJECTDIR = $(PROJECTDIR)"
-	echo "PUBDIR = $(PUBDIR)"
 	echo "SOURCEDIR = $(SOURCEDIR)"
+	echo "CONTAINERIZED = $(CONTAINERIZED)"
 	echo "----------------------------"
 	echo "FamilyNames = $(FamilyNames)"
 	echo "FontInstances = $(FontInstances)"
 	echo "FontVersion = $(FontVersion)"
-	echo "FontVersionMeta = $(FontVersionMeta)"
 	echo "GitVersion = $(GitVersion)"
 	echo "isTagged = $(isTagged)"
-	echo "----------------------------"
-	echo "CANONICAL = $(CANONICAL)"
 	echo "isVariable = $(isVariable)"
+	echo "CANONICAL = $(CANONICAL)"
+	echo "----------------------------"
 	echo "SOURCES = $(SOURCES)"
 	echo "SOURCES_SFD = $(SOURCES_SFD)"
 	echo "SOURCES_GLYPHS = $(SOURCES_GLYPHS)"

@@ -11,11 +11,15 @@ type Result<T> = result::Result<T, Box<dyn error::Error>>;
 /// Setup Fontship for use on a new Font project
 pub fn run() -> Result<()> {
     crate::header("setup-header");
-    let path = CONFIG.get_string("path")?;
+    let path = &CONFIG.get_string("path")?;
     let metadata = fs::metadata(&path)?;
     match metadata.is_dir() {
         true => match Repository::open(path) {
-            Ok(repo) => regen_gitignore(repo),
+            Ok(repo) => {
+                regen_gitignore(repo)?;
+                configure_short_shas(Repository::open(path)?)?;
+                Ok(())
+            }
             Err(_error) => Err(Box::new(io::Error::new(
                 io::ErrorKind::InvalidInput,
                 LocalText::new("setup-error-not-git").fmt(),
@@ -53,4 +57,11 @@ fn regen_gitignore(repo: Repository) -> Result<()> {
             }
         }
     }
+}
+
+fn configure_short_shas(repo: Repository) -> Result<()> {
+    let text = LocalText::new("setup-short-shas").fmt();
+    eprintln!("{} {}", "┠┄".cyan(), text);
+    let mut conf = repo.config()?;
+    Ok(conf.set_i32("core.abbrev", 7)?)
 }

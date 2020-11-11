@@ -1,11 +1,15 @@
 #[macro_use]
 extern crate lazy_static;
+extern crate num_cpus;
 
 use crate::config::CONFIG;
 use colored::Colorize;
 use git2::{Oid, Repository, Signature};
 use i18n::LocalText;
-use std::{error, fmt, result, str};
+use inflector::Inflector;
+use regex::Regex;
+use std::ffi::OsStr;
+use std::{error, fmt, path, result, str};
 
 pub mod cli;
 pub mod config;
@@ -53,6 +57,13 @@ impl error::Error for Error {
     }
 }
 
+pub fn pname(input: &str) -> String {
+    let seps = Regex::new(r"[-_]").unwrap();
+    let spaces = Regex::new(r" ").unwrap();
+    let title = seps.replace(input, " ").to_title_case();
+    spaces.replace(&title, "").to_string()
+}
+
 pub fn commit(repo: Repository, oid: Oid, msg: &str) -> result::Result<Oid, git2::Error> {
     let prefix = "[fontship]";
     let commiter = repo.signature()?;
@@ -68,6 +79,11 @@ pub fn commit(repo: Repository, oid: Oid, msg: &str) -> result::Result<Oid, git2
         &tree,
         &parents,
     )
+}
+
+pub fn format_font_version(version: String) -> String {
+    let re = Regex::new(r"-r.*$").unwrap();
+    String::from(re.replace(version.as_str(), ""))
 }
 
 /// Output welcome header at start of run before moving on to actual commands
@@ -86,4 +102,15 @@ pub fn show_outro() {
 pub fn header(key: &str) {
     let text = LocalText::new(key);
     eprintln!("{} {}", "┣━".cyan(), text.fmt().yellow());
+}
+
+#[cfg(unix)]
+pub fn bytes2path(b: &[u8]) -> &path::Path {
+    use std::os::unix::prelude::*;
+    path::Path::new(OsStr::from_bytes(b))
+}
+#[cfg(windows)]
+pub fn bytes2path(b: &[u8]) -> &path::Path {
+    use std::str;
+    path::Path::new(str::from_utf8(b).unwrap())
 }

@@ -2,6 +2,7 @@ use crate::i18n::LocalText;
 use crate::CONFIG;
 use crate::{status, CONFIGURE_DATADIR};
 use colored::Colorize;
+use itertools::Itertools;
 use regex::Regex;
 use std::io::prelude::*;
 use std::{error, ffi::OsString, io, result};
@@ -12,7 +13,11 @@ type Result<T> = result::Result<T, Box<dyn error::Error>>;
 // FTL: help-subcommand-make
 /// Build specified target(s)
 pub fn run(target: Vec<String>) -> Result<()> {
+    status::is_setup()?;
     crate::header("make-header");
+    let mut makeflags: Vec<OsString> = Vec::new();
+    let cpus = num_cpus::get();
+    makeflags.push(OsString::from(format!("--jobs={}", cpus)));
     let mut makefiles: Vec<OsString> = Vec::new();
     makefiles.push(OsString::from("-f"));
     makefiles.push(OsString::from(format!(
@@ -30,9 +35,32 @@ pub fn run(target: Vec<String>) -> Result<()> {
         "{}{}",
         CONFIGURE_DATADIR, "rules/rules.mk"
     )));
-    let mut process = Exec::cmd("make").args(&makefiles).args(&target);
+    let mut process = Exec::cmd("make")
+        .args(&makeflags)
+        .args(&makefiles)
+        .args(&target);
     // Start deprecating non-CLI usage
-    process = process.env("FONTSHIP_CLI", "true");
+    let gitname = status::get_gitname()?;
+    let sources = status::get_sources()?;
+    let sources_str = format!(
+        "{}",
+        sources
+            .iter()
+            .format_with(" ", |p, f| f(&p.to_str().unwrap()))
+    );
+    let git_version = status::get_git_version();
+    let font_version = crate::format_font_version(git_version.clone());
+    process = process
+        .env("FONTSHIP_CLI", "true")
+        .env("FONTSHIPDIR", CONFIGURE_DATADIR)
+        .env("CONTAINERIZED", status::is_container().to_string())
+        .env("GITNAME", &gitname)
+        .env("PROJECT", crate::pname(&gitname))
+        .env("PROJECTDIR", CONFIG.get_string("path")?)
+        .env("GitVersion", git_version)
+        .env("FontVersion", font_version)
+        .env("SOURCEDIR", CONFIG.get_string("sourcedir")?)
+        .env("SOURCES", sources_str);
     if CONFIG.get_bool("debug")? {
         process = process.env("DEBUG", "true");
     };
