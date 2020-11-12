@@ -18,25 +18,6 @@ endif
 
 $(BUILDDIR)/%-VF.ttf: $(SOURCEDIR)/%.designspace | $(BUILDDIR)
 	$(FONTMAKE) $(FONTMAKEFLAGS) -m "$<" -o variable --output-path $@
-	$(GFTOOLS) $(GFTOOLSFLAGS) fix-vf-meta $@
-	$(GFTOOLS) $(GFTOOLSFLAGS) fix-unwanted-tables --tables MVAR $@ ||:
-	$(GFTOOLS) $(GFTOOLSFLAGS) fix-dsig -f $@
-
-$(BUILDDIR)/%-hinted.ttf: $(if $(wildcard $(SOURCEDIR)/*-vtt.ttx),$(BUILDDIR)/%-vtthinted.ttf,$(BUILDDIR)/%.ttf)
-	$(and $(filter %-vtthinted.ttf,$<),$(PYTHON) -m vttLib compile --ship $< $@)
-	$(and $(filter-out %-vtthinted.ttf,$<),$(TTFAUTOHINT) $(TTFAUTOHINTFLAGS) -n $< $@)
-
-$(BUILDDIR)/%-VF-vtthinted.ttf: $(BUILDDIR)/%-VF.ttf $(SOURCEDIR)/%-vtt.ttx
-	cp $< $@
-	python -m vttLib mergefile $(filter %.ttx,$^) $@
-
-$(BUILDDIR)/%-hinted.ttf.fix: $(BUILDDIR)/%-hinted.ttf
-	$(GFTOOLS) $(GFTOOLSFLAGS) fix-hinting $<
-	$(GFTOOLS) $(GFTOOLSFLAGS) fix-gasp $@
-
-$(VARIABLETTFS): %.ttf: $(BUILDDIR)/%-hinted.ttf.fix $(BUILDDIR)/last-commit
-	cp $< $@
-	$(normalizeVersion)
 
 $(SOURCEDIR)/%.ufo: UFONORMALIZERFLAGS += -m
 $(SOURCEDIR)/%.ufo: $$(call ifTrue,$$(NORMALIZE_MODE),force) | $(BUILDDIR)
@@ -65,7 +46,6 @@ define otf_instance_template ?=
 
 $$(BUILDDIR)/$1-%-instance.otf: $(BUILDDIR)/$1-%-normalized.ufo | $$(BUILDDIR)
 	$$(FONTMAKE) $$(FONTMAKEFLAGS) -u $$< -o otf --output-path $$@
-	$$(GFTOOLS) $$(GFTOOLSFLAGS) fix-dsig -f $$@
 
 endef
 
@@ -75,6 +55,5 @@ define ttf_instance_template ?=
 
 $$(BUILDDIR)/$1-%-instance.ttf: $(BUILDDIR)/$1-%-normalized.ufo | $$(BUILDDIR)
 	$$(FONTMAKE) $$(FONTMAKEFLAGS) -u $$< -o ttf --output-path $$@
-	$$(GFTOOLS) $$(GFTOOLSFLAGS) fix-dsig -f $$@
 
 endef

@@ -269,42 +269,41 @@ $(foreach FamilyName,$(FamilyNames),$(eval $(call ttf_instance_template,$(Family
 
 # Final steps common to all input formats
 
+_VTTSOURCES := $(wildcard $(SOURCEDIR)/*-vtt.ttx)
+ifneq ($(_VTTSOURCES),)
+
+$(BUILDDIR)/%-VF-vtthinted.ttf: $(BUILDDIR)/%-VF.ttf $(SOURCEDIR)/%-vtt.ttx
+	cp $< $@
+	python -m vttLib mergefile $(filter %.ttx,$^) $@
+
+$(BUILDDIR)/%-VF-hinted.ttf: $(BUILDDIR)/%-VF-vtthinted.ttf
+	$(PYTHON) -m vttLib compile --ship $< $@
+
+endif
+
 $(BUILDDIR)/%-hinted.ttf: $(BUILDDIR)/%-instance.ttf
 	$(TTFAUTOHINT) $(TTFAUTOHINTFLAGS) -n $< $@
 
-$(BUILDDIR)/%-hinted.ttf.fix: $(BUILDDIR)/%-hinted.ttf
-	$(GFTOOLS) $(GFTOOLSFLAGS) fix-hinting $<
+$(BUILDDIR)/%-hinted.otf: $(BUILDDIR)/%-instance.otf
+	$(PSAUTOHINT) $(PSAUTOHINTFLAGS) -o $@ $<
 
-ifeq ($(HINT),true)
-$(STATICTTFS): %.ttf: $(BUILDDIR)/%-hinted.ttf.fix $(BUILDDIR)/last-commit
-	cp $< $@
-	$(normalizeVersion)
-
-$(VARIABLETTFS): %.ttf: $(BUILDDIR)/%-variable-hinted.ttf.fix $(BUILDDIR)/last-commit
-	cp $< $@
-	$(normalizeVersion)
-else
-$(STATICTTFS): %.ttf: $(BUILDDIR)/%-instance.ttf $(BUILDDIR)/last-commit
-	cp $< $@
+$(STATICTTFS): %.ttf: $(BUILDDIR)/%-$(if $(HINT),hinted,instance).ttf $(BUILDDIR)/last-commit
+	$(GFTOOLS) $(GFTOOLSFLAGS) fix-font -o $@ $<
 	$(normalizeVersion)
 
-$(VARIABLETTFS): %.ttf: $(BUILDDIR)/%.ttf $(BUILDDIR)/last-commit
-	cp $< $@
+$(VARIABLETTFS): %.ttf: $(BUILDDIR)/%-variable-$(if $(HINT),hinted,instance).ttf $(BUILDDIR)/last-commit
+	$(GFTOOLS) $(GFTOOLSFLAGS) fix-font -o $@ $<
 	$(normalizeVersion)
-endif
 
 $(VARIABLEOTFS): %.otf: $(BUILDDIR)/%-variable.otf $(BUILDDIR)/last-commit
-	cp $< $@
+	$(GFTOOLS) $(GFTOOLSFLAGS) fix-font -o $@ $<
 	$(normalizeVersion)
-
-$(BUILDDIR)/%-hinted.otf: $(BUILDDIR)/%-instance.otf
-	$(PSAUTOHINT) $(PSAUTOHINTFLAGS) $< -o $@
 
 $(BUILDDIR)/%-subr.otf: $(BUILDDIR)/%-$(if $(HINT),hinted,instance).otf
 	$(PYTHON) -m cffsubr -o $@ $<
 
 $(STATICOTFS): %.otf: $(BUILDDIR)/%-subr.otf $(BUILDDIR)/last-commit
-	cp $< $@
+	$(GFTOOLS) $(GFTOOLSFLAGS) fix-font -o $@ $<
 	$(normalizeVersion)
 
 # Webfont compressions

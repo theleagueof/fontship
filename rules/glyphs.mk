@@ -23,24 +23,11 @@ $(shell rm -f $(_TMP))
 
 $(BUILDDIR)/%-VF-variable.otf: $(SOURCEDIR)/%.glyphs | $(BUILDDIR)
 	$(FONTMAKE) $(FONTMAKEFLAGS) -g $< -o variable-cff2 --output-path $@
-	$(GFTOOLS) $(GFTOOLSFLAGS) fix-vf-meta $@
-	$(GFTOOLS) $(GFTOOLSFLAGS) fix-unwanted-tables --tables MVAR $@ ||:
-	$(GFTOOLS) $(GFTOOLSFLAGS) fix-dsig -f $@
 
 # Glyphs -> Varibale TTF
 
 $(BUILDDIR)/%-VF-variable.ttf: $(SOURCEDIR)/%.glyphs | $(BUILDDIR)
 	$(FONTMAKE) $(FONTMAKEFLAGS) -g $< -o variable --output-path $@
-	$(GFTOOLS) $(GFTOOLSFLAGS) fix-vf-meta $@
-	$(GFTOOLS) $(GFTOOLSFLAGS) fix-unwanted-tables --tables MVAR $@ ||:
-	$(GFTOOLS) $(GFTOOLSFLAGS) fix-dsig -f $@
-
-$(BUILDDIR)/%-hinted.ttf: $(BUILDDIR)/%.ttf
-	$(TTFAUTOHINT) $(TTFAUTOHINTFLAGS) -n $< $@
-
-$(BUILDDIR)/%-hinted.ttf.fix: $(BUILDDIR)/%-hinted.ttf
-	$(GFTOOLS) $(GFTOOLSFLAGS) fix-hinting $<
-	$(GFTOOLS) $(GFTOOLSFLAGS) fix-gasp $@
 
 # Glyphs -> Static OTF
 
@@ -48,7 +35,6 @@ define otf_instance_template ?=
 
 $$(BUILDDIR)/$1-%-instance.otf: $$$$(instanceToGlyphs) | $$(BUILDDIR)
 	$$(FONTMAKE) $$(FONTMAKEFLAGS) -g $$< -i "$$(_DSI_$1$$*)" -o otf --output-path $$@
-	$$(GFTOOLS) $$(GFTOOLSFLAGS) fix-dsig -f $$@
 
 endef
 
@@ -58,6 +44,5 @@ define ttf_instance_template ?=
 
 $$(BUILDDIR)/$1-%-instance.ttf: $$$$(instanceToGlyphs) | $$(BUILDDIR)
 	$$(FONTMAKE) $$(FONTMAKEFLAGS) -g $$< -i "$$(_DSI_$1$$*)" -o ttf --output-path $$@
-	$$(GFTOOLS) $$(GFTOOLSFLAGS) fix-dsig -f $$@
 
 endef
