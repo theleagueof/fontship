@@ -1,21 +1,17 @@
-use crate::i18n::LocalText;
+use crate::setup;
 use crate::CONFIG;
-use colored::{ColoredString, Colorize};
-use git2::{DescribeFormatOptions, DescribeOptions, Repository};
+use git2::{DescribeFormatOptions, DescribeOptions};
 use regex::Regex;
-use std::io::prelude::*;
-use std::sync::{Arc, RwLock};
-use std::{env, error, fs, path, result};
-use subprocess::{Exec, NullFile, Redirection};
+use std::{env, path};
 
-type Result<T> = result::Result<T, Box<dyn error::Error>>;
+use crate::Result;
 
 // FTL: help-subcommand-status
 /// Show status information about setup, configuration, and build state
 pub fn run() -> Result<()> {
     crate::header("status-header");
     CONFIG.set_bool("verbose", true)?;
-    is_setup()?;
+    setup::is_setup()?;
     Ok(())
 }
 
@@ -41,93 +37,8 @@ pub fn is_gha() -> Result<bool> {
         Ok(_) => true,
         Err(_) => false,
     };
-    display_check("status-is-gha", ret);
+    crate::display_check("status-is-gha", ret);
     Ok(ret)
-}
-
-/// Evaluate whether this project is properly configured
-pub fn is_setup() -> Result<bool> {
-    let results = Arc::new(RwLock::new(Vec::new()));
-
-    // First round of tests, entirely independent
-    rayon::scope(|s| {
-        s.spawn(|_| {
-            let ret = is_repo().unwrap();
-            results.write().unwrap().push(ret);
-        });
-        s.spawn(|_| {
-            let ret = is_make_exectuable().unwrap();
-            results.write().unwrap().push(ret);
-        });
-    });
-
-    // Second round of tests, dependent on first set
-    if results.read().unwrap().iter().all(|&v| v) {
-        rayon::scope(|s| {
-            s.spawn(|_| {
-                let ret = is_writable().unwrap();
-                results.write().unwrap().push(ret);
-            });
-            s.spawn(|_| {
-                let ret = is_make_gnu().unwrap();
-                results.write().unwrap().push(ret);
-            });
-        });
-    }
-
-    let ret = results.read().unwrap().iter().all(|&v| v);
-    let msg = LocalText::new(if ret { "status-good" } else { "status-bad" }).fmt();
-    eprintln!(
-        "{} {}",
-        "┠─".cyan(),
-        if ret { msg.green() } else { msg.red() }
-    );
-    Ok(ret)
-}
-
-/// Are we in a git repo?
-pub fn is_repo() -> Result<bool> {
-    let ret = get_repo().is_ok();
-    display_check("status-is-repo", ret);
-    Ok(ret)
-}
-
-/// Is the git repo we are in writable?
-pub fn is_writable() -> Result<bool> {
-    let repo = get_repo()?;
-    let workdir = repo.workdir().unwrap();
-    let testfile = workdir.join(".fontship-write-test");
-    let mut file = fs::File::create(&testfile)?;
-    file.write_all(b"test")?;
-    fs::remove_file(&testfile)?;
-    let ret = true;
-    display_check("status-is-writable", ret);
-    Ok(true)
-}
-
-/// Check if we can execute the system's `make` utility
-pub fn is_make_exectuable() -> Result<bool> {
-    let ret = Exec::cmd("make")
-        .arg("-v")
-        .stdout(NullFile)
-        .stderr(NullFile)
-        .join()
-        .is_ok();
-    display_check("status-is-make-executable", ret);
-    Ok(true)
-}
-
-/// Check that the system's `make` utility is GNU Make
-pub fn is_make_gnu() -> Result<bool> {
-    let out = Exec::cmd("make")
-        .arg("-v")
-        .stdout(Redirection::Pipe)
-        .stderr(NullFile)
-        .capture()?
-        .stdout_str();
-    let ret = out.starts_with("GNU Make 4.");
-    display_check("status-is-make-gnu", ret);
-    Ok(true)
 }
 
 /// Figure out if we're running inside Docker or another container
@@ -136,15 +47,9 @@ pub fn is_container() -> bool {
     dockerenv.exists()
 }
 
-/// Get repository object
-pub fn get_repo() -> Result<Repository> {
-    let path = CONFIG.get_string("path")?;
-    Ok(Repository::discover(path)?)
-}
-
 pub fn get_gitname() -> Result<String> {
     fn origin() -> Result<String> {
-        let repo = get_repo()?;
+        let repo = crate::get_repo()?;
         let remote = repo.find_remote("origin")?;
         let url = remote.url().unwrap();
         let re = Regex::new(r"^(.*/)([^/]+)(/?\.git/?)$").unwrap();
@@ -170,7 +75,7 @@ pub fn get_gitname() -> Result<String> {
 
 /// Scan for existing makefiles with Fontship rules
 pub fn get_rules() -> Result<Vec<path::PathBuf>> {
-    let repo = get_repo()?;
+    let repo = crate::get_repo()?;
     let root = repo.workdir().unwrap();
     let files = vec!["GNUMakefile", "makefile", "Makefile", "rules.mk"];
     let mut rules = Vec::new();
@@ -185,7 +90,7 @@ pub fn get_rules() -> Result<Vec<path::PathBuf>> {
 
 /// Scan for sources
 pub fn get_sources() -> Result<Vec<path::PathBuf>> {
-    let repo = get_repo()?;
+    let repo = crate::get_repo()?;
     let index = repo.index()?;
     let mut sources = vec![];
     let sourcedir = CONFIG.get_string("sourcedir")?;
@@ -219,7 +124,7 @@ pub fn get_sources() -> Result<Vec<path::PathBuf>> {
 /// Figure out version string from repo tags
 pub fn get_git_version() -> String {
     let zero_version = String::from("0.000");
-    let repo = get_repo().unwrap();
+    let repo = crate::get_repo().unwrap();
     let mut opts = DescribeOptions::new();
     opts.describe_tags().pattern("*[0-9].[0-9][0-9][0-9]");
     let desc = match repo.describe(&opts) {
@@ -240,26 +145,4 @@ pub fn get_git_version() -> String {
     let prefix = Regex::new(r"^v").unwrap();
     let sep = Regex::new(r"-").unwrap();
     String::from(sep.replace(&prefix.replace(desc.as_str(), ""), "-r"))
-}
-
-fn display_check(key: &str, val: bool) {
-    if CONFIG.get_bool("debug").unwrap() || CONFIG.get_bool("verbose").unwrap() {
-        eprintln!(
-            "{} {} {}",
-            "┠─".cyan(),
-            LocalText::new(key).fmt(),
-            fmt_t_f(val)
-        );
-    };
-}
-
-/// Format a localized string just for true / false status prints
-fn fmt_t_f(val: bool) -> ColoredString {
-    let key = if val { "status-true" } else { "status-false" };
-    let text = LocalText::new(key).fmt();
-    if val {
-        text.green()
-    } else {
-        text.red()
-    }
 }

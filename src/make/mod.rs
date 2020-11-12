@@ -1,6 +1,6 @@
 use crate::i18n::LocalText;
 use crate::CONFIG;
-use crate::{status, CONFIGURE_DATADIR};
+use crate::{setup, status, CONFIGURE_DATADIR};
 use colored::Colorize;
 use itertools::Itertools;
 use regex::Regex;
@@ -13,7 +13,7 @@ type Result<T> = result::Result<T, Box<dyn error::Error>>;
 // FTL: help-subcommand-make
 /// Build specified target(s)
 pub fn run(target: Vec<String>) -> Result<()> {
-    status::is_setup()?;
+    setup::is_setup()?;
     crate::header("make-header");
     let mut makeflags: Vec<OsString> = Vec::new();
     let cpus = num_cpus::get();
@@ -70,7 +70,7 @@ pub fn run(target: Vec<String>) -> Result<()> {
     if CONFIG.get_bool("verbose")? {
         process = process.env("VERBOSE", "true");
     };
-    let repo = status::get_repo()?;
+    let repo = crate::get_repo()?;
     let workdir = repo.workdir().unwrap();
     process = process.cwd(workdir);
     let process = process.stderr(Redirection::Merge).stdout(Redirection::Pipe);
