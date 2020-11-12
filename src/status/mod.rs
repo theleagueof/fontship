@@ -18,7 +18,6 @@ pub fn run() -> Result<()> {
 #[allow(dead_code)]
 #[derive(Debug)]
 enum RunAsMode {
-    RunAsSubmodule,
     RunAsDirectory,
     RunAsDocker,
     RunAsRunner,
