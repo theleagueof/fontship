@@ -1,6 +1,5 @@
 use crate::i18n::LocalText;
-use crate::{setup, status, CONFIGURE_DATADIR};
-use crate::{Result, CONFIG};
+use crate::*;
 use colored::Colorize;
 use itertools::Itertools;
 use regex::Regex;
@@ -12,7 +11,7 @@ use subprocess::{Exec, ExitStatus, Redirection};
 /// Build specified target(s)
 pub fn run(target: Vec<String>) -> Result<()> {
     setup::is_setup()?;
-    crate::header("make-header");
+    show_header("make-header");
     let mut makeflags: Vec<OsString> = Vec::new();
     let cpus = num_cpus::get();
     makeflags.push(OsString::from(format!("--jobs={}", cpus)));
@@ -47,13 +46,13 @@ pub fn run(target: Vec<String>) -> Result<()> {
             .format_with(" ", |p, f| f(&p.to_str().unwrap()))
     );
     let git_version = status::get_git_version();
-    let font_version = crate::format_font_version(git_version.clone());
+    let font_version = format_font_version(git_version.clone());
     process = process
         .env("FONTSHIP_CLI", "true")
         .env("FONTSHIPDIR", CONFIGURE_DATADIR)
         .env("CONTAINERIZED", status::is_container().to_string())
         .env("GITNAME", &gitname)
-        .env("PROJECT", crate::pname(&gitname))
+        .env("PROJECT", pname(&gitname))
         .env("PROJECTDIR", CONFIG.get_string("path")?)
         .env("GitVersion", git_version)
         .env("FontVersion", font_version)
@@ -68,7 +67,7 @@ pub fn run(target: Vec<String>) -> Result<()> {
     if CONFIG.get_bool("verbose")? {
         process = process.env("VERBOSE", "true");
     };
-    let repo = crate::get_repo()?;
+    let repo = get_repo()?;
     let workdir = repo.workdir().unwrap();
     process = process.cwd(workdir);
     let process = process.stderr(Redirection::Merge).stdout(Redirection::Pipe);

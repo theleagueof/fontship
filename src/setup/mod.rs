@@ -1,6 +1,5 @@
 use crate::i18n::LocalText;
-use crate::make;
-use crate::{Result, CONFIG};
+use crate::*;
 use colored::Colorize;
 use git2::{Repository, Status};
 use std::io::prelude::*;
@@ -11,7 +10,7 @@ use subprocess::{Exec, NullFile, Redirection};
 // FTL: help-subcommand-setup
 /// Setup Fontship for use on a new Font project
 pub fn run() -> Result<()> {
-    crate::header("setup-header");
+    show_header("setup-header");
     let path = &CONFIG.get_string("path")?;
     let metadata = fs::metadata(&path)?;
     match metadata.is_dir() {
@@ -75,21 +74,21 @@ pub fn is_setup() -> Result<bool> {
 
 /// Are we in a git repo?
 pub fn is_repo() -> Result<bool> {
-    let ret = crate::get_repo().is_ok();
-    crate::display_check("setup-is-repo", ret);
+    let ret = get_repo().is_ok();
+    display_check("setup-is-repo", ret);
     Ok(ret)
 }
 
 /// Is the git repo we are in writable?
 pub fn is_writable() -> Result<bool> {
-    let repo = crate::get_repo()?;
+    let repo = get_repo()?;
     let workdir = repo.workdir().unwrap();
     let testfile = workdir.join(".fontship-write-test");
     let mut file = fs::File::create(&testfile)?;
     file.write_all(b"test")?;
     fs::remove_file(&testfile)?;
     let ret = true;
-    crate::display_check("setup-is-writable", ret);
+    display_check("setup-is-writable", ret);
     Ok(true)
 }
 
@@ -101,7 +100,7 @@ pub fn is_make_exectuable() -> Result<bool> {
         .stderr(NullFile)
         .join()
         .is_ok();
-    crate::display_check("setup-is-make-executable", ret);
+    display_check("setup-is-make-executable", ret);
     Ok(true)
 }
 
@@ -114,7 +113,7 @@ pub fn is_make_gnu() -> Result<bool> {
         .capture()?
         .stdout_str();
     let ret = out.starts_with("GNU Make 4.");
-    crate::display_check("setup-is-make-gnu", ret);
+    display_check("setup-is-make-gnu", ret);
     Ok(true)
 }
 
@@ -134,7 +133,7 @@ fn regen_gitignore(repo: Repository) -> Result<()> {
         _ => {
             let text = LocalText::new("setup-gitignore-committing").fmt();
             eprintln!("{} {}", "┠┄".cyan(), text);
-            match crate::commit(repo, oid, "Update .gitignore") {
+            match commit(repo, oid, "Update .gitignore") {
                 Ok(_) => {
                     index.write()?;
                     Ok(())

@@ -1,15 +1,12 @@
-use crate::setup;
-use crate::CONFIG;
+use crate::*;
 use git2::{DescribeFormatOptions, DescribeOptions};
 use regex::Regex;
 use std::{env, path};
 
-use crate::Result;
-
 // FTL: help-subcommand-status
 /// Show status information about setup, configuration, and build state
 pub fn run() -> Result<()> {
-    crate::header("status-header");
+    show_header("status-header");
     CONFIG.set_bool("verbose", true)?;
     setup::is_setup()?;
     Ok(())
@@ -36,7 +33,7 @@ pub fn is_gha() -> Result<bool> {
         Ok(_) => true,
         Err(_) => false,
     };
-    crate::display_check("status-is-gha", ret);
+    display_check("status-is-gha", ret);
     Ok(ret)
 }
 
@@ -48,15 +45,15 @@ pub fn is_container() -> bool {
 
 pub fn get_gitname() -> Result<String> {
     fn origin() -> Result<String> {
-        let repo = crate::get_repo()?;
+        let repo = get_repo()?;
         let remote = repo.find_remote("origin")?;
         let url = remote.url().unwrap();
         let re = Regex::new(r"^(.*/)([^/]+)(/?\.git/?)$").unwrap();
         let name = re
             .captures(url)
-            .ok_or(crate::Error::new("error-no-remote"))?
+            .ok_or(Error::new("error-no-remote"))?
             .get(2)
-            .ok_or(crate::Error::new("error-no-remote"))?
+            .ok_or(Error::new("error-no-remote"))?
             .as_str();
         Ok(String::from(name))
     }
@@ -64,7 +61,7 @@ pub fn get_gitname() -> Result<String> {
         let path = &CONFIG.get_string("path")?;
         let file = path::Path::new(path)
             .file_name()
-            .ok_or(crate::Error::new("error-no-path"))?
+            .ok_or(Error::new("error-no-path"))?
             .to_str();
         Ok(file.unwrap().to_string())
     }
@@ -74,7 +71,7 @@ pub fn get_gitname() -> Result<String> {
 
 /// Scan for existing makefiles with Fontship rules
 pub fn get_rules() -> Result<Vec<path::PathBuf>> {
-    let repo = crate::get_repo()?;
+    let repo = get_repo()?;
     let root = repo.workdir().unwrap();
     let files = vec!["GNUMakefile", "makefile", "Makefile", "rules.mk"];
     let mut rules = Vec::new();
@@ -89,7 +86,7 @@ pub fn get_rules() -> Result<Vec<path::PathBuf>> {
 
 /// Scan for sources
 pub fn get_sources() -> Result<Vec<path::PathBuf>> {
-    let repo = crate::get_repo()?;
+    let repo = get_repo()?;
     let index = repo.index()?;
     let mut sources = vec![];
     let sourcedir = CONFIG.get_string("sourcedir")?;
@@ -98,7 +95,7 @@ pub fn get_sources() -> Result<Vec<path::PathBuf>> {
     let ufoexts = Regex::new(r"\.ufo$").unwrap();
     for entry in index.iter() {
         let rawpath = &entry.path;
-        let path = crate::bytes2path(rawpath);
+        let path = bytes2path(rawpath);
         if !path.exists() {
             continue;
         }
@@ -123,7 +120,7 @@ pub fn get_sources() -> Result<Vec<path::PathBuf>> {
 /// Figure out version string from repo tags
 pub fn get_git_version() -> String {
     let zero_version = String::from("0.000");
-    let repo = crate::get_repo().unwrap();
+    let repo = get_repo().unwrap();
     let mut opts = DescribeOptions::new();
     opts.describe_tags().pattern("*[0-9].[0-9][0-9][0-9]");
     let desc = match repo.describe(&opts) {

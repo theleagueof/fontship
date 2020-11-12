@@ -107,7 +107,7 @@ pub fn show_outro() {
 }
 
 /// Output header before starting work on a subcommand
-pub fn header(key: &str) {
+pub fn show_header(key: &str) {
     let text = LocalText::new(key);
     eprintln!("{} {}", "┣━".cyan(), text.fmt().yellow());
 }
