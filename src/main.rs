@@ -1,11 +1,11 @@
 use clap::{FromArgMatches, IntoApp};
 use fontship::cli::{Cli, Subcommand};
 use fontship::config::CONFIG;
-use fontship::VERSION;
 use fontship::{make, setup, status};
-use std::{env, error};
+use fontship::{Result, VERSION};
+use std::env;
 
-fn main() -> Result<(), Box<dyn error::Error>> {
+fn main() -> Result<()> {
     CONFIG.defaults()?;
     CONFIG.from_env()?;
     // Workaround for Github Actions usage to make the prebuilt Docker image

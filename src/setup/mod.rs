@@ -1,14 +1,12 @@
 use crate::i18n::LocalText;
 use crate::make;
-use crate::CONFIG;
+use crate::{Result, CONFIG};
 use colored::Colorize;
 use git2::{Repository, Status};
 use std::io::prelude::*;
 use std::sync::{Arc, RwLock};
-use std::{error, fs, io, path, result};
+use std::{fs, io, path};
 use subprocess::{Exec, NullFile, Redirection};
-
-type Result<T> = result::Result<T, Box<dyn error::Error>>;
 
 // FTL: help-subcommand-setup
 /// Setup Fontship for use on a new Font project

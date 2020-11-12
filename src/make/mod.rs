@@ -1,14 +1,12 @@
 use crate::i18n::LocalText;
-use crate::CONFIG;
 use crate::{setup, status, CONFIGURE_DATADIR};
+use crate::{Result, CONFIG};
 use colored::Colorize;
 use itertools::Itertools;
 use regex::Regex;
 use std::io::prelude::*;
-use std::{error, ffi::OsString, io, result};
+use std::{ffi::OsString, io};
 use subprocess::{Exec, ExitStatus, Redirection};
-
-type Result<T> = result::Result<T, Box<dyn error::Error>>;
 
 // FTL: help-subcommand-make
 /// Build specified target(s)
