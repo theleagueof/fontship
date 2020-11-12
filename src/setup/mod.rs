@@ -66,7 +66,7 @@ pub fn is_setup() -> Result<bool> {
     }
 
     let ret = results.read().unwrap().iter().all(|&v| v);
-    let msg = LocalText::new(if ret { "status-good" } else { "status-bad" }).fmt();
+    let msg = LocalText::new(if ret { "setup-good" } else { "setup-bad" }).fmt();
     eprintln!(
         "{} {}",
         "┠─".cyan(),
@@ -78,7 +78,7 @@ pub fn is_setup() -> Result<bool> {
 /// Are we in a git repo?
 pub fn is_repo() -> Result<bool> {
     let ret = crate::get_repo().is_ok();
-    crate::display_check("status-is-repo", ret);
+    crate::display_check("setup-is-repo", ret);
     Ok(ret)
 }
 
@@ -91,7 +91,7 @@ pub fn is_writable() -> Result<bool> {
     file.write_all(b"test")?;
     fs::remove_file(&testfile)?;
     let ret = true;
-    crate::display_check("status-is-writable", ret);
+    crate::display_check("setup-is-writable", ret);
     Ok(true)
 }
 
@@ -103,7 +103,7 @@ pub fn is_make_exectuable() -> Result<bool> {
         .stderr(NullFile)
         .join()
         .is_ok();
-    crate::display_check("status-is-make-executable", ret);
+    crate::display_check("setup-is-make-executable", ret);
     Ok(true)
 }
 
@@ -116,7 +116,7 @@ pub fn is_make_gnu() -> Result<bool> {
         .capture()?
         .stdout_str();
     let ret = out.starts_with("GNU Make 4.");
-    crate::display_check("status-is-make-gnu", ret);
+    crate::display_check("setup-is-make-gnu", ret);
     Ok(true)
 }
 

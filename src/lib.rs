@@ -125,7 +125,7 @@ pub fn display_check(key: &str, val: bool) {
 
 /// Format a localized string just for true / false status prints
 fn fmt_t_f(val: bool) -> ColoredString {
-    let key = if val { "status-true" } else { "status-false" };
+    let key = if val { "setup-true" } else { "setup-false" };
     let text = LocalText::new(key).fmt();
     if val {
         text.green()
