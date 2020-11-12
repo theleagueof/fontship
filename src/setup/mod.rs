@@ -11,7 +11,7 @@ use subprocess::{Exec, NullFile, Redirection};
 /// Setup Fontship for use on a new Font project
 pub fn run() -> Result<()> {
     show_header("setup-header");
-    let path = &CONFIG.get_string("path")?;
+    let path = &CONF.get_string("path")?;
     let metadata = fs::metadata(&path)?;
     match metadata.is_dir() {
         true => match Repository::open(path) {

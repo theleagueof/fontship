@@ -53,18 +53,18 @@ pub fn run(target: Vec<String>) -> Result<()> {
         .env("CONTAINERIZED", status::is_container().to_string())
         .env("GITNAME", &gitname)
         .env("PROJECT", pname(&gitname))
-        .env("PROJECTDIR", CONFIG.get_string("path")?)
+        .env("PROJECTDIR", CONF.get_string("path")?)
         .env("GitVersion", git_version)
         .env("FontVersion", font_version)
-        .env("SOURCEDIR", CONFIG.get_string("sourcedir")?)
+        .env("SOURCEDIR", CONF.get_string("sourcedir")?)
         .env("SOURCES", sources_str);
-    if CONFIG.get_bool("debug")? {
+    if CONF.get_bool("debug")? {
         process = process.env("DEBUG", "true");
     };
-    if CONFIG.get_bool("quiet")? {
+    if CONF.get_bool("quiet")? {
         process = process.env("QUIET", "true");
     };
-    if CONFIG.get_bool("verbose")? {
+    if CONF.get_bool("verbose")? {
         process = process.env("VERBOSE", "true");
     };
     let repo = get_repo()?;
@@ -85,14 +85,14 @@ pub fn run(target: Vec<String>) -> Result<()> {
                 "STDOUT" => {
                     if fields[2] == "_gha" {
                         println!("{}", fields[3]);
-                    } else if CONFIG.get_bool("verbose")? {
+                    } else if CONF.get_bool("verbose")? {
                         report_line(fields[3]);
                     } else {
                         backlog.push(String::from(fields[3]));
                     }
                 }
                 "STDERR" => {
-                    if CONFIG.get_bool("verbose")? {
+                    if CONF.get_bool("verbose")? {
                         report_line(fields[3]);
                     } else {
                         backlog.push(String::from(fields[3]));
@@ -122,7 +122,7 @@ pub fn run(target: Vec<String>) -> Result<()> {
             match foo {
                 0 => Ok(()),
                 _ => {
-                    if !CONFIG.get_bool("verbose")? {
+                    if !CONF.get_bool("verbose")? {
                         dump_backlog(&backlog);
                     }
                     Err(Box::new(io::Error::new(

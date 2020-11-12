@@ -2,7 +2,7 @@
 extern crate lazy_static;
 extern crate num_cpus;
 
-use crate::config::CONFIG;
+use crate::config::CONF;
 use colored::{ColoredString, Colorize};
 use git2::{Oid, Repository, Signature};
 use i18n::LocalText;
@@ -68,7 +68,7 @@ pub fn pname(input: &str) -> String {
 
 /// Get repository object
 pub fn get_repo() -> Result<Repository> {
-    let path = CONFIG.get_string("path")?;
+    let path = CONF.get_string("path")?;
     Ok(Repository::discover(path)?)
 }
 
@@ -113,7 +113,7 @@ pub fn show_header(key: &str) {
 }
 
 pub fn display_check(key: &str, val: bool) {
-    if CONFIG.get_bool("debug").unwrap() || CONFIG.get_bool("verbose").unwrap() {
+    if CONF.get_bool("debug").unwrap() || CONF.get_bool("verbose").unwrap() {
         eprintln!(
             "{} {} {}",
             "┠─".cyan(),

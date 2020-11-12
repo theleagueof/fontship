@@ -7,7 +7,7 @@ use std::{env, path};
 /// Show status information about setup, configuration, and build state
 pub fn run() -> Result<()> {
     show_header("status-header");
-    CONFIG.set_bool("verbose", true)?;
+    CONF.set_bool("verbose", true)?;
     setup::is_setup()?;
     Ok(())
 }
@@ -58,7 +58,7 @@ pub fn get_gitname() -> Result<String> {
         Ok(String::from(name))
     }
     fn path() -> Result<String> {
-        let path = &CONFIG.get_string("path")?;
+        let path = &CONF.get_string("path")?;
         let file = path::Path::new(path)
             .file_name()
             .ok_or(Error::new("error-no-path"))?
@@ -89,7 +89,7 @@ pub fn get_sources() -> Result<Vec<path::PathBuf>> {
     let repo = get_repo()?;
     let index = repo.index()?;
     let mut sources = vec![];
-    let sourcedir = CONFIG.get_string("sourcedir")?;
+    let sourcedir = CONF.get_string("sourcedir")?;
     let sourcedir = path::Path::new(&sourcedir);
     let sourceexts = Regex::new(r"\.(sfd|glyphs|designspace)$").unwrap();
     let ufoexts = Regex::new(r"\.ufo$").unwrap();
