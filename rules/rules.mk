@@ -272,37 +272,44 @@ $(foreach FamilyName,$(FamilyNames),$(eval $(call ttf_instance_template,$(Family
 _VTTSOURCES := $(wildcard $(SOURCEDIR)/*-vtt.ttx)
 ifneq ($(_VTTSOURCES),)
 
-$(BUILDDIR)/%-VF-vtthinted.ttf: $(BUILDDIR)/%-VF.ttf $(SOURCEDIR)/%-vtt.ttx
+$(BUILDDIR)/%-VF-variable-vtthinted.otf: $(BUILDDIR)/%-VF-variable.otf $(SOURCEDIR)/%-vtt.ttx
 	cp $< $@
 	python -m vttLib mergefile $(filter %.ttx,$^) $@
 
-$(BUILDDIR)/%-VF-hinted.ttf: $(BUILDDIR)/%-VF-vtthinted.ttf
+$(BUILDDIR)/%-VF-variable-vtthinted.ttf: $(BUILDDIR)/%-VF-variable.ttf $(SOURCEDIR)/%-vtt.ttx
+	cp $< $@
+	python -m vttLib mergefile $(filter %.ttx,$^) $@
+
+$(BUILDDIR)/%-hinted.otf: $(BUILDDIR)/%-vtthinted.otf
+	$(PYTHON) -m vttLib compile --ship $< $@
+
+$(BUILDDIR)/%-hinted.ttf: $(BUILDDIR)/%-vtthinted.ttf
 	$(PYTHON) -m vttLib compile --ship $< $@
 
 endif
 
-$(BUILDDIR)/%-hinted.ttf: $(BUILDDIR)/%-instance.ttf
-	$(TTFAUTOHINT) $(TTFAUTOHINTFLAGS) -n $< $@
-
-$(BUILDDIR)/%-hinted.otf: $(BUILDDIR)/%-instance.otf
+$(BUILDDIR)/%-hinted.otf: $(BUILDDIR)/%.otf
 	$(PSAUTOHINT) $(PSAUTOHINTFLAGS) -o $@ $<
 
-$(STATICTTFS): %.ttf: $(BUILDDIR)/%-$(if $(HINT),hinted,instance).ttf $(BUILDDIR)/last-commit
+$(BUILDDIR)/%-hinted.ttf: $(BUILDDIR)/%.ttf
+	$(TTFAUTOHINT) $(TTFAUTOHINTFLAGS) -n $< $@
+
+$(STATICTTFS): %.ttf: $(BUILDDIR)/%-instance$(and $(HINT),-hinted).ttf $(BUILDDIR)/last-commit
 	$(GFTOOLS) $(GFTOOLSFLAGS) fix-font -o $@ $<
 	$(normalizeVersion)
 
-$(VARIABLETTFS): %.ttf: $(BUILDDIR)/%-variable-$(if $(HINT),hinted,instance).ttf $(BUILDDIR)/last-commit
-	$(GFTOOLS) $(GFTOOLSFLAGS) fix-font -o $@ $<
-	$(normalizeVersion)
-
-$(VARIABLEOTFS): %.otf: $(BUILDDIR)/%-variable.otf $(BUILDDIR)/last-commit
-	$(GFTOOLS) $(GFTOOLSFLAGS) fix-font -o $@ $<
-	$(normalizeVersion)
-
-$(BUILDDIR)/%-subr.otf: $(BUILDDIR)/%-$(if $(HINT),hinted,instance).otf
+$(BUILDDIR)/%-subr.otf: $(BUILDDIR)/%-instance$(and $(HINT),-hinted).otf
 	$(PYTHON) -m cffsubr -o $@ $<
 
 $(STATICOTFS): %.otf: $(BUILDDIR)/%-subr.otf $(BUILDDIR)/last-commit
+	$(GFTOOLS) $(GFTOOLSFLAGS) fix-font -o $@ $<
+	$(normalizeVersion)
+
+$(VARIABLEOTFS): %.otf: $(BUILDDIR)/%-variable$(and $(_VTTSOURCES),-hinted).otf $(BUILDDIR)/last-commit
+	$(GFTOOLS) $(GFTOOLSFLAGS) fix-font -o $@ $<
+	$(normalizeVersion)
+
+$(VARIABLETTFS): %.ttf: $(BUILDDIR)/%-variable$(and $(_VTTSOURCES),-hinted).ttf $(BUILDDIR)/last-commit
 	$(GFTOOLS) $(GFTOOLSFLAGS) fix-font -o $@ $<
 	$(normalizeVersion)
 

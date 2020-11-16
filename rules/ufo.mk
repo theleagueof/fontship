@@ -16,7 +16,10 @@ $(eval $(file < $(_TMP)))
 $(shell rm -f $(_TMP))
 endif
 
-$(BUILDDIR)/%-VF.ttf: $(SOURCEDIR)/%.designspace | $(BUILDDIR)
+$(BUILDDIR)/%-VF-variable.otf: $(SOURCEDIR)/%.designspace | $(BUILDDIR)
+	$(FONTMAKE) $(FONTMAKEFLAGS) -m "$<" -o variable-cff2 --output-path $@
+
+$(BUILDDIR)/%-VF-variable.ttf: $(SOURCEDIR)/%.designspace | $(BUILDDIR)
 	$(FONTMAKE) $(FONTMAKEFLAGS) -m "$<" -o variable --output-path $@
 
 $(SOURCEDIR)/%.ufo: UFONORMALIZERFLAGS += -m
