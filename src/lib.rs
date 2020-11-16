@@ -2,8 +2,8 @@
 extern crate lazy_static;
 extern crate num_cpus;
 
-use crate::config::CONFIG;
-use colored::Colorize;
+use crate::config::CONF;
+use colored::{ColoredString, Colorize};
 use git2::{Oid, Repository, Signature};
 use i18n::LocalText;
 use inflector::Inflector;
@@ -30,6 +30,8 @@ pub static DEFAULT_LOCALE: &'static str = "en-US";
 
 /// Fontship version number as detected by `git describe --tags` at build time
 pub static VERSION: &'static str = env!("VERGEN_SEMVER_LIGHTWEIGHT");
+
+pub type Result<T> = result::Result<T, Box<dyn error::Error>>;
 
 /// A type for our internal whoops
 #[derive(Debug)]
@@ -62,6 +64,12 @@ pub fn pname(input: &str) -> String {
     let spaces = Regex::new(r" ").unwrap();
     let title = seps.replace(input, " ").to_title_case();
     spaces.replace(&title, "").to_string()
+}
+
+/// Get repository object
+pub fn get_repo() -> Result<Repository> {
+    let path = CONF.get_string("path")?;
+    Ok(Repository::discover(path)?)
 }
 
 pub fn commit(repo: Repository, oid: Oid, msg: &str) -> result::Result<Oid, git2::Error> {
@@ -99,9 +107,31 @@ pub fn show_outro() {
 }
 
 /// Output header before starting work on a subcommand
-pub fn header(key: &str) {
+pub fn show_header(key: &str) {
     let text = LocalText::new(key);
     eprintln!("{} {}", "┣━".cyan(), text.fmt().yellow());
+}
+
+pub fn display_check(key: &str, val: bool) {
+    if CONF.get_bool("debug").unwrap() || CONF.get_bool("verbose").unwrap() {
+        eprintln!(
+            "{} {} {}",
+            "┠─".cyan(),
+            LocalText::new(key).fmt(),
+            fmt_t_f(val)
+        );
+    };
+}
+
+/// Format a localized string just for true / false status prints
+fn fmt_t_f(val: bool) -> ColoredString {
+    let key = if val { "setup-true" } else { "setup-false" };
+    let text = LocalText::new(key).fmt();
+    if val {
+        text.green()
+    } else {
+        text.red()
+    }
 }
 
 #[cfg(unix)]

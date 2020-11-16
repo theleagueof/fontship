@@ -1,4 +1,4 @@
-use crate::config::CONFIG;
+use crate::*;
 use fluent::{FluentArgs, FluentBundle, FluentResource, FluentValue};
 use fluent_fallback::Localization;
 use fluent_langneg;
@@ -18,7 +18,7 @@ pub struct Asset;
 lazy_static! {
     /// List of Locales in order of closeness to the runtime config
     pub static ref LOCALES: sync::RwLock<Locales> =
-        sync::RwLock::new(Locales::new(CONFIG.get_string("language").expect("Unable to retrieve language from config")));
+        sync::RwLock::new(Locales::new(CONF.get_string("language").expect("Unable to retrieve language from config")));
 }
 
 /// A prioritized locale fallback stack
@@ -39,7 +39,7 @@ impl Locales {
         let language = normalize_lang(&language);
         let available = self::list_available_locales();
         let requested = fluent_langneg::accepted_languages::parse(&language);
-        let default: LanguageIdentifier = crate::DEFAULT_LOCALE
+        let default: LanguageIdentifier = DEFAULT_LOCALE
             .parse()
             .expect("Unable to parse default locale");
         Locales(

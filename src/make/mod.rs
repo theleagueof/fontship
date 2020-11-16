@@ -1,20 +1,17 @@
 use crate::i18n::LocalText;
-use crate::CONFIG;
-use crate::{status, CONFIGURE_DATADIR};
+use crate::*;
 use colored::Colorize;
 use itertools::Itertools;
 use regex::Regex;
 use std::io::prelude::*;
-use std::{error, ffi::OsString, io, result};
+use std::{ffi::OsString, io};
 use subprocess::{Exec, ExitStatus, Redirection};
-
-type Result<T> = result::Result<T, Box<dyn error::Error>>;
 
 // FTL: help-subcommand-make
 /// Build specified target(s)
 pub fn run(target: Vec<String>) -> Result<()> {
-    status::is_setup()?;
-    crate::header("make-header");
+    setup::is_setup()?;
+    show_header("make-header");
     let mut makeflags: Vec<OsString> = Vec::new();
     let cpus = num_cpus::get();
     makeflags.push(OsString::from(format!("--jobs={}", cpus)));
@@ -49,28 +46,28 @@ pub fn run(target: Vec<String>) -> Result<()> {
             .format_with(" ", |p, f| f(&p.to_str().unwrap()))
     );
     let git_version = status::get_git_version();
-    let font_version = crate::format_font_version(git_version.clone());
+    let font_version = format_font_version(git_version.clone());
     process = process
         .env("FONTSHIP_CLI", "true")
         .env("FONTSHIPDIR", CONFIGURE_DATADIR)
         .env("CONTAINERIZED", status::is_container().to_string())
         .env("GITNAME", &gitname)
-        .env("PROJECT", crate::pname(&gitname))
-        .env("PROJECTDIR", CONFIG.get_string("path")?)
+        .env("PROJECT", pname(&gitname))
+        .env("PROJECTDIR", CONF.get_string("path")?)
         .env("GitVersion", git_version)
         .env("FontVersion", font_version)
-        .env("SOURCEDIR", CONFIG.get_string("sourcedir")?)
+        .env("SOURCEDIR", CONF.get_string("sourcedir")?)
         .env("SOURCES", sources_str);
-    if CONFIG.get_bool("debug")? {
+    if CONF.get_bool("debug")? {
         process = process.env("DEBUG", "true");
     };
-    if CONFIG.get_bool("quiet")? {
+    if CONF.get_bool("quiet")? {
         process = process.env("QUIET", "true");
     };
-    if CONFIG.get_bool("verbose")? {
+    if CONF.get_bool("verbose")? {
         process = process.env("VERBOSE", "true");
     };
-    let repo = status::get_repo()?;
+    let repo = get_repo()?;
     let workdir = repo.workdir().unwrap();
     process = process.cwd(workdir);
     let process = process.stderr(Redirection::Merge).stdout(Redirection::Pipe);
@@ -88,14 +85,14 @@ pub fn run(target: Vec<String>) -> Result<()> {
                 "STDOUT" => {
                     if fields[2] == "_gha" {
                         println!("{}", fields[3]);
-                    } else if CONFIG.get_bool("verbose")? {
+                    } else if CONF.get_bool("verbose")? {
                         report_line(fields[3]);
                     } else {
                         backlog.push(String::from(fields[3]));
                     }
                 }
                 "STDERR" => {
-                    if CONFIG.get_bool("verbose")? {
+                    if CONF.get_bool("verbose")? {
                         report_line(fields[3]);
                     } else {
                         backlog.push(String::from(fields[3]));
@@ -125,7 +122,7 @@ pub fn run(target: Vec<String>) -> Result<()> {
             match foo {
                 0 => Ok(()),
                 _ => {
-                    if !CONFIG.get_bool("verbose")? {
+                    if !CONF.get_bool("verbose")? {
                         dump_backlog(&backlog);
                     }
                     Err(Box::new(io::Error::new(

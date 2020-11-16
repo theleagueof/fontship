@@ -88,20 +88,32 @@ make-error-failed =
 make-error-process =
   Make failed to execute a build plan.
 
-status-true =
-  Yes
-
-status-false =
-  No
-
-status-good =
-  Everything seems to be ship shape, anchors up!
-
-status-bad =
-  Something isn’t seaworthy, run ‘fontship setup’
-
 setup-header =
   Configuring repository for use with Fontship
+
+setup-true =
+  Yes
+
+setup-false =
+  No
+
+setup-good =
+  Everything seems to be ship shape, anchors up!
+
+setup-bad =
+  Something isn’t seaworthy, run ‘fontship setup’
+
+setup-is-repo =
+  Is the path a Git repository?
+
+setup-is-writable =
+  Can we write to the project base directory?
+
+setup-is-make-executable =
+  Is the system’s ‘make’ executable?
+
+setup-is-make-gnu =
+  Is the system’s ‘make’ a supported version of GNU Make?
 
 setup-gitignore-committing =
   Committing updated .gitignore file
@@ -110,22 +122,10 @@ setup-gitignore-fresh =
   Existing .gitignore file is up to date
 
 setup-short-shas =
-  Set default length of short SHA hashes in repository
+  Setting default length of short SHA hashes in repository
 
 status-header =
   Scanning project status
 
-status-is-repo =
-  Is the path a Git repository?
-
 status-is-gha =
   Are we running as a GitHub Action?
-
-status-is-writable =
-  Can we write to the project base directory?
-
-status-is-make-executable =
-  Is the system’s ‘make’ executable?
-
-status-is-make-gnu =
-  Is the system’s ‘make’ a supported version of GNU Make?

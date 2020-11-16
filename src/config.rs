@@ -1,17 +1,16 @@
 use crate::cli::Cli;
+use crate::Result;
 use config::{Config, Environment};
-use std::{error, result, sync};
+use std::sync;
 
 static ERROR_CONFIG_WRITE: &str = "Unable to gain write lock on global app config";
 static ERROR_CONFIG_READ: &str = "Unable to gain read lock on global app config";
 
 lazy_static! {
-    pub static ref CONFIG: sync::RwLock<Config> = sync::RwLock::new(Config::default());
+    pub static ref CONF: sync::RwLock<Config> = sync::RwLock::new(Config::default());
 }
 
-type Result<T> = result::Result<T, Box<dyn error::Error>>;
-
-impl CONFIG {
+impl CONF {
     pub fn defaults(&self) -> Result<()> {
         self.write()
             .expect(ERROR_CONFIG_WRITE)
