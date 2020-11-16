@@ -15,7 +15,7 @@ jobs:
         run: |
           git fetch --prune --tags ||:
       - name: Setup system dependencies
-        run: sudo apt-get install fontmake fonttools libgit2-dev python3-pip psautohint python3 python3-pygit2 sfnt2woff-zopfli ttfautohint woff2 zsh
+        run: sudo apt-get install fontmake fonttools libgit2-dev python3-pip psautohint python3 sfnt2woff-zopfli ttfautohint woff2 zsh
       - name: Install Rust
         uses: actions-rs/toolchain@v1
         with:
