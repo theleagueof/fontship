@@ -269,42 +269,48 @@ $(foreach FamilyName,$(FamilyNames),$(eval $(call ttf_instance_template,$(Family
 
 # Final steps common to all input formats
 
-$(BUILDDIR)/%-hinted.ttf: $(BUILDDIR)/%-instance.ttf
-	$(TTFAUTOHINT) $(TTFAUTOHINTFLAGS) -n $< $@
+_VTTSOURCES := $(wildcard $(SOURCEDIR)/*-vtt.ttx)
+ifneq ($(_VTTSOURCES),)
 
-$(BUILDDIR)/%-hinted.ttf.fix: $(BUILDDIR)/%-hinted.ttf
-	$(GFTOOLS) $(GFTOOLSFLAGS) fix-hinting $<
+$(BUILDDIR)/%-VF-variable-vtthinted.otf: $(BUILDDIR)/%-VF-variable.otf $(SOURCEDIR)/%-vtt.ttx
+	cp $< $@
+	python -m vttLib mergefile $(filter %.ttx,$^) $@
 
-ifeq ($(HINT),true)
-$(STATICTTFS): %.ttf: $(BUILDDIR)/%-hinted.ttf.fix $(BUILDDIR)/last-commit
+$(BUILDDIR)/%-VF-variable-vtthinted.ttf: $(BUILDDIR)/%-VF-variable.ttf $(SOURCEDIR)/%-vtt.ttx
 	cp $< $@
-	$(normalizeVersion)
+	python -m vttLib mergefile $(filter %.ttx,$^) $@
 
-$(VARIABLETTFS): %.ttf: $(BUILDDIR)/%-variable-hinted.ttf.fix $(BUILDDIR)/last-commit
-	cp $< $@
-	$(normalizeVersion)
-else
-$(STATICTTFS): %.ttf: $(BUILDDIR)/%-instance.ttf $(BUILDDIR)/last-commit
-	cp $< $@
-	$(normalizeVersion)
+$(BUILDDIR)/%-hinted.otf: $(BUILDDIR)/%-vtthinted.otf
+	$(PYTHON) -m vttLib compile --ship $< $@
 
-$(VARIABLETTFS): %.ttf: $(BUILDDIR)/%.ttf $(BUILDDIR)/last-commit
-	cp $< $@
-	$(normalizeVersion)
+$(BUILDDIR)/%-hinted.ttf: $(BUILDDIR)/%-vtthinted.ttf
+	$(PYTHON) -m vttLib compile --ship $< $@
+
 endif
 
-$(VARIABLEOTFS): %.otf: $(BUILDDIR)/%-variable.otf $(BUILDDIR)/last-commit
-	cp $< $@
+$(BUILDDIR)/%-hinted.otf: $(BUILDDIR)/%.otf
+	$(PSAUTOHINT) $(PSAUTOHINTFLAGS) -o $@ $<
+
+$(BUILDDIR)/%-hinted.ttf: $(BUILDDIR)/%.ttf
+	$(TTFAUTOHINT) $(TTFAUTOHINTFLAGS) -n $< $@
+
+$(STATICTTFS): %.ttf: $(BUILDDIR)/%-instance$(and $(HINT),-hinted).ttf $(BUILDDIR)/last-commit
+	$(GFTOOLS) $(GFTOOLSFLAGS) fix-font -o $@ $<
 	$(normalizeVersion)
 
-$(BUILDDIR)/%-hinted.otf: $(BUILDDIR)/%-instance.otf
-	$(PSAUTOHINT) $(PSAUTOHINTFLAGS) $< -o $@
-
-$(BUILDDIR)/%-subr.otf: $(BUILDDIR)/%-$(if $(HINT),hinted,instance).otf
+$(BUILDDIR)/%-subr.otf: $(BUILDDIR)/%-instance$(and $(HINT),-hinted).otf
 	$(PYTHON) -m cffsubr -o $@ $<
 
 $(STATICOTFS): %.otf: $(BUILDDIR)/%-subr.otf $(BUILDDIR)/last-commit
-	cp $< $@
+	$(GFTOOLS) $(GFTOOLSFLAGS) fix-font -o $@ $<
+	$(normalizeVersion)
+
+$(VARIABLEOTFS): %.otf: $(BUILDDIR)/%-variable$(and $(_VTTSOURCES),-hinted).otf $(BUILDDIR)/last-commit
+	$(GFTOOLS) $(GFTOOLSFLAGS) fix-font -o $@ $<
+	$(normalizeVersion)
+
+$(VARIABLETTFS): %.ttf: $(BUILDDIR)/%-variable$(and $(_VTTSOURCES),-hinted).ttf $(BUILDDIR)/last-commit
+	$(GFTOOLS) $(GFTOOLSFLAGS) fix-font -o $@ $<
 	$(normalizeVersion)
 
 # Webfont compressions
