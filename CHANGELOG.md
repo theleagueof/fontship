@@ -2,6 +2,29 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.7.0](https://github.com/theleagueof/fontship/compare/v0.6.2...v0.7.0) (2020-11-17)
+
+
+### ⚠ BREAKING CHANGES
+
+* **rules:** Complete deprecation of using rules without CLI
+
+### Features
+
+* **cli:** Add setup operation to normalize SHA lengths ([4945f53](https://github.com/theleagueof/fontship/commit/4945f534cdece4ed504af5570b5f0ad8dbb500f8))
+* **cli:** Rebuild .gitignore on setup ([527a0ed](https://github.com/theleagueof/fontship/commit/527a0eddb8ca97596b90f14b899db781b41bf811))
+* **rules:** Add .gitignore file builder ([57c0925](https://github.com/theleagueof/fontship/commit/57c092521641924f136c0006880e733f07c0e009))
+
+
+### Bug Fixes
+
+* **ufo:** Bring variable UFO sources inline with Glyphs ([1680e29](https://github.com/theleagueof/fontship/commit/1680e29553cbc0a6e9cf82831788c044e4623ca3))
+
+
+### Miscellaneous Chores
+
+* **rules:** Complete deprecation of using rules without CLI ([e138edf](https://github.com/theleagueof/fontship/commit/e138edffce1357665121d8a32ef1a781cfdb8cbf))
+
 ### [0.6.2](https://github.com/theleagueof/fontship/compare/v0.6.1...v0.6.2) (2020-10-29)
 
 
