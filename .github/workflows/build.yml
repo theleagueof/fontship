@@ -35,8 +35,8 @@ jobs:
           export PATH="$HOME/.local/bin:$PATH"
           ./bootstrap.sh
           ./configure
-          echo ::set-env name=VERSION::$(./build-aux/git-version-gen .tarball-version)
-          echo ::set-env name=MAKEFLAGS::-j$(nproc) -Otarget
+          echo VERSION=$(./build-aux/git-version-gen .tarball-version) >> $GITHUB_ENV
+          echo MAKEFLAGS=-j$(nproc) -Otarget >> $GITHUB_ENV
       - name: Build
         run: |
           export PATH="$HOME/.local/bin:$PATH"
@@ -45,7 +45,7 @@ jobs:
         run: |
           export PATH="$HOME/.local/bin:$PATH"
           make dist
-          echo ::set-env name=ISRELEASETAG::$(grep -Pqx '\d+\.\d+\.\d+' .version && echo true || echo false)
+          echo ISRELEASETAG=$(grep -Pqx '\d+\.\d+\.\d+' .version && echo true || echo false) >> $GITHUB_ENV
       - name: Upload Artifacts
         if: ${{ env.ISRELEASETAG == 'false' }}
         uses: actions/upload-artifact@v2
