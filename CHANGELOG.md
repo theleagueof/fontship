@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.7.1](https://github.com/theleagueof/fontship/compare/v0.7.0...v0.7.1) (2020-11-18)
+
+
+### Bug Fixes
+
+* **actions:** Repair detection of project name in GitHub Actions ([bc859de](https://github.com/theleagueof/fontship/commit/bc859dec4a70c79d0e13573da0762661cc351af4))
+
 ## [0.7.0](https://github.com/theleagueof/fontship/compare/v0.6.2...v0.7.0) (2020-11-17)
 
 
