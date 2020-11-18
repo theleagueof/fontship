@@ -82,11 +82,20 @@ make-error-unknown-code =
   binary.  Needless to say this should not have happened. If you are not
   currently hacking on Fontship itself please report this as a bug.
 
-make-error-failed =
+make-error =
+  Failed to execute a subprocess for ‘make’.
+
+make-error-unfinished =
+  Make reported outdated targets were not built.
+
+make-error-build =
+  Make failed to parse or execute a build plan.
+
+make-error-target =
   Make failed to execute a recipe.
 
-make-error-process =
-  Make failed to execute a build plan.
+make-error-unknown =
+  Make returned unknown error.
 
 setup-header =
   Configuring repository for use with Fontship
