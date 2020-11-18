@@ -121,20 +121,41 @@ pub fn run(target: Vec<String>) -> Result<()> {
             let foo = int + ret;
             match foo {
                 0 => Ok(()),
-                _ => {
+                1 => {
+                    dump_backlog(&backlog);
+                    Err(Box::new(io::Error::new(
+                        io::ErrorKind::InvalidInput,
+                        LocalText::new("make-error-unfinished").fmt(),
+                    )))
+                }
+                2 => {
+                    dump_backlog(&backlog);
+                    Err(Box::new(io::Error::new(
+                        io::ErrorKind::InvalidInput,
+                        LocalText::new("make-error-build").fmt(),
+                    )))
+                }
+                3 => {
                     if !CONF.get_bool("verbose")? {
                         dump_backlog(&backlog);
                     }
                     Err(Box::new(io::Error::new(
                         io::ErrorKind::InvalidInput,
-                        LocalText::new("make-error-failed").fmt(),
+                        LocalText::new("make-error-target").fmt(),
+                    )))
+                }
+                _ => {
+                    dump_backlog(&backlog);
+                    Err(Box::new(io::Error::new(
+                        io::ErrorKind::InvalidInput,
+                        LocalText::new("make-error-unknown").fmt(),
                     )))
                 }
             }
         }
         _ => Err(Box::new(io::Error::new(
             io::ErrorKind::InvalidInput,
-            LocalText::new("make-error-process").fmt(),
+            LocalText::new("make-error").fmt(),
         ))),
     }
 }
