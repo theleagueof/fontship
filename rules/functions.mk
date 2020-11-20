@@ -9,8 +9,6 @@ designspaceMasters ?= $(notdir $(basename $1))
 sfdFamilyNames = $(shell sed -n '/FamilyName/{s/.*: //;s/ //g;p}' "$1")
 sfdInstances ?=
 
-file2family ?= $(shell $(PYTHON) -c 'import re; print(re.sub(r"(?<!^)(?=[A-Z])", " ", "$1"))')
-
 define normalizeVersion ?=
 	$(FONTV) $(FONTVFLAGS) write --ver=$(FontVersion) $(if $(isTagged),--rel,--dev --sha1) $@
 endef
