@@ -16,26 +16,30 @@ isVariable ?= $(and $(SOURCES_GLYPHS)$(SOURCES_DESIGNSPACE),true)
 
 # Read font name from metadata file or guess from repository name
 ifeq ($(CANONICAL),glyphs)
-FamilyNames ?= $(sort $(foreach SOURCE,$(SOURCES_GLYPHS),$(call glyphsFamilyNames,$(SOURCE))))
-FontInstances ?= $(sort $(foreach SOURCE,$(SOURCES_GLYPHS),$(call glyphsInstances,$(SOURCE))))
-FamilyMasters ?= $(sort $(foreach SOURCE,$(SOURCES_GLYPHS),$(call designspaceMasters,$(SOURCE))))
+_FamilyNames := $(sort $(foreach SOURCE,$(SOURCES_GLYPHS),$(call glyphsFamilyNames,$(SOURCE))))
+_FontInstances := $(sort $(foreach SOURCE,$(SOURCES_GLYPHS),$(call glyphsInstances,$(SOURCE))))
+_FamilyMasters := $(sort $(foreach SOURCE,$(SOURCES_GLYPHS),$(call designspaceMasters,$(SOURCE))))
 endif
 
 ifeq ($(CANONICAL),sfd)
-FamilyNames ?= $(sort $(foreach SOURCE,$(SOURCES_SFD),$(call sfdFamilyNames,$(SOURCE))))
-# FontInstances ?=
+_FamilyNames := $(sort $(foreach SOURCE,$(SOURCES_SFD),$(call sfdFamilyNames,$(SOURCE))))
+_FontInstances :=
 endif
 
 ifeq ($(CANONICAL),ufo)
 ifeq ($(isVariable),true)
-FamilyNames ?= $(sort $(foreach SOURCE,$(SOURCES_DESIGNSPACE),$(call designspaceFamilyNames,$(SOURCE))))
-FontInstances ?= $(sort $(foreach SOURCE,$(SOURCES_DESIGNSPACE),$(call designspaceInstances,$(SOURCE))))
-FamilyMasters ?= $(sort $(foreach SOURCE,$(SOURCES_DESIGNSPACE),$(call designspaceMasters,$(SOURCE))))
+_FamilyNames := $(sort $(foreach SOURCE,$(SOURCES_DESIGNSPACE),$(call designspaceFamilyNames,$(SOURCE))))
+_FontInstances := $(sort $(foreach SOURCE,$(SOURCES_DESIGNSPACE),$(call designspaceInstances,$(SOURCE))))
+_FamilyMasters := $(sort $(foreach SOURCE,$(SOURCES_DESIGNSPACE),$(call designspaceMasters,$(SOURCE))))
 else
-FamilyNames ?= $(sort $(foreach SOURCE,$(SOURCES_UFO),$(call ufoFamilyNames,$(SOURCE))))
-FontInstances ?= $(sort $(foreach SOURCE,$(SOURCES_UFO),$(call ufoInstances,$(SOURCE))))
+_FamilyNames := $(sort $(foreach SOURCE,$(SOURCES_UFO),$(call ufoFamilyNames,$(SOURCE))))
+_FontInstances := $(sort $(foreach SOURCE,$(SOURCES_UFO),$(call ufoInstances,$(SOURCE))))
 endif
 endif
+
+FamilyNames ?= $(_FamilyNames)
+FontInstances ?= $(_FontInstances)
+FamilyMasters ?= $(_FamilyMasters)
 
 HINT ?= true
 
