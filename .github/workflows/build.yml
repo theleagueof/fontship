@@ -35,8 +35,8 @@ jobs:
           export PATH="$HOME/.local/bin:$PATH"
           ./bootstrap.sh
           ./configure
-          echo VERSION=$(./build-aux/git-version-gen .tarball-version) >> $GITHUB_ENV
-          echo MAKEFLAGS=-j$(nproc) -Otarget >> $GITHUB_ENV
+          echo "VERSION=$(./build-aux/git-version-gen .tarball-version)" >> $GITHUB_ENV
+          echo "MAKEFLAGS=-j$(nproc) -Otarget" >> $GITHUB_ENV
       - name: Build
         run: |
           export PATH="$HOME/.local/bin:$PATH"
