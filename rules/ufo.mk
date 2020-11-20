@@ -7,7 +7,7 @@ define makeVars =
 from fontTools.designspaceLib import DesignSpaceDocument
 designspace = DesignSpaceDocument()
 designspace.read("$(SOURCE)")
-for instance in designspace.instances: print("_DSI_{1}{0} = {1} {2}\n_DSF_{1}{0} = $(SOURCE)".format(instance.styleName.replace(" ", ""), instance.familyName, instance.styleName))
+for instance in designspace.instances: print("_DSI_{1}{0} = {1} {2}\n_DSF_{1}{0} = $(SOURCE)".format(instance.styleName.replace(" ", ""), instance.openTypeNamePreferredFamilyName, instance.styleName))
 endef
 
 ifneq ($(SOURCES_DESIGNSPACE),)
