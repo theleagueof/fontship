@@ -28,7 +28,9 @@ RUN pacman --needed --noconfirm -Syq \
 FROM fontship-base AS fontship-builder
 
 # Install build time dependecies
-RUN pacman --needed --noconfirm -Syq base-devel cargo jq rust && yes | pacman -Sccq
+RUN pacman --needed --noconfirm -Syq \
+		base-devel cargo jq rust \
+	&& yes | pacman -Sccq
 
 # Set at build time, forces Docker's layer caching to reset at this point
 ARG VCS_REF=0
