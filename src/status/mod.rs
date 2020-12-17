@@ -48,7 +48,7 @@ pub fn get_gitname() -> Result<String> {
         let repo = get_repo()?;
         let remote = repo.find_remote("origin")?;
         let url = remote.url().unwrap();
-        let re = Regex::new(r"^(.*/)([^/]+)/?(\.git)?/?$").unwrap();
+        let re = Regex::new(r"^(.*/)([^/]+?)(/?(\.git)?/?)$").unwrap();
         let name = re
             .captures(url)
             .ok_or(Error::new("error-no-remote"))?
