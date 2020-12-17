@@ -32,12 +32,11 @@ impl CONF {
     pub fn from_args(&self, args: &Cli) -> Result<()> {
         if args.debug {
             self.set_bool("debug", true)?;
-        }
-        if args.quiet {
-            self.set_bool("quiet", true)?;
-        }
-        if args.verbose {
             self.set_bool("verbose", true)?;
+        } else if args.verbose {
+            self.set_bool("verbose", true)?;
+        } else if args.quiet {
+            self.set_bool("quiet", true)?;
         }
         if let Some(path) = &args.path.to_str() {
             self.set_str("path", path)?;
