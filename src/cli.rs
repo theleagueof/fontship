@@ -3,7 +3,7 @@ use std::path;
 
 // FTL: help-description
 /// The command line interface to Fontship,
-/// A font development toolkit and collaborative work flow.
+/// a font development toolkit and collaborative work flow.
 #[derive(Clap, Debug)]
 #[clap(bin_name = "fontship")]
 #[clap(setting = AppSettings::InferSubcommands)]
@@ -42,6 +42,7 @@ pub enum Subcommand {
     // FTL: help-subcommand-make
     /// Build specified target(s) with ‘make’
     Make {
+        // FTL: help-subcommand-make-target
         /// Target as defined in Fontship or project rules
         target: Vec<String>,
     },
