@@ -37,6 +37,7 @@ pub fn run(target: Vec<String>) -> Result<()> {
         .args(&makeflags)
         .args(&makefiles)
         .args(&target);
+    let targets: Vec<_> = target.into_iter().collect();
     // Start deprecating non-CLI usage
     let gitname = status::get_gitname()?;
     let sources = status::get_sources()?;
@@ -65,7 +66,7 @@ pub fn run(target: Vec<String>) -> Result<()> {
     if CONF.get_bool("quiet")? {
         process = process.env("QUIET", "true");
     };
-    if CONF.get_bool("verbose")? {
+    if CONF.get_bool("verbose")? || targets.contains(&"debug".into()) {
         process = process.env("VERBOSE", "true");
     };
     let repo = get_repo()?;
@@ -84,7 +85,7 @@ pub fn run(target: Vec<String>) -> Result<()> {
             "FONTSHIP" => match fields[1] {
                 "PRE" => report_start(fields[2]),
                 "STDOUT" => {
-                    if fields[2] == "_gha" {
+                    if targets.contains(&"_gha".into()) {
                         println!("{}", fields[3]);
                     } else if CONF.get_bool("verbose")? {
                         report_line(fields[3]);
@@ -121,7 +122,12 @@ pub fn run(target: Vec<String>) -> Result<()> {
         Ok(ExitStatus::Exited(int)) => {
             let foo = int + ret;
             match foo {
-                0 => Ok(()),
+                0 => {
+                    if targets.contains(&"debug".into()) {
+                        dump_backlog(&backlog)
+                    };
+                    Ok(())
+                }
                 1 => {
                     dump_backlog(&backlog);
                     Err(Box::new(io::Error::new(
