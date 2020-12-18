@@ -1,8 +1,10 @@
 use clap::{FromArgMatches, IntoApp};
+
 use fontship::cli::{Cli, Subcommand};
 use fontship::config::CONF;
 use fontship::{make, setup, status};
 use fontship::{Result, VERSION};
+
 use std::env;
 
 fn main() -> Result<()> {

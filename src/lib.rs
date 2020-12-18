@@ -3,6 +3,7 @@ extern crate lazy_static;
 extern crate num_cpus;
 
 use crate::config::CONF;
+
 use colored::{ColoredString, Colorize};
 use git2::{Oid, Repository, Signature};
 use i18n::LocalText;
