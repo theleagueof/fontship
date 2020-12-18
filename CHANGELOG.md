@@ -2,6 +2,25 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.7.2](https://github.com/theleagueof/fontship/compare/v0.7.1...v0.7.2) (2020-12-18)
+
+
+### Features
+
+* **cli:** Pass through output of special debug target ([0f6471f](https://github.com/theleagueof/fontship/commit/0f6471f0a3f4a660dfc0492d491bd90734761f43))
+
+
+### Bug Fixes
+
+* **cli:** Detect project name from local Git repo too ([b7c3197](https://github.com/theleagueof/fontship/commit/b7c3197e4e31690de6614b5bbe021e45efde5136))
+* **cli:** Disallow quiet flag if debug or verbose enabled ([97a3a49](https://github.com/theleagueof/fontship/commit/97a3a49daf274cca275cd88aa25bbc35b9ba6df6))
+* **ufo:** Use best available family name, not legacy ([368201e](https://github.com/theleagueof/fontship/commit/368201e2a78454a9d183d5c47762c750a38a550d))
+
+
+### Performance Improvements
+
+* **rules:** Stop iteratively reading every value on every use ([01eea8d](https://github.com/theleagueof/fontship/commit/01eea8d0a3348106d3eeca94b363a1ebb07bb863))
+
 ### [0.7.1](https://github.com/theleagueof/fontship/compare/v0.7.0...v0.7.1) (2020-11-18)
 
 
