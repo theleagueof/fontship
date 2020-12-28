@@ -58,7 +58,7 @@ INSTANCES ?= $(foreach FamilyName,$(FamilyNames),$(foreach STYLE,$(FontInstances
 isTagged := $(and $(findstring -r0-,$(GitVersion)),true)
 
 ifeq ($(DEBUG),true)
-.SHELLFLAGS += +x
+.SHELLFLAGS += -x
 MAKEFLAGS += --no-silent
 FONTMAKEFLAGS ?= --verbose DEBUG
 FONTVFLAGS ?=

@@ -98,10 +98,7 @@ dist: fontship-$(VERSION).md
 dist-hook:
 	echo $(VERSION) > $(distdir)/.tarball-version
 
-check: selfcheck
-
-.PHONY: selfcheck
-selfcheck: $(_fontship) | $(BUILT_SOURCES)
+check-local: $(_fontship) | $(BUILT_SOURCES)
 	./$< --version | grep -Ff $(firstword $|)
 
 RELTYPE ?=
