@@ -98,8 +98,13 @@ dist: fontship-$(VERSION).md
 dist-hook:
 	echo $(VERSION) > $(distdir)/.tarball-version
 
-check-local: $(_fontship) | $(BUILT_SOURCES)
-	./$< --version | grep -Ff $(firstword $|)
+check-local: cargo-test check-local-version
+
+check-local-version: $(_fontship) | .version
+	./$< --version | grep -Ff $|
+
+cargo-test: $(_casile)
+	cargo test --locked
 
 RELTYPE ?=
 
