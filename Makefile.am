@@ -21,14 +21,9 @@ _fontship_assets = assets/en-US/cli.ftl
 fontship_SOURCES = Cargo.toml build.rs src/main.rs $(_fontship_libs) $(_fontship_modules) $(_fontship_assets)
 EXTRA_fontship_SOURCES = Cargo.lock
 
+
 BUILT_SOURCES = .version
-
 CLEANFILES = $(BUILT_SOURCES) $(bin_PROGRAMS)
-
-.version: $(shell test -e .git && awk '{print ".git/" $$2}' .git/HEAD)
-	mv $@{,-prev} 2>/dev/null || touch $@-prev
-	( test -e .git && ./build-aux/git-version-gen .tarball-version || echo $(VERSION) ) > $@
-	cmp -s $@{,-prev} || autoreconf configure.ac --force -W none
 
 if ENABLE_BASH_COMPLETION
 bashcompletiondir = $(BASH_COMPLETION_DIR)
@@ -89,6 +84,11 @@ $(COMPLETIONS_OUT_DIR)/_$(_fontship): $(CARGO_TARGET)
 $(CARGO_TARGET): $(fontship_SOURCES) clean-embedded-assets
 	cargo build $(CARGO_VERBOSE) $(CARGO_RELEASE_ARGS)
 
+.version: $(shell test -e .git && awk '{print ".git/" $$2}' .git/HEAD)
+	mv $@{,-prev} 2>/dev/null || touch $@-prev
+	( test -e .git && ./build-aux/git-version-gen .tarball-version || echo $(VERSION) ) > $@
+	cmp -s $@{,-prev} || autoreconf configure.ac --force -W none
+
 .PHONY: clean-embedded-assets
 clean-embedded-assets:
 	[[ ! -e .git  ]] || git clean -dxf assets
@@ -125,6 +125,10 @@ release-preview:
 .PHONY: release
 release: tagrelease
 
+fontship-%.md: CHANGELOG.md
+	sed -e '/\.\.\.v$*/,/\.\.\.v/!d' $< | \
+		sed -e '1,3d;N;$$!P;$$!D;$$d' > $@
+
 _svg_cleanup = select-all;object-to-path;vacuum-defs
 _scour_args = --quiet --set-precision=4 --remove-metadata --enable-id-stripping --strip-xml-prolog --strip-xml-space --no-line-breaks --no-renderer-workaround
 
@@ -160,10 +164,6 @@ media_badge: media/badge.svg
 	@echo =================
 	@svgo --datauri base64 --multipass --quiet -i $< -o -
 	@echo =================
-
-fontship-%.md: CHANGELOG.md
-	sed -e '/\.\.\.v$*/,/\.\.\.v/!d' $< | \
-		sed -e '1,3d;N;$$!P;$$!D;$$d' > $@
 
 .PHONY: docker
 docker: Dockerfile
