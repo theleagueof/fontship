@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+
+DESC=$(git describe --long --tags | sed 's/^v//;s/\([^-]*-g\)/r\1/;s/-/./g')
+
+docker build \
+	--build-arg VCS_REF="${1:-$DESC}" \
+	--tag "$IMAGE_NAME" \
+	./

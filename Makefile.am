@@ -11,7 +11,7 @@ dist_doc_DATA = README.md CHANGELOG.md
 dist_man_MANS = $(_fontship).1
 dist_license_DATA = LICENSE
 nobase_dist_data_DATA = rules/fontship.mk rules/rules.mk rules/functions.mk rules/glyphs.mk rules/sfd.mk rules/ufo.mk
-EXTRA_DIST = .version Dockerfile build-aux/cargo-updater.js build-aux/bootstrap-docker.sh
+EXTRA_DIST = .version Dockerfile build-aux/cargo-updater.js build-aux/bootstrap-docker.sh hooks/build
 
 bin_PROGRAMS = fontship
 
@@ -21,14 +21,9 @@ _fontship_assets = assets/en-US/cli.ftl
 fontship_SOURCES = Cargo.toml build.rs src/main.rs $(_fontship_libs) $(_fontship_modules) $(_fontship_assets)
 EXTRA_fontship_SOURCES = Cargo.lock
 
+
 BUILT_SOURCES = .version
-
 CLEANFILES = $(BUILT_SOURCES) $(bin_PROGRAMS)
-
-.version: $(shell test -e .git && awk '{print ".git/" $$2}' .git/HEAD)
-	mv $@{,-prev} 2>/dev/null || touch $@-prev
-	( test -e .git && ./build-aux/git-version-gen .tarball-version || echo $(VERSION) ) > $@
-	cmp -s $@{,-prev} || autoreconf configure.ac --force -W none
 
 if ENABLE_BASH_COMPLETION
 bashcompletiondir = $(BASH_COMPLETION_DIR)
@@ -89,6 +84,11 @@ $(COMPLETIONS_OUT_DIR)/_$(_fontship): $(CARGO_TARGET)
 $(CARGO_TARGET): $(fontship_SOURCES) clean-embedded-assets
 	cargo build $(CARGO_VERBOSE) $(CARGO_RELEASE_ARGS)
 
+.version: $(shell test -e .git && awk '{print ".git/" $$2}' .git/HEAD)
+	mv $@{,-prev} 2>/dev/null || touch $@-prev
+	( test -e .git && ./build-aux/git-version-gen .tarball-version || echo $(VERSION) ) > $@
+	cmp -s $@{,-prev} || autoreconf configure.ac --force -W none
+
 .PHONY: clean-embedded-assets
 clean-embedded-assets:
 	[[ ! -e .git  ]] || git clean -dxf assets
@@ -98,11 +98,16 @@ dist: fontship-$(VERSION).md
 dist-hook:
 	echo $(VERSION) > $(distdir)/.tarball-version
 
-check: selfcheck
+check-local: cargo-test check-local-version
 
-.PHONY: selfcheck
-selfcheck: $(_fontship) | $(BUILT_SOURCES)
-	./$< --version | grep -Ff $(firstword $|)
+check-local-version: $(_fontship) | .version
+	./$< --version | grep -Ff $|
+
+cargo-test: $(_casile)
+	cargo test --locked
+
+clean-local:
+	cargo clean
 
 RELTYPE ?=
 
@@ -113,15 +118,16 @@ tagrelease:
 	git diff-files --quiet && \
 	npm run release -- $(and $(RELTYPE),--release-as $(RELTYPE))
 
-.PHONY: prerelease
-prerelease: all
-
 .PHONY: release-preview
 release-preview:
 	npm run release -- --dry-run $(and $(RELTYPE),--release-as $(RELTYPE))
 
 .PHONY: release
 release: tagrelease
+
+fontship-%.md: CHANGELOG.md
+	sed -e '/\.\.\.v$*/,/\.\.\.v/!d' $< | \
+		sed -e '1,3d;N;$$!P;$$!D;$$d' > $@
 
 _svg_cleanup = select-all;object-to-path;vacuum-defs
 _scour_args = --quiet --set-precision=4 --remove-metadata --enable-id-stripping --strip-xml-prolog --strip-xml-space --no-line-breaks --no-renderer-workaround
@@ -159,13 +165,6 @@ media_badge: media/badge.svg
 	@svgo --datauri base64 --multipass --quiet -i $< -o -
 	@echo =================
 
-fontship-%.md: CHANGELOG.md
-	sed -e '/\.\.\.v$*/,/\.\.\.v/!d' $< | \
-		sed -e '1,3d;N;$$!P;$$!D;$$d' > $@
-
 .PHONY: docker
-docker: Dockerfile
-	docker build \
-		--build-arg VCS_REF="$(VERSION)" \
-		--tag theleagueof/fontship:HEAD \
-		./
+docker: Dockerfile hooks/build .version
+	IMAGE_NAME=theleagueof/fontship:HEAD ./hooks/build $(VERSION)

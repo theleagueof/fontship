@@ -54,7 +54,7 @@ local process_shell() {
 eval $1
 shift
 
-if [[ $1 = "+x" ]]; then
+if [[ $1 = "-x" ]]; then
   _debug=true
   shift
 fi

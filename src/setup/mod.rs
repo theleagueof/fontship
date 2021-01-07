@@ -9,7 +9,7 @@ use std::{fs, io, path};
 use subprocess::{Exec, NullFile, Redirection};
 
 // FTL: help-subcommand-setup
-/// Setup Fontship for use on a new Font project
+/// Setup a font project for use with Fontship
 pub fn run() -> Result<()> {
     show_header("setup-header");
     let path = &CONF.get_string("path")?;

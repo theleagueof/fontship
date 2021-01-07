@@ -29,7 +29,7 @@ help-subcommand-make-target =
 
 # Currently hard coded, see clap issue #1880
 help-subcommand-setup =
-  Show status information about setup, configuration, and build state
+  Setup a font project for use with Fontship
 
 # Currently hard coded, see clap issue #1880
 help-subcommand-setup-path =
