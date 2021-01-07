@@ -11,7 +11,7 @@ dist_doc_DATA = README.md CHANGELOG.md
 dist_man_MANS = $(_fontship).1
 dist_license_DATA = LICENSE
 nobase_dist_data_DATA = rules/fontship.mk rules/rules.mk rules/functions.mk rules/glyphs.mk rules/sfd.mk rules/ufo.mk
-EXTRA_DIST = .version Dockerfile build-aux/cargo-updater.js build-aux/bootstrap-docker.sh
+EXTRA_DIST = .version Dockerfile build-aux/cargo-updater.js build-aux/bootstrap-docker.sh hooks/build
 
 bin_PROGRAMS = fontship
 
@@ -166,8 +166,5 @@ media_badge: media/badge.svg
 	@echo =================
 
 .PHONY: docker
-docker: Dockerfile
-	docker build \
-		--build-arg VCS_REF="$(VERSION)" \
-		--tag theleagueof/fontship:HEAD \
-		./
+docker: Dockerfile hooks/build .version
+	IMAGE_NAME=theleagueof/fontship:HEAD ./hooks/build $(VERSION)
