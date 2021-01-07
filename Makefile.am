@@ -106,6 +106,9 @@ check-local-version: $(_fontship) | .version
 cargo-test: $(_casile)
 	cargo test --locked
 
+clean-local:
+	cargo clean
+
 RELTYPE ?=
 
 .PHONY: tagrelease
