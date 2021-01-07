@@ -115,9 +115,6 @@ tagrelease:
 	git diff-files --quiet && \
 	npm run release -- $(and $(RELTYPE),--release-as $(RELTYPE))
 
-.PHONY: prerelease
-prerelease: all
-
 .PHONY: release-preview
 release-preview:
 	npm run release -- --dry-run $(and $(RELTYPE),--release-as $(RELTYPE))
