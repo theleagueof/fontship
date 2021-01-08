@@ -1,5 +1,16 @@
 use crate::*;
 
+use fluent_templates::{ArcLoader, Loader};
+use std::collections::HashMap;
+use unic_langid::{langid, LanguageIdentifier};
+
+lazy_static! {
+    pub static ref LOCALES: ArcLoader =
+        ArcLoader::builder("assets/", unic_langid::langid!("en-US"))
+            .build()
+            .unwrap();
+}
+
 #[derive(Debug)]
 pub struct FluentArgs {}
 
@@ -15,6 +26,8 @@ pub struct LocalText {
     key: String,
     args: Option<FluentArgs>,
 }
+
+const EN: LanguageIdentifier = langid!("en-US");
 
 impl LocalText {
     /// Make a new localizable text placeholder for a Fluent key with no args
@@ -37,6 +50,9 @@ impl LocalText {
     /// Format and return a string for the given key and args using the prefered locale fallback
     /// stack as negotiated at runtime.
     pub fn fmt(&self) -> String {
-        String::from("foo")
+        // let lang = CONF.get_string("language").expect("Unable to retrieve language from config")
+        // .lookup_single_language(&EN, &self.key, None)
+        let str = LOCALES.lookup_complete(&EN, "foo", None);
+        str
     }
 }
