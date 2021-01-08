@@ -26,7 +26,7 @@ impl LocalText {
     }
 
     /// Add values for variables to be passed as arguments to Fluent
-    pub fn arg(self, var: &str, val: impl ToString) -> LocalText {
+    pub fn arg(self, _var: &str, _val: impl ToString) -> LocalText {
         let args: Option<FluentArgs> = None;
         LocalText {
             key: String::from(&self.key),
