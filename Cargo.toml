@@ -12,6 +12,7 @@ build = "build.rs"
 [dependencies]
 colored = "2.0.0"
 config = "0.10.1"
+fluent = "0.14.0"
 fluent-templates = "0.5.16"
 git2 = "0.13.15"
 itertools = "0.10.0"

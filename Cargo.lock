@@ -242,7 +242,17 @@ version = "0.12.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "3c3b6132d1377d8776409a337c6851d342aee4e85277c96ecd2755c4e0efde1d"
 dependencies = [
- "fluent-bundle",
+ "fluent-bundle 0.12.0",
+ "unic-langid",
+]
+
+[[package]]
+name = "fluent"
+version = "0.14.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "bdb1332a30e4eb0d388961ccd7f3fcbc907d37072caac5aa3fcdb09b372223b2"
+dependencies = [
+ "fluent-bundle 0.14.0",
  "unic-langid",
 ]
 
@@ -253,10 +263,25 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "01a094d494ab2ed06077e9a95f4e47f446c376de95f6c93045dd88c499bfcd70"
 dependencies = [
  "fluent-langneg",
- "fluent-syntax",
+ "fluent-syntax 0.9.3",
  "intl-memoizer",
  "intl_pluralrules",
  "rental",
+ "smallvec",
+ "unic-langid",
+]
+
+[[package]]
+name = "fluent-bundle"
+version = "0.14.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "25eb8ef496c9db4cc473cbfb9dd1ccbfa65117940fe2f998a5e4b37355fa82ce"
+dependencies = [
+ "fluent-langneg",
+ "fluent-syntax 0.10.1",
+ "intl-memoizer",
+ "intl_pluralrules",
+ "ouroboros",
  "smallvec",
  "unic-langid",
 ]
@@ -275,6 +300,12 @@ name = "fluent-syntax"
 version = "0.9.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "ac0f7e83d14cccbf26e165d8881dcac5891af0d85a88543c09dd72ebd31d91ba"
+
+[[package]]
+name = "fluent-syntax"
+version = "0.10.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "edb1016e8c600060e0099218442fff329a204f6316d6ec974d590d3281517a52"
 
 [[package]]
 name = "fluent-template-macros"
@@ -298,10 +329,10 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "954e39b54b86bb8d5cf2180454101e9fd36c6dda5aa012ea051a2545ae17b28c"
 dependencies = [
  "arc-swap",
- "fluent",
- "fluent-bundle",
+ "fluent 0.12.0",
+ "fluent-bundle 0.12.0",
  "fluent-langneg",
- "fluent-syntax",
+ "fluent-syntax 0.9.3",
  "fluent-template-macros",
  "flume",
  "heck",
@@ -339,6 +370,7 @@ dependencies = [
  "clap_generate",
  "colored",
  "config",
+ "fluent 0.14.0",
  "fluent-templates",
  "git2",
  "itertools",
@@ -756,6 +788,28 @@ name = "os_str_bytes"
 version = "2.4.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "afb2e1c3ee07430c2cf76151675e583e0f19985fa6efae47d6848a3e2c824f85"
+
+[[package]]
+name = "ouroboros"
+version = "0.5.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "cc04551635026d3ac7bc646698ea1836a85ed2a26b7094fe1d15d8b14854c4a2"
+dependencies = [
+ "ouroboros_macro",
+ "stable_deref_trait",
+]
+
+[[package]]
+name = "ouroboros_macro"
+version = "0.5.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "cec33dfceabec83cd0e95a5ce9d20e76ab3a5cbfef59659b8c927f69b93ed8ae"
+dependencies = [
+ "Inflector",
+ "proc-macro2",
+ "quote",
+ "syn",
+]
 
 [[package]]
 name = "percent-encoding"
