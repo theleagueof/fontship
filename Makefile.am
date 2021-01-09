@@ -11,7 +11,7 @@ dist_doc_DATA = README.md CHANGELOG.md
 dist_man_MANS = $(_fontship).1
 dist_license_DATA = LICENSE
 nobase_dist_data_DATA = rules/fontship.mk rules/rules.mk rules/functions.mk rules/glyphs.mk rules/sfd.mk rules/ufo.mk
-EXTRA_DIST = .version Dockerfile build-aux/cargo-updater.js build-aux/bootstrap-docker.sh hooks/build
+EXTRA_DIST = .version Dockerfile build-aux/cargo-updater.js build-aux/bootstrap-docker.sh build-aux/git-version-gen hooks/build
 
 bin_PROGRAMS = fontship
 
@@ -20,7 +20,6 @@ _fontship_modules = src/make/mod.rs src/setup/mod.rs src/status/mod.rs
 _fontship_assets = assets/en-US/cli.ftl
 fontship_SOURCES = Cargo.toml build.rs src/main.rs $(_fontship_libs) $(_fontship_modules) $(_fontship_assets)
 EXTRA_fontship_SOURCES = Cargo.lock
-
 
 BUILT_SOURCES = .version
 CLEANFILES = $(BUILT_SOURCES) $(bin_PROGRAMS)
