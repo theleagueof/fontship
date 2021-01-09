@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.7.5](https://github.com/theleagueof/fontship/compare/v0.7.4...v0.7.5) (2021-01-09)
+
+
+### Bug Fixes
+
+* **rules:** Exclude excess version info from tagged dist packaging ([c1beed7](https://github.com/theleagueof/fontship/commit/c1beed7865bb7db05d39bde6afc7155903a9e7f4))
+
 ### [0.7.4](https://github.com/theleagueof/fontship/compare/v0.7.3...v0.7.4) (2021-01-09)
 
 
