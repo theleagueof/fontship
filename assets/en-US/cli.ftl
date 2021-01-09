@@ -1,3 +1,6 @@
+foo =
+  bar
+
 # Currently hard coded, see clap issue #1880
 help-description =
   The command line interface to Fontship,
