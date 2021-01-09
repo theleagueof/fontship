@@ -141,6 +141,7 @@ debug:
 	echo "isTagged = $(isTagged)"
 	echo "isVariable = $(isVariable)"
 	echo "CANONICAL = $(CANONICAL)"
+	echo "DISTDIR = $(DISTDIR)"
 	echo "----------------------------"
 	echo "SOURCES = $(SOURCES)"
 	echo "SOURCES_SFD = $(SOURCES_SFD)"
@@ -345,7 +346,7 @@ $(BUILDDIR)/last-commit: $$(forceiftagchange) | $(BUILDDIR)
 	git diff-index --quiet --cached HEAD -- $(SOURCES)
 	echo $(GitVersion) > $@
 
-DISTDIR = $(PROJECT)-$(GitVersion)
+DISTDIR ?= $(PROJECT)-$(if $(isTagged),$(FontVersion),$(GitVersion))
 
 $(DISTDIR):
 	mkdir -p $@
