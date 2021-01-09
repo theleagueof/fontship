@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.7.4](https://github.com/theleagueof/fontship/compare/v0.7.3...v0.7.4) (2021-01-09)
+
+
+### Bug Fixes
+
+* **build:** Distribute aux script used in configure ([8149664](https://github.com/theleagueof/fontship/commit/81496640d792aa76a288c9c62527cddfd114666e))
+* **build:** Run autoupdate to fix autoconf syntax issue ([d87441a](https://github.com/theleagueof/fontship/commit/d87441a3f7deaa712b0a108aac2b40037bac7da0))
+
 ### [0.7.3](https://github.com/theleagueof/fontship/compare/v0.7.2...v0.7.3) (2021-01-09)
 
 
