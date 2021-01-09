@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.7.3](https://github.com/theleagueof/fontship/compare/v0.7.2...v0.7.3) (2021-01-09)
+
+
+### Bug Fixes
+
+* **docker:** Force update to catch gftools package rebuild ([46eba88](https://github.com/theleagueof/fontship/commit/46eba88dddcf05ef4e01173c0898cc6fe8a8f471))
+
 ### [0.7.2](https://github.com/theleagueof/fontship/compare/v0.7.1...v0.7.2) (2020-12-18)
 
 
