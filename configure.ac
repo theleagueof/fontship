@@ -110,5 +110,6 @@ fi
 AC_SUBST([MAN_DATE])
 
 AC_CONFIG_FILES([Makefile fontship.1])
+AC_CONFIG_FILES([rules/fontship.mk])
 
 AC_OUTPUT
