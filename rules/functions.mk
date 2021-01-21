@@ -1,3 +1,10 @@
+# Utility variables for later, http://blog.jgc.org/2007/06/escaping-comma-and-space-in-gnu-make.html
+, := ,
+space := $() $()
+$(space) := $() $()
+lparen := (
+rparen := )
+
 glyphsFamilyNames ?= $(shell $(PYTHON) -c 'from glyphsLib import GSFont; print(GSFont("$1").familyName.title().replace(" ", ""))')
 glyphsInstances ?= $(shell $(PYTHON) -c 'from glyphsLib import GSFont; list(map(lambda x: print(x.name.replace(" ", "")), GSFont("$1").instances))')
 glyphsMasters ?= $(notdir $(basename $1))

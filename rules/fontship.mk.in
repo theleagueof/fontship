@@ -22,11 +22,6 @@ SHELL := $(FONTSHIPDIR)/make-shell.zsh
 .ONESHELL:
 .SECONDEXPANSION:
 
-# Some Makefile shinanigans to avoid aggressive trimming
-space := $() $()
-lparen := (
-rparen := )
-
 # Allow overriding executables used
 FONTMAKE ?= fontmake
 FONTV ?= font-v
@@ -42,9 +37,7 @@ WOFF2COMPRESS ?= woff2_compress
 
 BUILDDIR ?= .fontship
 
-include $(FONTSHIPDIR)/rules/functions.mk
-
 .PHONY: default
 default: all
 
-
+include $(FONTSHIPDIR)/rules/functions.mk

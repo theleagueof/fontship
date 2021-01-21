@@ -6,6 +6,9 @@ ifeq ($(FONTSHIPDIR),)
 $(error Please initialize Fontship by sourcing fontship.mk first, then include your project rules, then source this rules.mk file)
 endif
 
+# Empty recipes for anything we _don't_ want to bother rebuilding:
+$(MAKEFILE_LIST):;
+
 SOURCES_SFD ?= $(filter %.sfd,$(SOURCES))
 SOURCES_UFO ?= $(filter %.ufo,$(SOURCES))
 SOURCES_GLYPHS ?= $(filter %.glyphs,$(SOURCES))
@@ -157,6 +160,12 @@ debug:
 	echo "VARIABLETTFS = $(VARIABLETTFS)"
 	echo "VARIABLEWOFFS = $(VARIABLEWOFFS)"
 	echo "VARIABLEWOFF2S = $(VARIABLEWOFF2S)"
+
+# Special dependency to force rebuilds of up to date targets
+.PHONY: force
+force:;
+
+.PHONY: fail
 
 .PHONY: _gha
 _gha:
@@ -383,10 +392,3 @@ install-local-otf: otf
 install-local-ttf: ttf
 	$(and $(STATICTTFS),install -Dm644 -t "$${HOME}/.local/share/fonts/TTF/" $(STATICTTFS))
 	$(and $(VARIABLETTFS),install -Dm644 -t "$${HOME}/.local/share/fonts/variable/" $(VARIABLETTFS))
-
-# Empty recipie to suppres makefile regeneration
-$(MAKEFILE_LIST):;
-
-# Special dependency to force rebuilds of up to date targets
-.PHONY: force
-force:;
