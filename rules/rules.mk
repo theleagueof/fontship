@@ -1,7 +1,7 @@
-# If called using the fontship CLI the init rules will be sources before any
+# If called using the fontship CLI the init rules will be sourced before any
 # project specific ones, then everything will be sourced in order. If people do
 # a manual include to rules they may or may not know to source the
-# initilazation rules first. this is to warn them.
+# initialization rules first. This is to warn them.
 ifeq ($(FONTSHIPDIR),)
 $(error Please initialize Fontship by sourcing fontship.mk first, then include your project rules, then source this rules.mk file)
 endif

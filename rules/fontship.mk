@@ -1,8 +1,8 @@
-# Defalut to running jobs in parallel, one for each CPU core
+# Mix output messages from parallel targets, will be collated by CLI
 MAKEFLAGS += --output-sync=none
 # Default to not echoing commands before running
 MAKEFLAGS += --silent
-# Disable as much built in file type builds as possible
+# Disable as many built in file type builds as possible
 MAKEFLAGS += --no-builtin-rules
 .SUFFIXES:
 
@@ -16,7 +16,7 @@ ifeq ($(FONTSHIP_CLI),)
 $(error Use of fontship rule file inclusion outside of the CLI is deprecated!)
 endif
 
-# Run recipies in zsh wrapper, and all in one pass
+# Run complete recipes in wrapper script that facilitates clean CLI output
 SHELL := $(FONTSHIPDIR)/make-shell.zsh
 .SHELLFLAGS = target=$@
 .ONESHELL:
