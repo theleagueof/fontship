@@ -1,5 +1,5 @@
 ufoNormalize ?= $(UFONORMALIZER) $(UFONORMALIZERFLAGS) "$1" -o "$2"
-expandUFOParts = $(shell find "$1" -type f 2> /dev/null)
+expandUFOParts = $(shell $(FIND) "$1" -type f 2> /dev/null)
 ufoParts = $(call expandUFOParts,$(patsubst %-normalized.ufo,%.ufo,$(patsubst $(BUILDDIR)/%,$(SOURCEDIR)/%,$@)))
 instanceToDS = $(_DSF_$(subst -,,$*))
 

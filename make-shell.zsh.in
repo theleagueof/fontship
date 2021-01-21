@@ -1,4 +1,4 @@
-#!/usr/bin/env zsh
+#!@ZSH@
 
 set -o nomatch
 set -o pipefail

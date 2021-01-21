@@ -1,32 +1,11 @@
 AC_INIT([fontship],[m4_esyscmd(build-aux/git-version-gen .tarball-version)],[caleb@alerque.com])
-AM_INIT_AUTOMAKE([foreign tar-pax dist-xz dist-zip no-dist-gzip color-tests])
+AM_INIT_AUTOMAKE([foreign tar-pax dist-xz dist-zip no-dist-gzip subdir-objects color-tests])
 AM_SILENT_RULES([yes])
 
-# Check that we have rust stuff
-AC_CHECK_PROG(CARGO, [cargo], [yes], [no])
-AS_IF(test x$CARGO = xno,
-    AC_MSG_ERROR([cargo is required.  Please install the Rust toolchain])
-)
-AC_CHECK_PROG(RUSTC, [rustc], [yes], [no])
-AS_IF(test x$RUSTC = xno,
-    AC_MSG_ERROR([rustc is required.  Please install the Rust toolchain])
-)
+AC_CONFIG_MACRO_DIRS([build-aux])
 
-# Add --enable-debug flag to change Rust build mode
-AC_ARG_ENABLE(debug,
-              AS_HELP_STRING([--enable-debug],[Build Rust code with debugging information [default=no]]),
-              [debug_release=$enableval],
-              [debug_release=no])
-
-AC_MSG_CHECKING(whether to build Rust code with debugging information)
-if test "x$debug_release" = "xyes" ; then
-    AC_MSG_RESULT(yes)
-    RUST_TARGET_SUBDIR=debug
-else
-    AC_MSG_RESULT(no)
-    RUST_TARGET_SUBDIR=release
-fi
-AM_CONDITIONAL([DEBUG_RELEASE], [test "x$debug_release" = "xyes"])
+AC_ARG_ENABLE([dependency-checks],
+              AS_HELP_STRING([--disable-dependency-checks], [Disable dependency checks]))
 
 AC_ARG_WITH([bash-completion-dir],
     AS_HELP_STRING([--with-bash-completion-dir[=PATH]],
@@ -71,36 +50,58 @@ fi
 AC_SUBST([ZSH_COMPLETION_DIR])
 AM_CONDITIONAL([ENABLE_ZSH_COMPLETION],[test "x$with_zsh_completion_dir" != "xno"])
 
+# Add --enable-debug flag to change Rust build mode
+AC_ARG_ENABLE(debug,
+              AS_HELP_STRING([--enable-debug],[Build Rust code with debugging information [default=no]]),
+              [debug_release=$enableval],
+              [debug_release=no])
+
+AC_MSG_CHECKING(whether to build Rust code with debugging information)
+if test "x$debug_release" = "xyes" ; then
+    AC_MSG_RESULT(yes)
+    RUST_TARGET_SUBDIR=debug
+else
+    AC_MSG_RESULT(no)
+    RUST_TARGET_SUBDIR=release
+fi
+AM_CONDITIONAL([DEBUG_RELEASE], [test "x$debug_release" = "xyes"])
+
 AC_SUBST([RUST_TARGET_SUBDIR])
 
-AC_CHECK_PROG(GFTOOLS, gftools, yes)
-test "x$GFTOOLS" == "xyes" || AC_MSG_ERROR([gftools is required])
+AC_DEFUN([AX_PROGVAR], [AC_PATH_PROG(m4_toupper($1), m4_default($2,$1))test -n "$m4_toupper($1)" || AC_MSG_ERROR([m4_default($2,$1) is required])])
 
-AC_CHECK_PROG(FONT_V, font-v, yes)
-test "x$FONT_V" == "xyes" || AC_MSG_ERROR([font-v is required])
+AS_IF([test "x$enable_dependency_checks" != "xno"], [
 
-AC_CHECK_PROG(FONTMAKE, fontmake, yes)
-test "x$FONTMAKE" == "xyes" || AC_MSG_ERROR([fontmake is required])
+    # Check that we have rust stuff
+    AC_CHECK_PROG(CARGO, [cargo], [yes], [no])
+    AS_IF(test x$CARGO = xno,
+        AC_MSG_ERROR([cargo is required.  Please install the Rust toolchain])
+    )
+    AC_CHECK_PROG(RUSTC, [rustc], [yes], [no])
+    AS_IF(test x$RUSTC = xno,
+        AC_MSG_ERROR([rustc is required.  Please install the Rust toolchain])
+    )
 
-AC_CHECK_PROG(SFNT2WOFFZOPFLI, sfnt2woff-zopfli, yes)
-test "x$SFNT2WOFFZOPFLI" == "xyes" || AC_MSG_ERROR([sfnt2woff-zopfli is required])
+    AC_PROG_SED
+    AC_PROG_GREP
 
-AC_CHECK_PROG(SFNT2WOFFZOPFLI, sfnt2woff-zopfli, yes)
-test "x$SFNT2WOFFZOPFLI" == "xyes" || AC_MSG_ERROR([sfnt2woff-zopfli is required])
+    AX_PROGVAR([cmp])
+    AX_PROGVAR([fontv], [font-v])
+    AX_PROGVAR([fontmake])
+    AX_PROGVAR([gftools])
+    AX_PROGVAR([find])
+    AX_PROGVAR([git])
+    AX_PROGVAR([sfnt2woffzopfli], [sfnt2woff-zopfli])
+    AX_PROGVAR([ttfautohint])
+    AX_PROGVAR([ufonormalizer])
+    AX_PROGVAR([sfdnormalize])
+    AX_PROGVAR([psautohint])
+    AX_PROGVAR([ttx])
+    AX_PROGVAR([woff2_compress])
+    AX_PROGVAR([zsh])
 
-AC_CHECK_PROG(TTFAUTOHINT, ttfautohint, yes)
-test "x$TTFAUTOHINT" == "xyes" || AC_MSG_ERROR([ttfautohint is required])
-
-AC_CHECK_PROG(TTX, ttx, yes)
-test "x$TTX" == "xyes" || AC_MSG_ERROR([ttx is required])
-
-AC_CHECK_PROG(WOFF2_COMPRESS, woff2_compress, yes)
-test "x$WOFF2_COMPRESS" == "xyes" || AC_MSG_ERROR([woff2_compress is required])
-
-AC_CHECK_PROG(ZSH, zsh, yes)
-test "x$ZSH" == "xyes" || AC_MSG_ERROR([zsh is required])
-
-AM_PATH_PYTHON([3.6])
+    AM_PATH_PYTHON([3.6])
+])
 
 if [[ -d .git ]]; then
     MAN_DATE=$(git log -1 --format="%cd" --date=format:"%d %B %Y" -- fontship.1.in)
@@ -111,6 +112,7 @@ AC_SUBST([MAN_DATE])
 
 AC_CONFIG_FILES([Makefile fontship.1])
 AC_CONFIG_FILES([rules/fontship.mk])
+AC_CONFIG_FILES([make-shell.zsh], [chmod +x make-shell.zsh])
 
 AC_ARG_PROGRAM
 

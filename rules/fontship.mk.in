@@ -22,18 +22,25 @@ SHELL := $(FONTSHIPDIR)/make-shell.zsh
 .ONESHELL:
 .SECONDEXPANSION:
 
-# Allow overriding executables used
-FONTMAKE ?= fontmake
-FONTV ?= font-v
-GFTOOLS ?= gftools
-PYTHON ?= python3
-SFNT2WOFF ?= sfnt2woff-zopfli
-TTFAUTOHINT ?= ttfautohint
-PSAUTOHINT ?= psautohint
-SFDNORMALIZE ?= sfdnormalize
-TTX ?= ttx
-UFONORMALIZER ?= ufonormalizer
-WOFF2COMPRESS ?= woff2_compress
+# Use paths discovered by autoconf by default, but allow projects to override
+# with paths of their own.
+CMP ?= @CMP@
+FONTMAKE ?= @FONTMAKE@
+FONTV ?= @FONTV@
+GFTOOLS ?= @GFTOOLS@
+FIND ?= @FIND@
+GIT ?= @GIT@
+GREP ?= @GREP@
+PSAUTOHINT ?= @PSAUTOHINT@
+PYTHON ?= @PYTHON@
+SED ?= @SED@
+SFDNORMALIZE ?= @SFDNORMALIZE@
+SFNT2WOFF ?= @SFNT2WOFFZOPFLI@
+TTFAUTOHINT ?= @TTFAUTOHINT@
+TTX ?= @TTX@
+UFONORMALIZER ?= @UFONORMALIZER@
+WOFF2COMPRESS ?= @WOFF2_COMPRESS@
+ZSH ?= @ZSH@
 
 BUILDDIR ?= .fontship
 

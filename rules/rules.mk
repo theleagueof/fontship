@@ -178,7 +178,7 @@ all: fonts $(and $(DEBUG),debug)
 
 .PHONY: clean
 clean:
-	git clean -dxf
+	$(GIT) clean -dxf
 
 .PHONY: ufo
 ufo: $$(addsuffix .ufo,$$(INSTANCES))
@@ -349,10 +349,10 @@ endif
 
 # Utility stuff
 
-forceiftagchange = $(shell cmp -s $@ - <<< "$(GitVersion)" || echo force)
+forceiftagchange = $(shell $(CMP) -s $@ - <<< "$(GitVersion)" || echo force)
 $(BUILDDIR)/last-commit: $$(forceiftagchange) | $(BUILDDIR)
-	git update-index --refresh --ignore-submodules ||:
-	git diff-index --quiet --cached HEAD -- $(SOURCES)
+	$(GIT) update-index --refresh --ignore-submodules ||:
+	$(GIT) diff-index --quiet --cached HEAD -- $(SOURCES)
 	echo $(GitVersion) > $@
 
 DISTDIR ?= $(PROJECT)-$(if $(isTagged),$(FontVersion),$(GitVersion))
