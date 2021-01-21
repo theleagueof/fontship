@@ -1,4 +1,4 @@
-FROM docker.io/library/archlinux:base-20210117.0.13798 AS fontship-base
+FROM docker.io/library/archlinux:base-20210117.0.13798 AS base
 
 # Setup Caleb's hosted Arch repository with prebuilt dependencies
 RUN pacman-key --init && pacman-key --populate
@@ -25,7 +25,7 @@ RUN pacman --needed --noconfirm -Syq \
 	&& yes | pacman -Sccq
 
 # Setup separate image for build so we don't bloat the final image
-FROM fontship-base AS fontship-builder
+FROM base AS builder
 
 # Install build time dependecies
 RUN pacman --needed --noconfirm -Syq \
@@ -48,12 +48,12 @@ RUN make
 RUN make check
 RUN make install DESTDIR=/pkgdir
 
-FROM fontship-base AS fontship
+FROM base AS final
 
 LABEL maintainer="Caleb Maclennan <caleb@alerque.com>"
 LABEL version="$VCS_REF"
 
-COPY --from=fontship-builder /pkgdir /
+COPY --from=builder /pkgdir /
 RUN fontship --version
 
 WORKDIR /data
