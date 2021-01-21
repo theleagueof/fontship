@@ -1,6 +1,6 @@
 $(and $(word 2,$(MAKEFILE_LIST)),$(error This is not the makefile you should include in your project to run Fontship, please use 'rules/fontship.mk' instead.))
 
-_fontship = $(shell sed -e "$(program_transform_name)" <<< fontship)
+_fontship = $(program_prefix)$(shell sed -e "$(program_transform_name)" <<< fontship)$(program_suffix)
 
 licensedir = $(datarootdir)/licenses/$(_fontship)
 datadir = $(datarootdir)/$(_fontship)
