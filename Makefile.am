@@ -166,4 +166,4 @@ media_badge: media/badge.svg
 
 .PHONY: docker
 docker: Dockerfile hooks/build .version
-	IMAGE_NAME=theleagueof/fontship:HEAD ./hooks/build $(VERSION)
+	IMAGE_NAME=theleagueof/$(_fontship):HEAD ./hooks/build $(VERSION)
