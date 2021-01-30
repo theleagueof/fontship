@@ -1,4 +1,4 @@
-FROM docker.io/library/archlinux:base-20210117.0.13798 AS base
+FROM docker.io/library/archlinux:base-20210124.0.14185 AS base
 
 # Setup Caleb's hosted Arch repository with prebuilt dependencies
 RUN pacman-key --init && pacman-key --populate
