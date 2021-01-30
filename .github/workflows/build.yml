@@ -17,7 +17,7 @@ jobs:
       - name: Setup system dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install fontmake fonttools libgit2-dev python3-pip psautohint python3 sfnt2woff-zopfli ttfautohint woff2 zsh
+          sudo apt-get install fontmake fonttools libgit2-dev python3-pip psautohint python3 sfnt2woff-zopfli ttfautohint ufonormalizer woff2 zsh
       - name: Install Rust
         uses: actions-rs/toolchain@v1
         with:
@@ -31,7 +31,7 @@ jobs:
             target
           key: cargo-build-${{ hashFiles('**/Cargo.lock') }}
       - name: Setup Python dependencies
-        run: pip install font-v gftools
+        run: pip install font-v gftools sfdnormalize
       - name: Configure
         run: |
           export PATH="$HOME/.local/bin:$PATH"

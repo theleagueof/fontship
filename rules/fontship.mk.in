@@ -1,0 +1,50 @@
+# Mix output messages from parallel targets, will be collated by CLI
+MAKEFLAGS += --output-sync=none
+# Default to not echoing commands before running
+MAKEFLAGS += --silent
+# Disable as many built in file type builds as possible
+MAKEFLAGS += --no-builtin-rules
+.SUFFIXES:
+
+# Don't drop intermediate artifacts (saves rebulid time and aids debugging)
+.SECONDARY:
+.PRECIOUS: %
+.DELETE_ON_ERROR:
+
+# Deprecate direct usage under `make` without the CLI
+ifeq ($(FONTSHIP_CLI),)
+$(error Use of fontship rule file inclusion outside of the CLI is deprecated!)
+endif
+
+# Run complete recipes in wrapper script that facilitates clean CLI output
+SHELL := $(FONTSHIPDIR)/make-shell.zsh
+.SHELLFLAGS = target=$@
+.ONESHELL:
+.SECONDEXPANSION:
+
+# Use paths discovered by autoconf by default, but allow projects to override
+# with paths of their own.
+CMP ?= @CMP@
+FONTMAKE ?= @FONTMAKE@
+FONTV ?= @FONTV@
+GFTOOLS ?= @GFTOOLS@
+FIND ?= @FIND@
+GIT ?= @GIT@
+GREP ?= @GREP@
+PSAUTOHINT ?= @PSAUTOHINT@
+PYTHON ?= @PYTHON@
+SED ?= @SED@
+SFDNORMALIZE ?= @SFDNORMALIZE@
+SFNT2WOFF ?= @SFNT2WOFFZOPFLI@
+TTFAUTOHINT ?= @TTFAUTOHINT@
+TTX ?= @TTX@
+UFONORMALIZER ?= @UFONORMALIZER@
+WOFF2COMPRESS ?= @WOFF2_COMPRESS@
+ZSH ?= @ZSH@
+
+BUILDDIR ?= .fontship
+
+.PHONY: default
+default: all
+
+include $(FONTSHIPDIR)/rules/functions.mk

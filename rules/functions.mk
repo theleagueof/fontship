@@ -1,3 +1,10 @@
+# Utility variables for later, http://blog.jgc.org/2007/06/escaping-comma-and-space-in-gnu-make.html
+, := ,
+space := $() $()
+$(space) := $() $()
+lparen := (
+rparen := )
+
 glyphsFamilyNames ?= $(shell $(PYTHON) -c 'from glyphsLib import GSFont; print(GSFont("$1").familyName.title().replace(" ", ""))')
 glyphsInstances ?= $(shell $(PYTHON) -c 'from glyphsLib import GSFont; list(map(lambda x: print(x.name.replace(" ", "")), GSFont("$1").instances))')
 glyphsMasters ?= $(notdir $(basename $1))
@@ -6,7 +13,7 @@ ufoInstances ?= $(shell $(PYTHON) -c 'import babelfont; print(babelfont.OpenFont
 designspaceFamilyNames ?= $(shell $(PYTHON) -c 'from fontTools.designspaceLib import DesignSpaceDocument; d = DesignSpaceDocument(); d.read("$1");for i in d.instances: print(i.familyName.replace(" ", ""))')
 designspaceInstances ?= $(shell $(PYTHON) -c 'from fontTools.designspaceLib import DesignSpaceDocument; d = DesignSpaceDocument(); d.read("$1");for i in d.instances: print(i.styleName.replace(" ", ""))')
 designspaceMasters ?= $(notdir $(basename $1))
-sfdFamilyNames = $(shell sed -n '/FamilyName/{s/.*: //;s/ //g;p}' "$1")
+sfdFamilyNames = $(shell $(SED) -n '/FamilyName/{s/.*: //;s/ //g;p}' "$1")
 sfdInstances ?=
 
 define normalizeVersion ?=
@@ -14,16 +21,16 @@ define normalizeVersion ?=
 endef
 
 define abort_if_not_clean ?=
-	git diff-index --quiet --cached HEAD -- $@ || exit 1 # die if anything is staged
-	git diff-files --quiet -- $@ || exit 1 # die if unstaged changes
+	$(GIT) diff-index --quiet --cached HEAD -- $@ || exit 1 # die if anything is staged
+	$(GIT) diff-files --quiet -- $@ || exit 1 # die if unstaged changes
 endef
 
 define addline ?=
-	grep -Fxq "$1" $@ || echo "$1" >> $@
+	$(GREP) -Fxq "$1" $@ || echo "$1" >> $@
 endef
 
 define delline ?=
-	grep -Fxv "$1" $@ | sponge $@
+	$(GREP) -Fxv "$1" $@ | sponge $@
 endef
 
 # Useful for testing secondary expanstions in dependencies

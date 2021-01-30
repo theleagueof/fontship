@@ -1,4 +1,4 @@
-FROM docker.io/library/archlinux:base-20210124.0.14185 AS fontship-base
+FROM docker.io/library/archlinux:base-20210124.0.14185 AS base
 
 # Setup Caleb's hosted Arch repository with prebuilt dependencies
 RUN pacman-key --init && pacman-key --populate
@@ -18,14 +18,14 @@ ARG DOCKER_HUB_CACHE=0
 # Freshen all base system packages
 RUN pacman --needed --noconfirm -Syuq && yes | pacman -Sccq
 
-# Install fontship run-time dependecies (increment cache var above)
+# Install run-time dependecies (increment cache var above)
 RUN pacman --needed --noconfirm -Syq \
 		diffutils entr font-v gftools git libarchive libgit2 make psautohint python sfd2ufo sfdnormalize sfnt2woff-zopfli ttfautohint woff2 zsh \
 		python-{babelfont,brotli,cffsubr,defcon,font{make,tools},fs,lxml,pcpp,skia-pathops,ufo{2ft-git,lib2,normalizer},unicodedata2,zopfli,vttlib} \
 	&& yes | pacman -Sccq
 
-# Setup separate image to build fontship so we don't bloat the final image
-FROM fontship-base AS fontship-builder
+# Setup separate image for build so we don't bloat the final image
+FROM base AS builder
 
 # Install build time dependecies
 RUN pacman --needed --noconfirm -Syq \
@@ -48,12 +48,12 @@ RUN make
 RUN make check
 RUN make install DESTDIR=/pkgdir
 
-FROM fontship-base AS fontship
+FROM base AS final
 
 LABEL maintainer="Caleb Maclennan <caleb@alerque.com>"
 LABEL version="$VCS_REF"
 
-COPY --from=fontship-builder /pkgdir /
+COPY --from=builder /pkgdir /
 RUN fontship --version
 
 WORKDIR /data
