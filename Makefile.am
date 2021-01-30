@@ -1,6 +1,6 @@
 $(and $(word 2,$(MAKEFILE_LIST)),$(error This is not the makefile you should include in your project to run Fontship, please use 'rules/fontship.mk' instead.))
 
-_fontship = $(shell sed -e "$(program_transform_name)" <<< fontship)
+_fontship = $(program_prefix)$(shell sed -e "$(program_transform_name)" <<< fontship)$(program_suffix)
 
 licensedir = $(datarootdir)/licenses/$(_fontship)
 datadir = $(datarootdir)/$(_fontship)
@@ -11,7 +11,7 @@ dist_doc_DATA = README.md CHANGELOG.md
 dist_man_MANS = $(_fontship).1
 dist_license_DATA = LICENSE
 nobase_dist_data_DATA = rules/fontship.mk rules/rules.mk rules/functions.mk rules/glyphs.mk rules/sfd.mk rules/ufo.mk
-EXTRA_DIST = .version Dockerfile build-aux/cargo-updater.js build-aux/bootstrap-docker.sh build-aux/git-version-gen hooks/build
+EXTRA_DIST = .version Dockerfile build-aux/cargo-updater.js build-aux/bootstrap-docker.sh build-aux/git-version-gen hooks/build requirements.txt
 
 bin_PROGRAMS = fontship
 
@@ -166,4 +166,4 @@ media_badge: media/badge.svg
 
 .PHONY: docker
 docker: Dockerfile hooks/build .version
-	IMAGE_NAME=theleagueof/fontship:HEAD ./hooks/build $(VERSION)
+	IMAGE_NAME=theleagueof/$(_fontship):HEAD ./hooks/build $(VERSION)

@@ -1,10 +1,13 @@
-# If called using the fontship CLI the init rules will be sources before any
+# If called using the fontship CLI the init rules will be sourced before any
 # project specific ones, then everything will be sourced in order. If people do
 # a manual include to rules they may or may not know to source the
-# initilazation rules first. this is to warn them.
+# initialization rules first. This is to warn them.
 ifeq ($(FONTSHIPDIR),)
 $(error Please initialize Fontship by sourcing fontship.mk first, then include your project rules, then source this rules.mk file)
 endif
+
+# Empty recipes for anything we _don't_ want to bother rebuilding:
+$(MAKEFILE_LIST):;
 
 SOURCES_SFD ?= $(filter %.sfd,$(SOURCES))
 SOURCES_UFO ?= $(filter %.ufo,$(SOURCES))
@@ -158,6 +161,12 @@ debug:
 	echo "VARIABLEWOFFS = $(VARIABLEWOFFS)"
 	echo "VARIABLEWOFF2S = $(VARIABLEWOFF2S)"
 
+# Special dependency to force rebuilds of up to date targets
+.PHONY: force
+force:;
+
+.PHONY: fail
+
 .PHONY: _gha
 _gha:
 	echo "::set-output name=PROJECT::$(PROJECT)"
@@ -169,7 +178,7 @@ all: fonts $(and $(DEBUG),debug)
 
 .PHONY: clean
 clean:
-	git clean -dxf
+	$(GIT) clean -dxf
 
 .PHONY: ufo
 ufo: $$(addsuffix .ufo,$$(INSTANCES))
@@ -340,10 +349,10 @@ endif
 
 # Utility stuff
 
-forceiftagchange = $(shell cmp -s $@ - <<< "$(GitVersion)" || echo force)
+forceiftagchange = $(shell $(CMP) -s $@ - <<< "$(GitVersion)" || echo force)
 $(BUILDDIR)/last-commit: $$(forceiftagchange) | $(BUILDDIR)
-	git update-index --refresh --ignore-submodules ||:
-	git diff-index --quiet --cached HEAD -- $(SOURCES)
+	$(GIT) update-index --refresh --ignore-submodules ||:
+	$(GIT) diff-index --quiet --cached HEAD -- $(SOURCES)
 	echo $(GitVersion) > $@
 
 DISTDIR ?= $(PROJECT)-$(if $(isTagged),$(FontVersion),$(GitVersion))
@@ -383,10 +392,3 @@ install-local-otf: otf
 install-local-ttf: ttf
 	$(and $(STATICTTFS),install -Dm644 -t "$${HOME}/.local/share/fonts/TTF/" $(STATICTTFS))
 	$(and $(VARIABLETTFS),install -Dm644 -t "$${HOME}/.local/share/fonts/variable/" $(VARIABLETTFS))
-
-# Empty recipie to suppres makefile regeneration
-$(MAKEFILE_LIST):;
-
-# Special dependency to force rebuilds of up to date targets
-.PHONY: force
-force:;
