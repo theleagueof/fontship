@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.7.6](https://github.com/theleagueof/fontship/compare/v0.7.5...v0.7.6) (2021-01-31)
+
+
+### Features
+
+* **build:** Detect system dependencies and allow substitution at build time ([f61fb30](https://github.com/theleagueof/fontship/commit/f61fb307e4034d9dd3ac565d81417f6e5028455b))
+* **build:** Finish up renameable build support ([b304140](https://github.com/theleagueof/fontship/commit/b3041401df642f7d3941ca30bb2ef3904ceabed5))
+* **cli:** Detect fontship.mk file as project specific rules ([b03d563](https://github.com/theleagueof/fontship/commit/b03d563597c64bd93e0ac4420ba587e67dac1d2a))
+* **docker:** Extend renameable build support to Docker ([c59d0ff](https://github.com/theleagueof/fontship/commit/c59d0ff63e614e8628c64460c743d06b47539808))
+
+
+### Bug Fixes
+
+* **cli:** Avoid tripping up on filnames with brackets ([5b464e1](https://github.com/theleagueof/fontship/commit/5b464e157f1606fac455c786138e59e1134ae55c))
+
 ### [0.7.5](https://github.com/theleagueof/fontship/compare/v0.7.4...v0.7.5) (2021-01-09)
 
 
