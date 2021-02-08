@@ -1,4 +1,4 @@
-babelfont==0.0.2
+babelfont>=2.0.2
 cffsubr>=0.2.7
 defcon>=0.7.2
 font-v>=1.0.5
