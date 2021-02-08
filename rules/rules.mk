@@ -134,6 +134,7 @@ debug:
 	echo "GITNAME = $(GITNAME)"
 	echo "PROJECT = $(PROJECT)"
 	echo "PROJECTDIR = $(PROJECTDIR)"
+	echo "BUILDDIR = $(BUILDDIR)"
 	echo "SOURCEDIR = $(SOURCEDIR)"
 	echo "CONTAINERIZED = $(CONTAINERIZED)"
 	echo "----------------------------"
