@@ -1,6 +1,6 @@
 FROM docker.io/library/archlinux:base-20210131.0.14634 AS base
 
-# Setup Caleb's hosted Arch repository with prebuilt dependencies
+# Setup Caleb’s hosted Arch repository with prebuilt dependencies
 RUN pacman-key --init && pacman-key --populate
 RUN sed -i  /etc/pacman.conf -e \
 	'/^.community/{n;n;s!^!\n\[alerque\]\nServer = https://arch.alerque.com/$arch\n!}'
@@ -9,7 +9,7 @@ RUN pacman-key --recv-keys 63CC496475267693 && pacman-key --lsign-key 63CC496475
 
 # This is a hack to convince Docker Hub that its cache is behind the times.
 # This happens when the contents of our dependencies changes but the base
-# system hasn't been refreshed. It's helpful to have this as a separate layer
+# system hasn’t been refreshed. It’s helpful to have this as a separate layer
 # because it saves a lot of time for local builds, but it does periodically
 # need a poke. Incrementing this when changing dependencies or just when the
 # remote Docker Hub builds die should be enough.
@@ -24,7 +24,7 @@ RUN pacman --needed --noconfirm -Syq \
 		python-{babelfont,brotli,cffsubr,defcon,font{make,tools},fs,lxml,pcpp,skia-pathops,ufo{2ft-git,lib2,normalizer},unicodedata2,zopfli,vttlib} \
 	&& yes | pacman -Sccq
 
-# Setup separate image for build so we don't bloat the final image
+# Setup separate image for build so we don’t bloat the final image
 FROM base AS builder
 
 # Install build time dependecies
@@ -32,7 +32,7 @@ RUN pacman --needed --noconfirm -Syq \
 		base-devel cargo jq rust \
 	&& yes | pacman -Sccq
 
-# Set at build time, forces Docker's layer caching to reset at this point
+# Set at build time, forces Docker’s layer caching to reset at this point
 ARG VCS_REF=0
 
 COPY ./ /src
