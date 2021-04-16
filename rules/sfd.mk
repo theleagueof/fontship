@@ -11,3 +11,8 @@ $(BUILDDIR)/%-normalized.sfd: $(SOURCEDIR)/%.sfd | $(BUILDDIR)
 .PHONY: $(SOURCEDIR)/%.sfd-check
 $(SOURCEDIR)/%.sfd-check: $(SOURCEDIR)/%.sfd $(BUILDDIR)/%-normalized.sfd
 	cmp $^
+
+$(BUILDDIR)/%-normalized.ufo: $(BUILDDIR)/%-normalized.sfd | $(BUILDDIR)
+	sfd2ufo --minimal $< $@
+
+-include $(FONTSHIPDIR)/rules/ufo.mk
