@@ -131,6 +131,17 @@ check-version: $(PACKAGE_NAME)$(EXEEXT) | .version
 installcheck-local:
 	./$(TRANSFORMED_PACKAGE_NAME) --version
 
+.PHONY: lint
+lint: rustfmt clippy
+
+.PHONY: rustfmt
+rustfmt:
+	$(GIT) ls-files '*.rs' | $(XARGS) rustfmt --check
+
+.PHONY: clippy
+clippy:
+	cd $(srcdir)
+	$(CARGO_ENV) $(CARGO) clippy -- -D warnings
 
 RELTYPE ?=
 
