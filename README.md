@@ -3,8 +3,10 @@
 [![Build Status](https://img.shields.io/github/workflow/status/theleagueof/fontship/Build?label=Build&logo=Github)](https://github.com/theleagueof/fontship/actions?workflow=Build)
 [![Docker Build Status](https://img.shields.io/docker/cloud/build/theleagueof/fontship?label=Docker&logo=Docker)](https://hub.docker.com/repository/docker/theleagueof/fontship/builds)
 [![GitHub Workflow Status](https://img.shields.io/github/workflow/status/theleagueof/fontship/Superlinter?label=Linter&logo=Github)](https://github.com/theleagueof/fontship/actions?workflow=Superlinter)
-[![Latest Release](https://img.shields.io/github/v/release/theleagueof/fontship?label=Release&logo=dependabot)](https://github.com/theleagueof/fontship/releases/latest)
+[![Latest Release](https://img.shields.io/github/v/release/theleagueof/fontship?label=Release&logo=dependabot)](https://github.com/theleagueof/fontship/releases/latest)<br />
 [![Chat on Gitter](https://img.shields.io/gitter/room/theleagueof/tooling?color=blue&label=Chat&logo=Gitter)](https://gitter.im/theleagueof/tooling?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+[![Conventional Commits](https://img.shields.io/badge/Conventional%20Commits-1.0.0-blue.svg)](https://conventionalcommits.org)
+[![Commitizen Friendly](https://img.shields.io/badge/Commitizen-friendly-blue.svg)](http://commitizen.github.io/cz-cli/)
 
 ## About Fontship
 
