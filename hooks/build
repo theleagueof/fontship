@@ -11,7 +11,7 @@ RUNTIME_DEPS='diffutils entr font-v gftools git libarchive libgit2 make'\
 ' python-pcpp python-skia-pathops python-ufo2ft-git python-ufolib2'\
 ' python-ufonormalizer python-unicodedata2 python-vttlib python-zopfli'\
 ' sfd2ufo sfdnormalize sfnt2woff-zopfli ttfautohint woff2 zsh'
-BUILD_DEPS='base-devel cargo jq rust'
+BUILD_DEPS='autoconf-archive base-devel cargo jq rust'
 
 : "${DOCKER_BUILDKIT:=1}"
 export DOCKER_BUILDKIT
