@@ -31,27 +31,35 @@ EXTRA_DIST += Dockerfile build-aux/bootstrap-docker.sh build-aux/docker-glibc-wo
 BUILT_SOURCES = .version
 CLEANFILES = $(BUILT_SOURCES) .version-prev $(bin_PROGRAMS)
 
-if ENABLE_BASH_COMPLETION
-bashcompletiondir = $(BASH_COMPLETION_DIR)
-nodist_bashcompletion_DATA = $(COMPLETIONS_OUT_DIR)/$(TRANSFORMED_PACKAGE_NAME)
-endif
-
-if ENABLE_FISH_COMPLETION
-fishcompletiondir = $(FISH_COMPLETION_DIR)
-nodist_fishcompletion_DATA = $(COMPLETIONS_OUT_DIR)/$(TRANSFORMED_PACKAGE_NAME).fish
-endif
-
-if ENABLE_ZSH_COMPLETION
-zshcompletiondir = $(ZSH_COMPLETION_DIR)
-nodist_zshcompletion_DATA = $(COMPLETIONS_OUT_DIR)/_$(TRANSFORMED_PACKAGE_NAME)
-endif
-
 if DEBUG_RELEASE
 CARGO_RELEASE_ARGS=--all-features
 _TARGETDIR=debug
 else
 CARGO_RELEASE_ARGS=--release --locked --all-features
 _TARGETDIR=release
+endif
+
+CARGO_ENV = CARGO_TARGET_DIR=@abs_top_builddir@/target
+RUST_BIN = @abs_top_builddir@/target/@RUST_TARGET_SUBDIR@/$(PACKAGE_NAME)
+_RUST_OUT = @abs_top_builddir@/target/@RUST_TARGET_SUBDIR@/.cargo_out_dir
+COMPLETIONS_OUT_DIR = completions
+
+if ENABLE_BASH_COMPLETION
+bashcompletiondir = $(BASH_COMPLETION_DIR)
+nodist_bashcompletion_DATA = $(COMPLETIONS_OUT_DIR)/$(TRANSFORMED_PACKAGE_NAME)
+CLEANFILES += $(nodist_bashcompletion_DATA)
+endif
+
+if ENABLE_FISH_COMPLETION
+fishcompletiondir = $(FISH_COMPLETION_DIR)
+nodist_fishcompletion_DATA = $(COMPLETIONS_OUT_DIR)/$(TRANSFORMED_PACKAGE_NAME).fish
+CLEANFILES += $(nodist_fishcompletion_DATA)
+endif
+
+if ENABLE_ZSH_COMPLETION
+zshcompletiondir = $(ZSH_COMPLETION_DIR)
+nodist_zshcompletion_DATA = $(COMPLETIONS_OUT_DIR)/_$(TRANSFORMED_PACKAGE_NAME)
+CLEANFILES += $(nodist_zshcompletion_DATA)
 endif
 
 export FONTSHIP_VERSION = v$(VERSION)
@@ -66,29 +74,32 @@ cargo_verbose_ = $(cargo_verbose_$(AM_DEFAULT_VERBOSITY))
 cargo_verbose_0 =
 cargo_verbose_1 = --verbose
 
-CARGO_TARGET = target/$(_TARGETDIR)/fontship
-COMPLETIONS_OUT_DIR = target/$(_TARGETDIR)/completions
+$(COMPLETIONS_OUT_DIR):
+	mkdir -p $@
 
-fontship$(EXEEXT): $(CARGO_TARGET)
+fontship$(EXEEXT): $(RUST_BIN)
 	cp -bf $< $@
 
-$(COMPLETIONS_OUT_DIR)/$(TRANSFORMED_PACKAGE_NAME): $(CARGO_TARGET)
-	cp -bf $(COMPLETIONS_OUT_DIR)/$(PACKAGE_NAME).bash $@
+$(COMPLETIONS_OUT_DIR)/$(TRANSFORMED_PACKAGE_NAME): $(RUST_BIN) | $(COMPLETIONS_OUT_DIR)
+	cp -bf $$(cat $(_RUST_OUT))/$(COMPLETIONS_OUT_DIR)/$(PACKAGE_NAME).bash $@
 
-$(COMPLETIONS_OUT_DIR)/$(TRANSFORMED_PACKAGE_NAME).elv: $(CARGO_TARGET)
-	cp -bf $(COMPLETIONS_OUT_DIR)/$(PACKAGE_NAME).elv $@
+$(COMPLETIONS_OUT_DIR)/$(TRANSFORMED_PACKAGE_NAME).elv: $(RUST_BIN) | $(COMPLETIONS_OUT_DIR)
+	cp -bf $$(cat $(_RUST_OUT))/$(COMPLETIONS_OUT_DIR)/$(PACKAGE_NAME).elv $@
 
-$(COMPLETIONS_OUT_DIR)/$(TRANSFORMED_PACKAGE_NAME).fish: $(CARGO_TARGET)
-	cp -bf $(COMPLETIONS_OUT_DIR)/$(PACKAGE_NAME).fish $@
+$(COMPLETIONS_OUT_DIR)/$(TRANSFORMED_PACKAGE_NAME).fish: $(RUST_BIN) | $(COMPLETIONS_OUT_DIR)
+	cp -bf $$(cat $(_RUST_OUT))/$(COMPLETIONS_OUT_DIR)/$(PACKAGE_NAME).fish $@
 
-$(COMPLETIONS_OUT_DIR)/_$(TRANSFORMED_PACKAGE_NAME).ps1: $(CARGO_TARGET)
-	cp -bf $(COMPLETIONS_OUT_DIR)/_$(PACKAGE_NAME).ps1 $@
+$(COMPLETIONS_OUT_DIR)/_$(TRANSFORMED_PACKAGE_NAME).ps1: $(RUST_BIN) | $(COMPLETIONS_OUT_DIR)
+	cp -bf $$(cat $(_RUST_OUT))/$(COMPLETIONS_OUT_DIR)/_$(PACKAGE_NAME).ps1 $@
 
-$(COMPLETIONS_OUT_DIR)/_$(TRANSFORMED_PACKAGE_NAME): $(CARGO_TARGET)
-	cp -bf $(COMPLETIONS_OUT_DIR)/_$(PACKAGE_NAME) $@
+$(COMPLETIONS_OUT_DIR)/_$(TRANSFORMED_PACKAGE_NAME): $(RUST_BIN) | $(COMPLETIONS_OUT_DIR)
+	cp -bf $$(cat $(_RUST_OUT))/$(COMPLETIONS_OUT_DIR)/_$(PACKAGE_NAME) $@
 
-$(CARGO_TARGET): $(fontship_SOURCES) clean-embedded-assets
-	cargo build $(CARGO_VERBOSE) $(CARGO_RELEASE_ARGS)
+$(_RUST_OUT) $(RUST_BIN): $(fontship_SOURCES) $(EXTRA_fontship_SOURCES) clean-embedded-assets
+	cd $(top_srcdir)
+	$(CARGO_ENV) $(CARGO) build $(CARGO_VERBOSE) $(CARGO_RELEASE_ARGS)
+	$(CARGO_ENV) $(CARGO) build --quiet --message-format=json $(CARGO_RELEASE_ARGS) |
+		$(JQ) -sr 'map(select(.reason == "build-script-executed")) | last | .out_dir' > $(_RUST_OUT)
 
 .version: $(shell $(AWK) '{print ".git/" $$2}' .git/HEAD 2>/dev/null ||:)
 	[ -e "$@" ] && mv "$@" "$@-prev" || $(if $<,touch,cp "$(srcdir)/.tarball-version") "$@-prev"
@@ -104,15 +115,22 @@ dist: fontship-$(VERSION).md
 dist-hook:
 	printf "$(VERSION)" > "$(distdir)/.tarball-version"
 
-check-local: cargo-test check-local-version
-
-check-local-version: $(PACKAGE_NAME) | .version
-
-cargo-test: $(PACKAGE_NAME)
-	cargo test --locked
-
 clean-local:
-	cargo clean
+	cd $(top_srcdir)
+	$(CARGO_ENV) $(CARGO) clean
+
+check-local: cargo-test check-version
+
+cargo-test: $(PACKAGE_NAME)$(EXEEXT)
+	cd $(srcdir)
+	$(CARGO_ENV) $(CARGO) test --locked
+
+check-version: $(PACKAGE_NAME)$(EXEEXT) | .version
+	./$< --version | $(GREP) -Ff $|
+
+installcheck-local:
+	./$(TRANSFORMED_PACKAGE_NAME) --version
+
 
 RELTYPE ?=
 
