@@ -29,7 +29,7 @@ EXTRA_DIST += build-aux/cargo-updater.js build-aux/git-version-gen
 EXTRA_DIST += Dockerfile build-aux/bootstrap-docker.sh build-aux/docker-glibc-workaround.sh hooks/build
 
 BUILT_SOURCES = .version
-CLEANFILES = $(BUILT_SOURCES) .version-prev $(bin_PROGRAMS)
+CLEANFILES = $(BUILT_SOURCES) .version-prev $(bin_PROGRAMS) fontship-$(VERSION).md
 
 if DEBUG_RELEASE
 CARGO_RELEASE_ARGS=--all-features
