@@ -26,7 +26,7 @@ endif
 
 ifeq ($(CANONICAL),sfd)
 _FamilyNames := $(sort $(foreach SOURCE,$(SOURCES_SFD),$(call sfdFamilyNames,$(SOURCE))))
-_FontInstances :=
+_FontInstances := $(sort $(foreach SOURCE,$(SOURCES_SFD),$(call sfdInstances,$(SOURCE))))
 endif
 
 ifeq ($(CANONICAL),ufo)

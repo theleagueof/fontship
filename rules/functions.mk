@@ -13,8 +13,8 @@ ufoInstances ?= $(shell $(PYTHON) -c 'import babelfont; print(babelfont.Babelfon
 designspaceFamilyNames ?= $(shell $(PYTHON) -c 'from fontTools.designspaceLib import DesignSpaceDocument; d = DesignSpaceDocument(); d.read("$1");for i in d.instances: print(i.familyName.replace(" ", ""))')
 designspaceInstances ?= $(shell $(PYTHON) -c 'from fontTools.designspaceLib import DesignSpaceDocument; d = DesignSpaceDocument(); d.read("$1");for i in d.instances: print(i.styleName.replace(" ", ""))')
 designspaceMasters ?= $(notdir $(basename $1))
-sfdFamilyNames = $(shell $(SED) -n '/FamilyName/{s/.*: //;s/ //g;p}' "$1")
-sfdInstances ?=
+sfdFamilyNames = $(shell $(SED) -n '/^FamilyName/{s/.*: //;s/ //g;p}' "$1")
+sfdInstances ?= $(shell $(SED) -n '/^FontName:/{s/^.*-//g;p}' "$1")
 
 define normalizeVersion ?=
 	$(FONTV) $(FONTVFLAGS) write --ver=$(FontVersion) $(if $(isTagged),--rel,--dev --sha1) $@

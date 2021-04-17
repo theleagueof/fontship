@@ -34,7 +34,7 @@ local process_recipe() {
   {
     (
       set -e
-      set -o no_bad_pattern
+      set -o nobadpattern
       [[ ! -v _debug ]] || set -x
       exec > >(report_stdout) 2> >(report_stderr)
       eval "$@"
@@ -47,7 +47,7 @@ local process_recipe() {
 local process_shell() {
   (
     set -e
-    set -o no_bad_pattern
+    set -o nobadpattern
     [[ ! -v _debug ]] || set -x
     eval "$@"
   )
