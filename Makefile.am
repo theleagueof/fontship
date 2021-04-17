@@ -2,6 +2,11 @@ $(and $(word 2,$(MAKEFILE_LIST)),$(error This is not the makefile you should inc
 
 ACLOCAL_AMFLAGS = -I build-aux
 
+.ONESHELL:
+.SECONDARY:
+.SECONDEXPANSION:
+.DELETE_ON_ERROR:
+
 licensedir = $(datarootdir)/licenses/$(TRANSFORMED_PACKAGE_NAME)
 docdir = $(datarootdir)/doc/$(TRANSFORMED_PACKAGE_NAME)
 datadir = $(datarootdir)/$(TRANSFORMED_PACKAGE_NAME)
@@ -15,7 +20,6 @@ nobase_dist_data_DATA = rules/fontship.mk rules/rules.mk rules/functions.mk rule
 EXTRA_DIST = .version build-aux/cargo-updater.js build-aux/git-version-gen build-aux/docker-glibc-workaround.sh requirements.txt
 EXTRA_DIST += Dockerfile build-aux/bootstrap-docker.sh hooks/build
 bin_PROGRAMS = fontship
-
 _fontship_libs = src/lib.rs src/cli.rs src/config.rs src/i18n.rs
 _fontship_modules = src/make/mod.rs src/setup/mod.rs src/status/mod.rs
 _fontship_assets = assets/en-US/cli.ftl

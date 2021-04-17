@@ -1,8 +1,10 @@
+AC_PREREQ([2.69])
 AC_INIT([fontship],[m4_esyscmd(build-aux/git-version-gen .tarball-version)],[caleb@alerque.com])
-AM_INIT_AUTOMAKE([foreign tar-pax dist-xz dist-zip no-dist-gzip subdir-objects color-tests])
+AC_CONFIG_AUX_DIR([build-aux])
+AC_CONFIG_MACRO_DIR([build-aux])
+AM_INIT_AUTOMAKE([foreign tar-pax dist-xz dist-zip no-dist-gzip color-tests subdir-objects])
 AM_SILENT_RULES([yes])
 
-AC_CONFIG_MACRO_DIRS([build-aux])
 
 AC_ARG_ENABLE([dependency-checks],
               AS_HELP_STRING([--disable-dependency-checks], [Disable dependency checks]))
