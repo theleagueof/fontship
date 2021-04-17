@@ -53,6 +53,10 @@ pub fn is_setup() -> Result<bool> {
     if results.read().unwrap().iter().all(|&v| v) {
         rayon::scope(|s| {
             s.spawn(|_| {
+                let ret = is_not_fontship_source().unwrap();
+                results.write().unwrap().push(ret);
+            });
+            s.spawn(|_| {
                 let ret = is_writable().unwrap();
                 results.write().unwrap().push(ret);
             });
@@ -77,6 +81,16 @@ pub fn is_setup() -> Result<bool> {
 pub fn is_repo() -> Result<bool> {
     let ret = get_repo().is_ok();
     display_check("setup-is-repo", ret);
+    Ok(ret)
+}
+
+/// Are we not in the CaSILE source repo?
+pub fn is_not_fontship_source() -> Result<bool> {
+    let repo = get_repo()?;
+    let workdir = repo.workdir().unwrap();
+    let testfile = workdir.join("make-shell.zsh.in");
+    let ret = fs::File::open(&testfile).is_err();
+    display_check("setup-is-not-fontship", ret);
     Ok(ret)
 }
 

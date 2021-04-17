@@ -115,6 +115,9 @@ setup-bad =
 setup-is-repo =
   Is the path a Git repository?
 
+setup-is-not-fontship =
+  Are we not in the Fontship source repository?
+
 setup-is-writable =
   Can we write to the project base directory?
 
