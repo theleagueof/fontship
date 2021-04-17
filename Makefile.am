@@ -12,36 +12,38 @@ docdir = $(datarootdir)/doc/$(TRANSFORMED_PACKAGE_NAME)
 datadir = $(datarootdir)/$(TRANSFORMED_PACKAGE_NAME)
 pkgdatadir = $(datadir)
 
-dist_pkgdata_SCRIPTS = make-shell.zsh
+pkgdata_SCRIPTS = make-shell.zsh
 dist_doc_DATA = README.md CHANGELOG.md
 dist_license_DATA = LICENSE
 dist_man_MANS = fontship.1
-nobase_dist_data_DATA = rules/fontship.mk rules/rules.mk rules/functions.mk rules/glyphs.mk rules/sfd.mk rules/ufo.mk
-EXTRA_DIST = .version build-aux/cargo-updater.js build-aux/git-version-gen build-aux/docker-glibc-workaround.sh requirements.txt
-EXTRA_DIST += Dockerfile build-aux/bootstrap-docker.sh hooks/build
+nobase_data_DATA = rules/fontship.mk
+nobase_dist_data_DATA = rules/rules.mk rules/functions.mk rules/glyphs.mk rules/sfd.mk rules/ufo.mk
 bin_PROGRAMS = fontship
 _fontship_libs = src/lib.rs src/cli.rs src/config.rs src/i18n.rs
 _fontship_modules = src/make/mod.rs src/setup/mod.rs src/status/mod.rs
 _fontship_assets = assets/en-US/cli.ftl
 fontship_SOURCES = Cargo.toml build.rs src/main.rs $(_fontship_libs) $(_fontship_modules) $(_fontship_assets)
 EXTRA_fontship_SOURCES = Cargo.lock
+EXTRA_DIST = .version requirements.txt
+EXTRA_DIST += build-aux/cargo-updater.js build-aux/git-version-gen
+EXTRA_DIST += Dockerfile build-aux/bootstrap-docker.sh build-aux/docker-glibc-workaround.sh hooks/build
 
 BUILT_SOURCES = .version
 CLEANFILES = $(BUILT_SOURCES) $(bin_PROGRAMS)
 
 if ENABLE_BASH_COMPLETION
 bashcompletiondir = $(BASH_COMPLETION_DIR)
-dist_bashcompletion_DATA = $(COMPLETIONS_OUT_DIR)/$(TRANSFORMED_PACKAGE_NAME)
+nodist_bashcompletion_DATA = $(COMPLETIONS_OUT_DIR)/$(TRANSFORMED_PACKAGE_NAME)
 endif
 
 if ENABLE_FISH_COMPLETION
 fishcompletiondir = $(FISH_COMPLETION_DIR)
-dist_fishcompletion_DATA = $(COMPLETIONS_OUT_DIR)/$(TRANSFORMED_PACKAGE_NAME).fish
+nodist_fishcompletion_DATA = $(COMPLETIONS_OUT_DIR)/$(TRANSFORMED_PACKAGE_NAME).fish
 endif
 
 if ENABLE_ZSH_COMPLETION
 zshcompletiondir = $(ZSH_COMPLETION_DIR)
-dist_zshcompletion_DATA = $(COMPLETIONS_OUT_DIR)/_$(TRANSFORMED_PACKAGE_NAME)
+nodist_zshcompletion_DATA = $(COMPLETIONS_OUT_DIR)/_$(TRANSFORMED_PACKAGE_NAME)
 endif
 
 if DEBUG_RELEASE
