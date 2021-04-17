@@ -4,7 +4,8 @@
   "description": "A font development toolkit and collaborative work flow",
   "main": "fontship",
   "scripts": {
-    "release": "standard-version"
+    "release": "standard-version",
+    "prepare": "husky install"
   },
   "repository": {
     "type": "git",
@@ -17,23 +18,18 @@
   },
   "homepage": "https://github.com/theleagueof/fontship",
   "devDependencies": {
-    "@commitlint/cli": "^11.0.0",
-    "@commitlint/config-conventional": "^11.0.0",
-    "@commitlint/prompt": "^11.0.0",
-    "commitizen": "^4.2.2",
-    "conventional-changelog-cli": "^2.0.34",
-    "husky": "^4.3.0",
-    "standard-version": "^9.0.0",
-    "@iarna/toml": "2.2.5"
+    "@commitlint/cli": "^12.1.1",
+    "@commitlint/config-conventional": "^12.1.1",
+    "@commitlint/prompt": "^12.1.1",
+    "@iarna/toml": "2.2.5",
+    "commitizen": "^4.2.3",
+    "conventional-changelog-cli": "^2.1.1",
+    "husky": "^6.0.0",
+    "standard-version": "^9.2.0"
   },
   "config": {
     "commitizen": {
       "path": "@commitlint/prompt"
-    }
-  },
-  "husky": {
-    "hooks": {
-      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
     }
   },
   "standard-version": {
