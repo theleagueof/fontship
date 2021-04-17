@@ -17,12 +17,12 @@ pub fn run(target: Vec<String>) -> Result<()> {
     let cpus = num_cpus::get();
     makeflags.push(OsString::from(format!("--jobs={}", cpus)));
     let mut makefiles: Vec<OsString> = Vec::new();
+    let rules = status::get_rules()?;
     makefiles.push(OsString::from("-f"));
     makefiles.push(OsString::from(format!(
         "{}{}",
         CONFIGURE_DATADIR, "rules/fontship.mk"
     )));
-    let rules = status::get_rules()?;
     for rule in rules {
         makefiles.push(OsString::from("-f"));
         let p = rule.into_os_string();
@@ -111,7 +111,7 @@ pub fn run(target: Vec<String>) -> Result<()> {
                 },
                 _ => {
                     let errmsg = LocalText::new("make-error-unknown-code").fmt();
-                    panic!(errmsg)
+                    panic!("{}", errmsg)
                 }
             },
             _ => backlog.push(String::from(fields[0])),
@@ -120,8 +120,8 @@ pub fn run(target: Vec<String>) -> Result<()> {
     let status = popen.wait();
     match status {
         Ok(ExitStatus::Exited(int)) => {
-            let foo = int + ret;
-            match foo {
+            let combined_code = int + ret;
+            match combined_code {
                 0 => {
                     if targets.contains(&"debug".into()) {
                         dump_backlog(&backlog)
@@ -167,7 +167,7 @@ pub fn run(target: Vec<String>) -> Result<()> {
     }
 }
 
-fn dump_backlog(backlog: &Vec<String>) {
+fn dump_backlog(backlog: &[String]) {
     let start = LocalText::new("make-backlog-start").fmt();
     eprintln!("{} {}", "┖┄".cyan(), start);
     for line in backlog.iter() {

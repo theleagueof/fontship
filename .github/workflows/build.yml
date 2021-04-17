@@ -16,8 +16,9 @@ jobs:
           git fetch --prune --tags ||:
       - name: Setup system dependencies
         run: |
+          sudo add-apt-repository universe
           sudo apt-get update
-          sudo apt-get install fontmake fonttools libgit2-dev python3-pip psautohint python3 sfnt2woff-zopfli ttfautohint ufonormalizer woff2 zsh
+          sudo apt-get install autoconf-archive fontmake fonttools libgit2-dev psautohint python3 python3-defcon python3-pip python3-ufo2ft python3-ufolib2 sfnt2woff-zopfli ttfautohint ufonormalizer woff2 zsh
       - name: Install Rust
         uses: actions-rs/toolchain@v1
         with:
@@ -31,13 +32,13 @@ jobs:
             target
           key: cargo-build-${{ hashFiles('**/Cargo.lock') }}
       - name: Setup Python dependencies
-        run: pip install font-v gftools sfdnormalize
+        run: pip install cffsubr font-v gftools pcpp git+git://github.com/alif-type/sfdLib.git@v1.0.7#egg=sfdLib sfdnormalize skia-pathops vttLib
       - name: Configure
         run: |
           export PATH="$HOME/.local/bin:$PATH"
           ./bootstrap.sh
           ./configure
-          echo "VERSION=$(./build-aux/git-version-gen .tarball-version)" >> $GITHUB_ENV
+          echo "VERSION=$(cat .version)" >> $GITHUB_ENV
           echo "MAKEFLAGS=-j$(nproc) -Otarget" >> $GITHUB_ENV
       - name: Build
         run: |
@@ -47,20 +48,8 @@ jobs:
         run: |
           export PATH="$HOME/.local/bin:$PATH"
           make dist
-          echo ISRELEASETAG=$(grep -Pqx '\d+\.\d+\.\d+' .version && echo true || echo false) >> $GITHUB_ENV
       - name: Upload Artifacts
-        if: ${{ env.ISRELEASETAG == 'false' }}
         uses: actions/upload-artifact@v2
         with:
           name: fontship-${{ env.VERSION }}
           path: fontship*-${{ env.VERSION }}.zip
-      - name: Publish Release
-        if: ${{ (env.ISRELEASETAG == 'true' && contains(github.ref, 'refs/tags/v')) }}
-        uses: softprops/action-gh-release@v0.1.5
-        with:
-          body_path: fontship-${{ env.VERSION }}.md
-          files: |
-            fontship-${{ env.VERSION }}.zip
-            fontship-${{ env.VERSION }}.tar.xz
-        env:
-          GITHUB_TOKEN: ${{ github.token }}

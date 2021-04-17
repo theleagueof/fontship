@@ -1,8 +1,25 @@
-#!/usr/bin/env bash
+#!/usr/bin/env sh
+set -e
+
+: "${ARCHTAG:=20210404.0.18927}"
 
 DESC=$(git describe --long --tags | sed 's/^v//;s/\([^-]*-g\)/r\1/;s/-/./g')
 
+RUNTIME_DEPS='diffutils entr font-v gftools git libarchive libgit2 make'\
+' psautohint python python-babelfont python-brotli python-cffsubr'\
+' python-defcon python-fontmake python-fonttools python-fs python-lxml'\
+' python-pcpp python-skia-pathops python-ufo2ft-git python-ufolib2'\
+' python-ufonormalizer python-unicodedata2 python-vttlib python-zopfli'\
+' sfd2ufo sfdnormalize sfnt2woff-zopfli ttfautohint woff2 zsh'
+BUILD_DEPS='autoconf-archive base-devel cargo jq rust'
+
+: "${DOCKER_BUILDKIT:=1}"
+export DOCKER_BUILDKIT
+
 docker build \
+	--build-arg ARCHTAG="$ARCHTAG" \
 	--build-arg VCS_REF="${1:-$DESC}" \
-	--tag "$IMAGE_NAME" \
+	--build-arg RUNTIME_DEPS="$RUNTIME_DEPS" \
+	--build-arg BUILD_DEPS="$BUILD_DEPS" \
+	--tag $DOCKER_REPO:$DOCKER_TAG \
 	./

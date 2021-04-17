@@ -139,7 +139,7 @@ fn regen_gitignore(repo: Repository) -> Result<()> {
                     index.write()?;
                     Ok(())
                 }
-                Err(foo) => Err(Box::new(foo)),
+                Err(err) => Err(Box::new(err)),
             }
         }
     }

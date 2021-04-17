@@ -1,8 +1,8 @@
-.TH fontship 1 "@MAN_DATE@" "version v@VERSION@"
+.TH @TRANSFORMED_PACKAGE_NAME@ 1 "@MAN_DATE@" "version v@VERSION@"
 .SH NAME
-fontship \- A font development toolkit and collaborative work flow.
+@TRANSFORMED_PACKAGE_NAME@ \- A font development toolkit and collaborative work flow.
 .SH SYNOPSIS
-.B fontship [
+.B @TRANSFORMED_PACKAGE_NAME@ [
 .I options
 .B ]
 .I COMMAND
@@ -12,7 +12,7 @@ fontship \- A font development toolkit and collaborative work flow.
 .SH DESCRIPTION
 Fontship transforms a Git repository with font sources into generated fonts ready to distribute.
 .SH OPTIONS
-.B fontship
+.B @TRANSFORMED_PACKAGE_NAME@
 accepts the following subcommands:
 .TP
 .BR \-h ", " \-\-help

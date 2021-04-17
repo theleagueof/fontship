@@ -1,38 +1,35 @@
-FROM docker.io/library/archlinux:base-20210131.0.14634 AS base
+#syntax=docker/dockerfile:1.2
 
-# Setup Caleb's hosted Arch repository with prebuilt dependencies
+ARG ARCHTAG
+
+FROM docker.io/library/archlinux:base-$ARCHTAG AS base
+
+# Monkey patch glibc to avoid issues with old kernels on hosts
+RUN --mount=type=bind,target=/mp,source=build-aux/docker-glibc-workaround.sh /mp
+
+# Setup Caleb’s hosted Arch repository with prebuilt dependencies
 RUN pacman-key --init && pacman-key --populate
 RUN sed -i  /etc/pacman.conf -e \
 	'/^.community/{n;n;s!^!\n\[alerque\]\nServer = https://arch.alerque.com/$arch\n!}'
 RUN echo 'keyserver pool.sks-keyservers.net' >> /etc/pacman.d/gnupg/gpg.conf
 RUN pacman-key --recv-keys 63CC496475267693 && pacman-key --lsign-key 63CC496475267693
 
-# This is a hack to convince Docker Hub that its cache is behind the times.
-# This happens when the contents of our dependencies changes but the base
-# system hasn't been refreshed. It's helpful to have this as a separate layer
-# because it saves a lot of time for local builds, but it does periodically
-# need a poke. Incrementing this when changing dependencies or just when the
-# remote Docker Hub builds die should be enough.
-ARG DOCKER_HUB_CACHE=0
+ARG RUNTIME_DEPS
+ARG BUILD_DEPS
 
 # Freshen all base system packages
 RUN pacman --needed --noconfirm -Syuq && yes | pacman -Sccq
 
-# Install run-time dependecies (increment cache var above)
-RUN pacman --needed --noconfirm -Syq \
-		diffutils entr font-v gftools git libarchive libgit2 make psautohint python sfd2ufo sfdnormalize sfnt2woff-zopfli ttfautohint woff2 zsh \
-		python-{babelfont,brotli,cffsubr,defcon,font{make,tools},fs,lxml,pcpp,skia-pathops,ufo{2ft-git,lib2,normalizer},unicodedata2,zopfli,vttlib} \
-	&& yes | pacman -Sccq
+# Install run-time dependecies
+RUN pacman --needed --noconfirm -Sq $RUNTIME_DEPS && yes | pacman -Sccq
 
-# Setup separate image for build so we don't bloat the final image
+# Setup separate image for build so we don’t bloat the final image
 FROM base AS builder
 
 # Install build time dependecies
-RUN pacman --needed --noconfirm -Syq \
-		base-devel cargo jq rust \
-	&& yes | pacman -Sccq
+RUN pacman --needed --noconfirm -Sq $BUILD_DEPS && yes | pacman -Sccq
 
-# Set at build time, forces Docker's layer caching to reset at this point
+# Set at build time, forces Docker’s layer caching to reset at this point
 ARG VCS_REF=0
 
 COPY ./ /src
@@ -47,6 +44,9 @@ RUN ./configure
 RUN make
 RUN make check
 RUN make install DESTDIR=/pkgdir
+
+# Work around BuiltKit / buildx bug, they can’t copy to symlinks only dirs
+RUN mv /pkgdir/usr/local/{share/,}/man
 
 FROM base AS final
 

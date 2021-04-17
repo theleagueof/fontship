@@ -1,8 +1,13 @@
 ### Generated files ###
 
+/fontship
 fontship-*
+fontship.1
 .version
 .version-prev
+make-shell.zsh
+rules/fontship.mk
+completions/*
 
 ### Editor cruft ###
 
@@ -27,21 +32,12 @@ Makefile.in
 # http://www.gnu.org/software/autoconf
 
 autom4te.cache
-/autoscan.log
-/autoscan-*.log
 /aclocal.m4
-/compile
-/config.guess
-/config.h.in
 /config.log
 /config.status
-/config.sub
 /configure
-/configure.scan
-/depcomp
-/install-sh
-/missing
-/stamp-h1
+build-aux/install-sh
+build-aux/missing
 
 ### Python ###
 # Byte-compiled / optimized / DLL files
