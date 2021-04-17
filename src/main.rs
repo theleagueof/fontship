@@ -33,5 +33,5 @@ fn main() -> Result<()> {
         }
     };
     fontship::show_outro();
-    return ret;
+    ret
 }

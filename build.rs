@@ -16,9 +16,8 @@ fn main() {
     generate_cargo_keys(flags).expect("Unable to generate the cargo keys!");
 
     // If automake has passed a version, use that instead of vergen's formatting
-    match env::var("FONTSHIP_VERSION") {
-        Ok(val) => println!("cargo:rustc-env=VERGEN_SEMVER_LIGHTWEIGHT={}", val),
-        Err(_) => (),
+    if let Ok(val) = env::var("FONTSHIP_VERSION") {
+        println!("cargo:rustc-env=VERGEN_SEMVER_LIGHTWEIGHT={}", val)
     };
 
     pass_on_configure_details();
