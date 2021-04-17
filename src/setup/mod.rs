@@ -3,6 +3,7 @@ use crate::*;
 
 use colored::Colorize;
 use git2::{Repository, Status};
+use git_warp_time::reset_mtime;
 use std::io::prelude::*;
 use std::sync::{Arc, RwLock};
 use std::{fs, io, path};
@@ -19,6 +20,7 @@ pub fn run() -> Result<()> {
             true => {
                 regen_gitignore(get_repo()?)?;
                 configure_short_shas(get_repo()?)?;
+                warp_time(get_repo()?)?;
                 Ok(())
             }
             false => Err(Box::new(io::Error::new(
@@ -157,6 +159,25 @@ fn regen_gitignore(repo: Repository) -> Result<()> {
             }
         }
     }
+}
+
+fn warp_time(repo: Repository) -> Result<()> {
+    let opts = git_warp_time::Options::new();
+    let text = LocalText::new("setup-warp-time").fmt();
+    eprintln!("{} {}", "┠┄".cyan(), text);
+    let files = reset_mtime(repo, opts)?;
+    match CONF.get_bool("verbose")? {
+        true => {
+            for file in files.iter() {
+                let text = LocalText::new("setup-warp-time-file")
+                    .arg("path", file.white().bold())
+                    .fmt();
+                eprintln!("{} {}", "┠┄".cyan(), text);
+            }
+        }
+        false => {}
+    }
+    Ok(())
 }
 
 fn configure_short_shas(repo: Repository) -> Result<()> {

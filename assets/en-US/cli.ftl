@@ -136,6 +136,12 @@ setup-gitignore-fresh =
 setup-short-shas =
   Setting default length of short SHA hashes in repository
 
+setup-warp-time =
+  Reseting version tracked file timestamps to last affecting commit
+
+setup-warp-time-file =
+  Rewound clock on { $path }
+
 status-header =
   Scanning project status
 
