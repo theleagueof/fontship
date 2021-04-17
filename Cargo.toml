@@ -1,6 +1,6 @@
 [package]
 name = "fontship"
-version = "0.7.6"
+version = "0.8.0"
 authors = [ "Caleb Maclennan <caleb@alerque.com>" ]
 edition = "2018"
 description = "A font development toolkit and collaborative work flow"
@@ -46,7 +46,7 @@ unic-langid = "0.9.0"
   [dependencies.regex]
   version = "1.4.5"
   default-features = false
-  features = ["std"]
+  features = [ "std" ]
 
 [build-dependencies]
 clap = "3.0.0-beta.2"

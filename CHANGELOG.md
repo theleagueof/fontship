@@ -2,6 +2,27 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.8.0](https://github.com/theleagueof/fontship/compare/v0.7.6...v0.8.0) (2021-04-17)
+
+
+### Features
+
+* **cli:** Add check to *not* run from Fontship source tree ([2812ead](https://github.com/theleagueof/fontship/commit/2812ead765a198d3d5962d1a056ef0535c1f246a))
+* **cli:** Reset file modification timestamps on setup ([f3785fd](https://github.com/theleagueof/fontship/commit/f3785fd641059bbd8a0f885cb1dbbfb1fc388080))
+* **docker:** Publish images to GHCR ([9f0d551](https://github.com/theleagueof/fontship/commit/9f0d5516294f96891b704d23135198aa798c30b6))
+* **sfd:** Automatically glean intstance names from sources ([4afa1bc](https://github.com/theleagueof/fontship/commit/4afa1bcc6eb61508d5692665bf17f38901bde2ed))
+* **sfd:** Include a default (sfd2ufo) way to build FontForge projects ([d5ab565](https://github.com/theleagueof/fontship/commit/d5ab56572ae97b8352253f91ad43e725cd222ae4))
+
+
+### Bug Fixes
+
+* **build:** Correct detection of completions dir on systems with pkg-config ([b33a11e](https://github.com/theleagueof/fontship/commit/b33a11e5c7015f3b6386e41e5fe12dd27f2e0337))
+* **build:** Correct dist vs. nodist source lists ([a9238cb](https://github.com/theleagueof/fontship/commit/a9238cbaae63a530e1c51d8b0df55dbae78c9386))
+* **build:** Handle version file for out-of-source builds ([b874172](https://github.com/theleagueof/fontship/commit/b874172235a8d050d69fb66f484a257ec79f8ef3))
+* **deps:** Update Python APIs used to fetch meta data ([08c263b](https://github.com/theleagueof/fontship/commit/08c263b86aa5426bc556dd5c602ff6f94897ef3f))
+* **docker:** Switch to BuildKit and make Docker Hub cooperate ([6e770e8](https://github.com/theleagueof/fontship/commit/6e770e821e765612403138aa0f16137612c0e153))
+* **docker:** Work around archaic host kernels on Docker Hub ([f3cf345](https://github.com/theleagueof/fontship/commit/f3cf345c217446f7bb7fa68b6cfb5889c8b78a46))
+
 ### [0.7.6](https://github.com/theleagueof/fontship/compare/v0.7.5...v0.7.6) (2021-01-31)
 
 
