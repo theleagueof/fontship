@@ -215,6 +215,18 @@ dependencies = [
 ]
 
 [[package]]
+name = "filetime"
+version = "0.2.14"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "1d34cfa13a63ae058bfa601fe9e313bbdb3746427c1459185464ce0fcf62e1e8"
+dependencies = [
+ "cfg-if",
+ "libc",
+ "redox_syscall",
+ "winapi",
+]
+
+[[package]]
 name = "fluent"
 version = "0.12.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -276,6 +288,7 @@ dependencies = [
  "fluent",
  "fluent-fallback",
  "fluent-langneg",
+ "git-warp-time",
  "git2",
  "itertools",
  "lazy_static",
@@ -308,6 +321,17 @@ dependencies = [
  "proc-macro2",
  "quote",
  "syn",
+]
+
+[[package]]
+name = "git-warp-time"
+version = "0.4.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "b5e8a389d58066558d4430fb70f8a513cc3994fd1cbc192c59b79f3e1db27712"
+dependencies = [
+ "filetime",
+ "git2",
+ "vergen",
 ]
 
 [[package]]
@@ -614,6 +638,15 @@ dependencies = [
  "crossbeam-utils",
  "lazy_static",
  "num_cpus",
+]
+
+[[package]]
+name = "redox_syscall"
+version = "0.2.6"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "8270314b5ccceb518e7e578952f0b72b88222d02e8f77f5ecf7abbb673539041"
+dependencies = [
+ "bitflags",
 ]
 
 [[package]]
