@@ -37,7 +37,7 @@ jobs:
           export PATH="$HOME/.local/bin:$PATH"
           ./bootstrap.sh
           ./configure
-          echo "VERSION=$(./build-aux/git-version-gen .tarball-version)" >> $GITHUB_ENV
+          echo "VERSION=$(cat .version)" >> $GITHUB_ENV
           echo "MAKEFLAGS=-j$(nproc) -Otarget" >> $GITHUB_ENV
       - name: Build
         run: |
@@ -47,20 +47,8 @@ jobs:
         run: |
           export PATH="$HOME/.local/bin:$PATH"
           make dist
-          echo ISRELEASETAG=$(grep -Pqx '\d+\.\d+\.\d+' .version && echo true || echo false) >> $GITHUB_ENV
       - name: Upload Artifacts
-        if: ${{ env.ISRELEASETAG == 'false' }}
         uses: actions/upload-artifact@v2
         with:
           name: fontship-${{ env.VERSION }}
           path: fontship*-${{ env.VERSION }}.zip
-      - name: Publish Release
-        if: ${{ (env.ISRELEASETAG == 'true' && contains(github.ref, 'refs/tags/v')) }}
-        uses: softprops/action-gh-release@v0.1.5
-        with:
-          body_path: fontship-${{ env.VERSION }}.md
-          files: |
-            fontship-${{ env.VERSION }}.zip
-            fontship-${{ env.VERSION }}.tar.xz
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
