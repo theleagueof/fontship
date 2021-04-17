@@ -16,24 +16,21 @@ pub fn run() -> Result<()> {
 #[allow(dead_code)]
 #[derive(Debug)]
 enum RunAsMode {
-    RunAsDirectory,
-    RunAsDocker,
-    RunAsRunner,
-    RunAsSystem,
+    Directory,
+    Docker,
+    Runner,
+    System,
 }
 
 #[allow(dead_code)]
 /// Determine the runtime mode
 fn run_as() -> RunAsMode {
-    RunAsMode::RunAsDocker {}
+    RunAsMode::Docker {}
 }
 
 /// Check to see if we're running in GitHub Actions
 pub fn is_gha() -> Result<bool> {
-    let ret = match env::var("GITHUB_ACTIONS") {
-        Ok(_) => true,
-        Err(_) => false,
-    };
+    let ret = env::var("GITHUB_ACTIONS").is_ok();
     display_check("status-is-gha", ret);
     Ok(ret)
 }
@@ -52,9 +49,9 @@ pub fn get_gitname() -> Result<String> {
         let re = Regex::new(r"^(.*/)([^/]+?)(/?(\.git)?/?)$").unwrap();
         let name = re
             .captures(url)
-            .ok_or(Error::new("error-no-remote"))?
+            .ok_or_else(|| Error::new("error-no-remote"))?
             .get(2)
-            .ok_or(Error::new("error-no-remote"))?
+            .ok_or_else(|| Error::new("error-no-remote"))?
             .as_str();
         Ok(String::from(name))
     }
@@ -62,12 +59,12 @@ pub fn get_gitname() -> Result<String> {
         let path = &CONF.get_string("path")?;
         let file = path::Path::new(path)
             .file_name()
-            .ok_or(Error::new("error-no-path"))?
+            .ok_or_else(|| Error::new("error-no-path"))?
             .to_str();
         Ok(file.unwrap().to_string())
     }
     let default = Ok(String::from("fontship"));
-    origin().or(path().or(default))
+    origin().or_else(|_| path().or(default))
 }
 
 /// Scan for existing makefiles with Fontship rules
@@ -109,10 +106,10 @@ pub fn get_sources() -> Result<Vec<path::PathBuf>> {
         if let Ok(part) = path.strip_prefix(&sourcedir) {
             let mut components = part.components();
             if let Some(path::Component::Normal(name)) = components.next() {
-                let n = name.to_str().unwrap().clone();
-                if let Some(_) = sourceexts.find(n) {
+                let n = name.to_str().unwrap();
+                if sourceexts.find(n).is_some() {
                     sources.push(path.to_path_buf());
-                } else if let Some(_) = ufoexts.find(n) {
+                } else if ufoexts.find(n).is_some() {
                     let mut p = sourcedir.to_path_buf();
                     p.push(name);
                     sources.push(p);

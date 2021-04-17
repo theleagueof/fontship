@@ -1,0 +1,37 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - v*.*.*
+
+jobs:
+
+  ghrelase:
+    strategy:
+      fail-fast: false
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Setup system dependencies
+        run: |
+          sudo apt-get install autoconf-archive
+      - name: Configure
+        run: |
+          echo "VERSION=${GITHUB_REF#refs/*/v}" >> $GITHUB_ENV
+          echo "${GITHUB_REF#refs/*/v}" > .tarball-version
+          ./bootstrap.sh
+          ./configure --without-{bash,fish,zsh}-completion-dir --disable-dependency-checks
+      - name: Build source package
+        run: |
+          make dist
+      - name: Publish Release
+        uses: softprops/action-gh-release@v1
+        with:
+          body_path: fontship-${{ env.VERSION }}.md
+          files: |
+            fontship-${{ env.VERSION }}.zip
+            fontship-${{ env.VERSION }}.tar.xz
+        env:
+          GITHUB_TOKEN: ${{ github.token }}

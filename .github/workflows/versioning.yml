@@ -7,13 +7,11 @@ on:
 jobs:
   actions-tagger:
 
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout
         uses: actions/checkout@v2
       - uses: Actions-R-Us/actions-tagger@v2
-        env:
-          GITHUB_TOKEN: "${{ github.token }}"
         with:
           publish_latest_tag: true

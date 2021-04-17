@@ -1,3 +1,5 @@
+#![allow(clippy::trivial_regex)]
+
 #[macro_use]
 extern crate lazy_static;
 extern crate num_cpus;
@@ -22,15 +24,15 @@ pub mod setup;
 pub mod status;
 
 // Import stuff set by autoconf/automake at build time
-pub static CONFIGURE_PREFIX: &'static str = env!["CONFIGURE_PREFIX"];
-pub static CONFIGURE_BINDIR: &'static str = env!["CONFIGURE_BINDIR"];
-pub static CONFIGURE_DATADIR: &'static str = env!["CONFIGURE_DATADIR"];
+pub static CONFIGURE_PREFIX: &str = env!["CONFIGURE_PREFIX"];
+pub static CONFIGURE_BINDIR: &str = env!["CONFIGURE_BINDIR"];
+pub static CONFIGURE_DATADIR: &str = env!["CONFIGURE_DATADIR"];
 
 /// If all else fails, use this BCP-47 locale
-pub static DEFAULT_LOCALE: &'static str = "en-US";
+pub static DEFAULT_LOCALE: &str = "en-US";
 
 /// Fontship version number as detected by `git describe --tags` at build time
-pub static VERSION: &'static str = env!("VERGEN_SEMVER_LIGHTWEIGHT");
+pub static VERSION: &str = env!("VERGEN_GIT_SEMVER");
 
 pub type Result<T> = result::Result<T, Box<dyn error::Error>>;
 

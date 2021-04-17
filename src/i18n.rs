@@ -2,7 +2,6 @@ use crate::*;
 
 use fluent::{FluentArgs, FluentBundle, FluentResource, FluentValue};
 use fluent_fallback::Localization;
-use fluent_langneg;
 use regex::Regex;
 use rust_embed::RustEmbed;
 use std::{iter, ops, path, str, sync, vec};
@@ -51,7 +50,7 @@ impl Locales {
                 fluent_langneg::NegotiationStrategy::Filtering,
             )
             .iter()
-            .map(|x| *x)
+            .copied()
             .cloned()
             .collect(),
         )
@@ -90,7 +89,7 @@ impl<'a> LocalText<'a> {
         };
         LocalText {
             key: String::from(&self.key),
-            args: args,
+            args,
         }
     }
 
@@ -141,7 +140,7 @@ impl<'a> LocalText<'a> {
 }
 
 /// Strip off any potential system locale encoding on the end of LC_LANG
-pub fn normalize_lang(input: &String) -> String {
+pub fn normalize_lang(input: &str) -> String {
     let re = Regex::new(r"\..*$").unwrap();
     re.replace(&input, "").to_string()
 }

@@ -1,8 +1,21 @@
+AC_PREREQ([2.69])
 AC_INIT([fontship],[m4_esyscmd(build-aux/git-version-gen .tarball-version)],[caleb@alerque.com])
-AM_INIT_AUTOMAKE([foreign tar-pax dist-xz dist-zip no-dist-gzip subdir-objects color-tests])
+AC_CONFIG_AUX_DIR([build-aux])
+AC_CONFIG_MACRO_DIR([build-aux])
+AM_INIT_AUTOMAKE([foreign tar-pax dist-xz dist-zip no-dist-gzip color-tests subdir-objects])
 AM_SILENT_RULES([yes])
 
-AC_CONFIG_MACRO_DIRS([build-aux])
+AC_DEFUN([AX_PROGVAR],
+		 [
+		  test -n "$m4_toupper($1)" || { AC_PATH_PROG(m4_toupper($1), m4_default($2,$1)) }
+		  test -n "$m4_toupper($1)" || AC_MSG_ERROR([m4_default($2,$1) is required])
+		 ])
+
+AC_PROG_AWK
+AC_PROG_SED
+AC_PROG_GREP
+AX_PROGVAR([cmp])
+AX_PROGVAR([xargs])
 
 AC_ARG_ENABLE([dependency-checks],
               AS_HELP_STRING([--disable-dependency-checks], [Disable dependency checks]))
@@ -14,7 +27,7 @@ AC_ARG_WITH([bash-completion-dir],
     [with_bash_completion_dir=yes])
 if test "x$with_bash_completion_dir" = "xyes"; then
     PKG_CHECK_MODULES([BASH_COMPLETION], [bash-completion >= 2.0],
-        [BASH_COMPLETION_DIR="`pkg-config --variable=completionsdir bash-completion`"],
+        [BASH_COMPLETION_DIR="`pkg-config --define-variable=datadir=$datadir --variable=completionsdir bash-completion`"],
         [BASH_COMPLETION_DIR="$datadir/bash-completion/completions"])
 else
     BASH_COMPLETION_DIR="$with_bash_completion_dir"
@@ -29,7 +42,7 @@ AC_ARG_WITH([fish-completion-dir],
     [with_fish_completion_dir=yes])
 if test "x$with_fish_completion_dir" = "xyes"; then
     PKG_CHECK_MODULES([FISH_COMPLETION], [fish >= 3.0],
-        [FISH_COMPLETION_DIR="`pkg-config --variable=completionsdir fish`"],
+        [FISH_COMPLETION_DIR="`pkg-config --define-variable=datadir=$datadir --variable=completionsdir fish`"],
         [FISH_COMPLETION_DIR="$datadir/fish/vendor_completions.d"])
 else
     FISH_COMPLETION_DIR="$with_fish_completion_dir"
@@ -68,40 +81,35 @@ AM_CONDITIONAL([DEBUG_RELEASE], [test "x$debug_release" = "xyes"])
 
 AC_SUBST([RUST_TARGET_SUBDIR])
 
-AC_DEFUN([AX_PROGVAR], [AC_PATH_PROG(m4_toupper($1), m4_default($2,$1))test -n "$m4_toupper($1)" || AC_MSG_ERROR([m4_default($2,$1) is required])])
-
 AS_IF([test "x$enable_dependency_checks" != "xno"], [
+       AX_PROGVAR([cargo])
+       AX_PROGVAR([rustc])
+       AX_PROGVAR([jq])
+       AX_PROGVAR([babelfont])
+       AX_PROGVAR([find])
+       AX_PROGVAR([fontmake])
+       AX_PROGVAR([fontv], [font-v])
+       AX_PROGVAR([gftools])
+       AX_PROGVAR([git])
+       AX_PROGVAR([psautohint])
+       AX_PROGVAR([sfdnormalize])
+       AX_PROGVAR([sfnt2woffzopfli], [sfnt2woff-zopfli])
+       AX_PROGVAR([ttfautohint])
+       AX_PROGVAR([ttx])
+       AX_PROGVAR([ufonormalizer])
+       AX_PROGVAR([woff2_compress])
+       AX_PROGVAR([zsh])
 
-    # Check that we have rust stuff
-    AC_CHECK_PROG(CARGO, [cargo], [yes], [no])
-    AS_IF(test x$CARGO = xno,
-        AC_MSG_ERROR([cargo is required.  Please install the Rust toolchain])
-    )
-    AC_CHECK_PROG(RUSTC, [rustc], [yes], [no])
-    AS_IF(test x$RUSTC = xno,
-        AC_MSG_ERROR([rustc is required.  Please install the Rust toolchain])
-    )
-
-    AC_PROG_SED
-    AC_PROG_GREP
-
-    AX_PROGVAR([cmp])
-    AX_PROGVAR([fontv], [font-v])
-    AX_PROGVAR([fontmake])
-    AX_PROGVAR([gftools])
-    AX_PROGVAR([find])
-    AX_PROGVAR([git])
-    AX_PROGVAR([sfnt2woffzopfli], [sfnt2woff-zopfli])
-    AX_PROGVAR([ttfautohint])
-    AX_PROGVAR([ufonormalizer])
-    AX_PROGVAR([sfdnormalize])
-    AX_PROGVAR([psautohint])
-    AX_PROGVAR([ttx])
-    AX_PROGVAR([woff2_compress])
-    AX_PROGVAR([zsh])
-
-    AM_PATH_PYTHON([3.6])
-])
+       AM_PATH_PYTHON([3.6])
+       AX_PYTHON_MODULE(cffsubr, true)
+       AX_PYTHON_MODULE(defcon, true)
+       AX_PYTHON_MODULE(pcpp, true)
+       AX_PYTHON_MODULE(sfdLib, true)
+       AX_PYTHON_MODULE(pathops, true)
+       AX_PYTHON_MODULE(ufo2ft, true)
+       AX_PYTHON_MODULE(ufoLib2, true)
+       AX_PYTHON_MODULE(vttLib, true)
+       ])
 
 if [[ -d .git ]]; then
     MAN_DATE=$(git log -1 --format="%cd" --date=format:"%d %B %Y" -- fontship.1.in)
@@ -110,7 +118,11 @@ else
 fi
 AC_SUBST([MAN_DATE])
 
-AC_CONFIG_FILES([Makefile fontship.1])
+TRANSFORMED_PACKAGE_NAME="$(printf "$PACKAGE_NAME" | $SED -e "${program_transform_name//\$\$/\$}")"
+AC_SUBST([TRANSFORMED_PACKAGE_NAME])
+
+AC_CONFIG_FILES([Makefile])
+AC_CONFIG_FILES([fontship.1])
 AC_CONFIG_FILES([rules/fontship.mk])
 AC_CONFIG_FILES([make-shell.zsh], [chmod +x make-shell.zsh])
 
