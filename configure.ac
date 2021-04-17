@@ -93,6 +93,7 @@ AS_IF([test "x$enable_dependency_checks" != "xno"], [
        AX_PROGVAR([git])
        AX_PROGVAR([psautohint])
        AX_PROGVAR([sfdnormalize])
+       AX_PROGVAR([sfd2ufo])
        AX_PROGVAR([sfnt2woffzopfli], [sfnt2woff-zopfli])
        AX_PROGVAR([ttfautohint])
        AX_PROGVAR([ttx])

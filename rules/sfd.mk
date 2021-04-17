@@ -13,6 +13,6 @@ $(SOURCEDIR)/%.sfd-check: $(SOURCEDIR)/%.sfd $(BUILDDIR)/%-normalized.sfd
 	cmp $^
 
 $(BUILDDIR)/%-normalized.ufo: $(BUILDDIR)/%-normalized.sfd | $(BUILDDIR)
-	sfd2ufo --minimal $< $@
+	$(SFD2UFO) $(SFD2UFOFLAGS) --minimal $< $@
 
 -include $(FONTSHIPDIR)/rules/ufo.mk
