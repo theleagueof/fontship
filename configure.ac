@@ -5,6 +5,17 @@ AC_CONFIG_MACRO_DIR([build-aux])
 AM_INIT_AUTOMAKE([foreign tar-pax dist-xz dist-zip no-dist-gzip color-tests subdir-objects])
 AM_SILENT_RULES([yes])
 
+AC_DEFUN([AX_PROGVAR],
+		 [
+		  test -n "$m4_toupper($1)" || { AC_PATH_PROG(m4_toupper($1), m4_default($2,$1)) }
+		  test -n "$m4_toupper($1)" || AC_MSG_ERROR([m4_default($2,$1) is required])
+		 ])
+
+AC_PROG_AWK
+AC_PROG_SED
+AC_PROG_GREP
+AX_PROGVAR([cmp])
+AX_PROGVAR([xargs])
 
 AC_ARG_ENABLE([dependency-checks],
               AS_HELP_STRING([--disable-dependency-checks], [Disable dependency checks]))
@@ -70,22 +81,9 @@ AM_CONDITIONAL([DEBUG_RELEASE], [test "x$debug_release" = "xyes"])
 
 AC_SUBST([RUST_TARGET_SUBDIR])
 
-AC_DEFUN([AX_PROGVAR], [AC_PATH_PROG(m4_toupper($1), m4_default($2,$1))test -n "$m4_toupper($1)" || AC_MSG_ERROR([m4_default($2,$1) is required])])
-
 AS_IF([test "x$enable_dependency_checks" != "xno"], [
-
-    # Check that we have rust stuff
-    AC_CHECK_PROG(CARGO, [cargo], [yes], [no])
-    AS_IF(test x$CARGO = xno,
-        AC_MSG_ERROR([cargo is required.  Please install the Rust toolchain])
-    )
-    AC_CHECK_PROG(RUSTC, [rustc], [yes], [no])
-    AS_IF(test x$RUSTC = xno,
-        AC_MSG_ERROR([rustc is required.  Please install the Rust toolchain])
-    )
-
-    AC_PROG_SED
-    AC_PROG_GREP
+       AX_PROGVAR([cargo])
+       AX_PROGVAR([rustc])
 
     AX_PROGVAR([cmp])
     AX_PROGVAR([fontv], [font-v])

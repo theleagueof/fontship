@@ -97,7 +97,7 @@ $(CARGO_TARGET): $(fontship_SOURCES) clean-embedded-assets
 
 .PHONY: clean-embedded-assets
 clean-embedded-assets:
-	[[ ! -e .git  ]] || git clean -dxf assets
+	[[ ! -e .git  ]] || $(GIT) clean -dxf assets
 
 dist: fontship-$(VERSION).md
 
@@ -118,10 +118,10 @@ RELTYPE ?=
 
 .PHONY: tagrelease
 tagrelease:
-	test -z $$(git tag --points-at HEAD) || \
-	git diff-index --quiet --cached HEAD && \
-	git diff-files --quiet && \
-	npm run release -- $(and $(RELTYPE),--release-as $(RELTYPE))
+	test -z $$($(GIT) tag --points-at HEAD) || \
+	$(GIT) diff-index --quiet --cached HEAD && \
+	$(GIT) diff-files --quiet && \
+	npm run release $(and $(RELTYPE),--release-as $(RELTYPE))
 
 .PHONY: release-preview
 release-preview:
@@ -131,8 +131,8 @@ release-preview:
 release: tagrelease
 
 fontship-%.md: CHANGELOG.md
-	sed -e '/\.\.\.v$*/,/\.\.\.v/!d' $< | \
-		sed -e '1,3d;N;$$!P;$$!D;$$d' > $@
+	$(SED) -e '/\.\.\.v$*/,/\.\.\.v/!d' $< | \
+		$(SED) -e '1,3d;N;$$!P;$$!D;$$d' > $@
 
 _svg_cleanup = select-all;object-to-path;vacuum-defs
 _scour_args = --quiet --set-precision=4 --remove-metadata --enable-id-stripping --strip-xml-prolog --strip-xml-space --no-line-breaks --no-renderer-workaround
