@@ -27,7 +27,7 @@ AC_ARG_WITH([bash-completion-dir],
     [with_bash_completion_dir=yes])
 if test "x$with_bash_completion_dir" = "xyes"; then
     PKG_CHECK_MODULES([BASH_COMPLETION], [bash-completion >= 2.0],
-        [BASH_COMPLETION_DIR="`pkg-config --variable=completionsdir bash-completion`"],
+        [BASH_COMPLETION_DIR="`pkg-config --define-variable=datadir=$datadir --variable=completionsdir bash-completion`"],
         [BASH_COMPLETION_DIR="$datadir/bash-completion/completions"])
 else
     BASH_COMPLETION_DIR="$with_bash_completion_dir"
@@ -42,7 +42,7 @@ AC_ARG_WITH([fish-completion-dir],
     [with_fish_completion_dir=yes])
 if test "x$with_fish_completion_dir" = "xyes"; then
     PKG_CHECK_MODULES([FISH_COMPLETION], [fish >= 3.0],
-        [FISH_COMPLETION_DIR="`pkg-config --variable=completionsdir fish`"],
+        [FISH_COMPLETION_DIR="`pkg-config --define-variable=datadir=$datadir --variable=completionsdir fish`"],
         [FISH_COMPLETION_DIR="$datadir/fish/vendor_completions.d"])
 else
     FISH_COMPLETION_DIR="$with_fish_completion_dir"
