@@ -24,12 +24,12 @@ _fontship_modules = src/make/mod.rs src/setup/mod.rs src/status/mod.rs
 _fontship_assets = assets/en-US/cli.ftl
 fontship_SOURCES = Cargo.toml build.rs src/main.rs $(_fontship_libs) $(_fontship_modules) $(_fontship_assets)
 EXTRA_fontship_SOURCES = Cargo.lock
-EXTRA_DIST = .version requirements.txt
+EXTRA_DIST = requirements.txt
 EXTRA_DIST += build-aux/cargo-updater.js build-aux/git-version-gen
 EXTRA_DIST += Dockerfile build-aux/bootstrap-docker.sh build-aux/docker-glibc-workaround.sh hooks/build
 
 BUILT_SOURCES = .version
-CLEANFILES = $(BUILT_SOURCES) $(bin_PROGRAMS)
+CLEANFILES = $(BUILT_SOURCES) .version-prev $(bin_PROGRAMS)
 
 if ENABLE_BASH_COMPLETION
 bashcompletiondir = $(BASH_COMPLETION_DIR)
@@ -90,10 +90,10 @@ $(COMPLETIONS_OUT_DIR)/_$(TRANSFORMED_PACKAGE_NAME): $(CARGO_TARGET)
 $(CARGO_TARGET): $(fontship_SOURCES) clean-embedded-assets
 	cargo build $(CARGO_VERBOSE) $(CARGO_RELEASE_ARGS)
 
-.version: $(shell test -e .git && awk '{print ".git/" $$2}' .git/HEAD)
-	mv $@{,-prev} 2>/dev/null || touch $@-prev
-	( test -e .git && ./build-aux/git-version-gen .tarball-version || echo $(VERSION) ) > $@
-	cmp -s $@{,-prev} || autoreconf configure.ac --force -W none
+.version: $(shell $(AWK) '{print ".git/" $$2}' .git/HEAD 2>/dev/null ||:)
+	[ -e "$@" ] && mv "$@" "$@-prev" || $(if $<,touch,cp "$(srcdir)/.tarball-version") "$@-prev"
+	$(if $<,./build-aux/git-version-gen "$(srcdir)/.tarball-version",printf "$(VERSION)") > "$@"
+	$(CMP) -s "$@" "$@-prev" || autoreconf configure.ac --force
 
 .PHONY: clean-embedded-assets
 clean-embedded-assets:
@@ -102,7 +102,7 @@ clean-embedded-assets:
 dist: fontship-$(VERSION).md
 
 dist-hook:
-	echo $(VERSION) > $(distdir)/.tarball-version
+	printf "$(VERSION)" > "$(distdir)/.tarball-version"
 
 check-local: cargo-test check-local-version
 
