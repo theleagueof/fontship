@@ -115,6 +115,9 @@ setup-bad =
 setup-is-repo =
   Is the path a Git repository?
 
+setup-is-not-fontship =
+  Are we not in the Fontship source repository?
+
 setup-is-writable =
   Can we write to the project base directory?
 
@@ -132,6 +135,12 @@ setup-gitignore-fresh =
 
 setup-short-shas =
   Setting default length of short SHA hashes in repository
+
+setup-warp-time =
+  Reseting version tracked file timestamps to last affecting commit
+
+setup-warp-time-file =
+  Rewound clock on { $path }
 
 status-header =
   Scanning project status
