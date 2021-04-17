@@ -199,6 +199,24 @@ media_badge: media/badge.svg
 	@svgo --datauri base64 --multipass --quiet -i $< -o -
 	@echo =================
 
+export DOCKER_REGISTRY ?= docker.io
+export DOCKER_REPO ?= theleagueof/$(TRANSFORMED_PACKAGE_NAME)
+export DOCKER_TAG ?= HEAD
+
 .PHONY: docker
 docker: Dockerfile hooks/build .version
-	IMAGE_NAME=theleagueof/$(_fontship):HEAD ./hooks/build $(VERSION)
+	./hooks/build $(VERSION)
+
+.PHONY: docker-build-push
+docker-build-push: docker
+	docker tag $(DOCKER_REPO):$(DOCKER_TAG) $(DOCKER_REGISTRY)/$(DOCKER_REPO):$(DOCKER_TAG)
+	test -z "$(DOCKER_PAT)" || \
+		docker login https://$(DOCKER_REGISTRY) -u $(DOCKER_USERNAME) -p $(DOCKER_PAT)
+	docker push $(DOCKER_REGISTRY)/$(DOCKER_REPO):$(DOCKER_TAG)
+	if [[ "$(DOCKER_TAG)" == v*.*.* ]]; then \
+		tag=$(DOCKER_TAG) ;\
+		docker tag $(DOCKER_REPO):$(DOCKER_TAG) $(DOCKER_REGISTRY)/$(DOCKER_REPO):latest ;\
+		docker tag $(DOCKER_REPO):$(DOCKER_TAG) $(DOCKER_REGISTRY)/$(DOCKER_REPO):$${tag//.*} ;\
+		docker push $(DOCKER_REGISTRY)/$(DOCKER_REPO):latest ;\
+		docker push $(DOCKER_REGISTRY)/$(DOCKER_REPO):$${tag//.*} ;\
+	fi
