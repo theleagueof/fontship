@@ -32,7 +32,7 @@ pub static CONFIGURE_DATADIR: &str = env!["CONFIGURE_DATADIR"];
 pub static DEFAULT_LOCALE: &str = "en-US";
 
 /// Fontship version number as detected by `git describe --tags` at build time
-pub static VERSION: &str = env!("VERGEN_SEMVER_LIGHTWEIGHT");
+pub static VERSION: &str = env!("VERGEN_GIT_SEMVER");
 
 pub type Result<T> = result::Result<T, Box<dyn error::Error>>;
 

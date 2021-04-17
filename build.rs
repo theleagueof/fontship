@@ -1,25 +1,27 @@
-extern crate vergen;
-
 use clap::IntoApp;
 use clap_generate::{generate_to, generators};
 use std::{collections, env, fs};
-use vergen::{generate_cargo_keys, ConstantsFlags};
+use vergen::vergen;
 
 include!("src/cli.rs");
 
 fn main() {
-    // Setup the flags, toggling off the 'SEMVER_FROM_CARGO_PKG' flag
-    let mut flags = ConstantsFlags::all();
-    flags.toggle(ConstantsFlags::SEMVER_FROM_CARGO_PKG);
-
-    // Generate the 'cargo:' key output
-    generate_cargo_keys(flags).expect("Unable to generate the cargo keys!");
-
-    // If automake has passed a version, use that instead of vergen's formatting
+    let mut flags = vergen::Config::default();
+    // If passed a version, use that instead of vergen's formatting
     if let Ok(val) = env::var("FONTSHIP_VERSION") {
-        println!("cargo:rustc-env=VERGEN_SEMVER_LIGHTWEIGHT={}", val)
+        *flags.git_mut().semver_mut() = false;
+        println!("cargo:rustc-env=VERGEN_GIT_SEMVER={}", val)
     };
-
+    // Try to output flags based on Git repo, but if that fails turn off Git features and try again
+    // with just cargo generated version info
+    if vergen(flags).is_err() {
+        *flags.git_mut().semver_mut() = false;
+        *flags.git_mut().branch_mut() = false;
+        *flags.git_mut().commit_timestamp_mut() = false;
+        *flags.git_mut().sha_mut() = false;
+        *flags.git_mut().rerun_on_head_change_mut() = false;
+        vergen(flags).expect("Unable to generate the cargo keys!");
+    }
     pass_on_configure_details();
     generate_shell_completions();
 }
