@@ -1,19 +1,19 @@
 $(and $(word 2,$(MAKEFILE_LIST)),$(error This is not the makefile you should include in your project to run Fontship, please use 'rules/fontship.mk' instead.))
 
-_fontship = $(program_prefix)$(shell sed -e "$(program_transform_name)" <<< fontship)$(program_suffix)
+ACLOCAL_AMFLAGS = -I build-aux
 
-licensedir = $(datarootdir)/licenses/$(_fontship)
-datadir = $(datarootdir)/$(_fontship)
+licensedir = $(datarootdir)/licenses/$(TRANSFORMED_PACKAGE_NAME)
+docdir = $(datarootdir)/doc/$(TRANSFORMED_PACKAGE_NAME)
+datadir = $(datarootdir)/$(TRANSFORMED_PACKAGE_NAME)
 pkgdatadir = $(datadir)
 
 dist_pkgdata_SCRIPTS = make-shell.zsh
 dist_doc_DATA = README.md CHANGELOG.md
-dist_man_MANS = $(_fontship).1
 dist_license_DATA = LICENSE
+dist_man_MANS = fontship.1
 nobase_dist_data_DATA = rules/fontship.mk rules/rules.mk rules/functions.mk rules/glyphs.mk rules/sfd.mk rules/ufo.mk
 EXTRA_DIST = .version build-aux/cargo-updater.js build-aux/git-version-gen build-aux/docker-glibc-workaround.sh requirements.txt
 EXTRA_DIST += Dockerfile build-aux/bootstrap-docker.sh hooks/build
-
 bin_PROGRAMS = fontship
 
 _fontship_libs = src/lib.rs src/cli.rs src/config.rs src/i18n.rs
@@ -27,17 +27,17 @@ CLEANFILES = $(BUILT_SOURCES) $(bin_PROGRAMS)
 
 if ENABLE_BASH_COMPLETION
 bashcompletiondir = $(BASH_COMPLETION_DIR)
-dist_bashcompletion_DATA = $(COMPLETIONS_OUT_DIR)/$(_fontship)
+dist_bashcompletion_DATA = $(COMPLETIONS_OUT_DIR)/$(TRANSFORMED_PACKAGE_NAME)
 endif
 
 if ENABLE_FISH_COMPLETION
 fishcompletiondir = $(FISH_COMPLETION_DIR)
-dist_fishcompletion_DATA = $(COMPLETIONS_OUT_DIR)/$(_fontship).fish
+dist_fishcompletion_DATA = $(COMPLETIONS_OUT_DIR)/$(TRANSFORMED_PACKAGE_NAME).fish
 endif
 
 if ENABLE_ZSH_COMPLETION
 zshcompletiondir = $(ZSH_COMPLETION_DIR)
-dist_zshcompletion_DATA = $(COMPLETIONS_OUT_DIR)/_$(_fontship)
+dist_zshcompletion_DATA = $(COMPLETIONS_OUT_DIR)/_$(TRANSFORMED_PACKAGE_NAME)
 endif
 
 if DEBUG_RELEASE
@@ -66,20 +66,20 @@ COMPLETIONS_OUT_DIR = target/$(_TARGETDIR)/completions
 fontship$(EXEEXT): $(CARGO_TARGET)
 	cp -bf $< $@
 
-$(COMPLETIONS_OUT_DIR)/$(_fontship): $(CARGO_TARGET)
-	cp -bf $(COMPLETIONS_OUT_DIR)/fontship.bash $@
+$(COMPLETIONS_OUT_DIR)/$(TRANSFORMED_PACKAGE_NAME): $(CARGO_TARGET)
+	cp -bf $(COMPLETIONS_OUT_DIR)/$(PACKAGE_NAME).bash $@
 
-$(COMPLETIONS_OUT_DIR)/$(_fontship).elv: $(CARGO_TARGET)
-	cp -bf $(COMPLETIONS_OUT_DIR)/fontship.elv $@
+$(COMPLETIONS_OUT_DIR)/$(TRANSFORMED_PACKAGE_NAME).elv: $(CARGO_TARGET)
+	cp -bf $(COMPLETIONS_OUT_DIR)/$(PACKAGE_NAME).elv $@
 
-$(COMPLETIONS_OUT_DIR)/$(_fontship).fish: $(CARGO_TARGET)
-	cp -bf $(COMPLETIONS_OUT_DIR)/fontship.fish $@
+$(COMPLETIONS_OUT_DIR)/$(TRANSFORMED_PACKAGE_NAME).fish: $(CARGO_TARGET)
+	cp -bf $(COMPLETIONS_OUT_DIR)/$(PACKAGE_NAME).fish $@
 
-$(COMPLETIONS_OUT_DIR)/_$(_fontship).ps1: $(CARGO_TARGET)
-	cp -bf $(COMPLETIONS_OUT_DIR)/_fontship.ps1 $@
+$(COMPLETIONS_OUT_DIR)/_$(TRANSFORMED_PACKAGE_NAME).ps1: $(CARGO_TARGET)
+	cp -bf $(COMPLETIONS_OUT_DIR)/_$(PACKAGE_NAME).ps1 $@
 
-$(COMPLETIONS_OUT_DIR)/_$(_fontship): $(CARGO_TARGET)
-	cp -bf $(COMPLETIONS_OUT_DIR)/_fontship $@
+$(COMPLETIONS_OUT_DIR)/_$(TRANSFORMED_PACKAGE_NAME): $(CARGO_TARGET)
+	cp -bf $(COMPLETIONS_OUT_DIR)/_$(PACKAGE_NAME) $@
 
 $(CARGO_TARGET): $(fontship_SOURCES) clean-embedded-assets
 	cargo build $(CARGO_VERBOSE) $(CARGO_RELEASE_ARGS)
@@ -100,10 +100,9 @@ dist-hook:
 
 check-local: cargo-test check-local-version
 
-check-local-version: $(_fontship) | .version
-	./$< --version | grep -Ff $|
+check-local-version: $(PACKAGE_NAME) | .version
 
-cargo-test: $(_casile)
+cargo-test: $(PACKAGE_NAME)
 	cargo test --locked
 
 clean-local:

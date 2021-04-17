@@ -110,7 +110,11 @@ else
 fi
 AC_SUBST([MAN_DATE])
 
-AC_CONFIG_FILES([Makefile fontship.1])
+TRANSFORMED_PACKAGE_NAME="$(printf "$PACKAGE_NAME" | $SED -e "${program_transform_name//\$\$/\$}")"
+AC_SUBST([TRANSFORMED_PACKAGE_NAME])
+
+AC_CONFIG_FILES([Makefile])
+AC_CONFIG_FILES([fontship.1])
 AC_CONFIG_FILES([rules/fontship.mk])
 AC_CONFIG_FILES([make-shell.zsh], [chmod +x make-shell.zsh])
 
