@@ -29,7 +29,7 @@ EXTRA_DIST += build-aux/action-updater.js build-aux/cargo-updater.js build-aux/g
 EXTRA_DIST += Dockerfile build-aux/bootstrap-docker.sh build-aux/docker-glibc-workaround.sh hooks/build
 
 BUILT_SOURCES = .version
-CLEANFILES = $(BUILT_SOURCES) .version-prev $(bin_PROGRAMS) fontship-$(VERSION).md
+CLEANFILES = $(BUILT_SOURCES) .version-prev $(bin_PROGRAMS)
 
 if DEBUG_RELEASE
 CARGO_RELEASE_ARGS=--all-features
@@ -159,7 +159,8 @@ release-preview:
 .PHONY: release
 release: tagrelease
 
-fontship-%.md: CHANGELOG.md
+CLEANFILES += $(PACKAGE_NAME)-$(VERSION).md
+$(PACKAGE_NAME)-%.md: CHANGELOG.md
 	$(SED) -e '/\.\.\.v$*/,/\.\.\.v/!d' $< | \
 		$(SED) -e '1,3d;N;$$!P;$$!D;$$d' > $@
 
