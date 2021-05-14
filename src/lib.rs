@@ -65,8 +65,8 @@ impl error::Error for Error {
 pub fn pname(input: &str) -> String {
     let seps = Regex::new(r"[-_]").unwrap();
     let spaces = Regex::new(r" ").unwrap();
-    let title = seps.replace(input, " ").to_title_case();
-    spaces.replace(&title, "").to_string()
+    let title = seps.replace_all(input, " ").to_title_case();
+    spaces.replace_all(&title, "").to_string()
 }
 
 /// Get repository object
