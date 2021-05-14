@@ -13,9 +13,14 @@
 
 Fontship is a toolkit for generating fonts and tooling for a collaborative workflow.
 
-Developed at [The League of Moveable Type](https://www.theleagueofmoveabletype.com/) with the needs of open-source font projects in mind, Fontship automates the process of turning your design sources into production ready font files and bundling them for publishing. Yes you could take all the same steps manually. Yes you could write your own scripts to get the same work done. What Fontship brings to the table is a complete bundle of all the tooling you need to gather with most bits wired up already.
+Developed at [The League of Moveable Type](https://www.theleagueofmoveabletype.com/) with the needs of open-source font projects in mind, Fontship automates the process of turning your design sources into production ready font files and bundling them for publishing.
+Yes you could take all the same steps manually.
+Yes you could write your own scripts to get the same work done.
+What Fontship brings to the table is a complete bundle of all the tooling you need to gather with most bits wired up already.
 
-One building fonts from sources is completely automated, automatic builds from CI and publishing releases is just a small step away. As an added bonus, everything is carefully organized to make asynchronous remote collaboration via version control systems (such as Git) as easy as possible. Designers don’t even need to be using the same design tools!
+One building fonts from sources is completely automated, automatic builds from CI and publishing releases is just a small step away.
+As an added bonus, everything is carefully organized to make asynchronous remote collaboration via version control systems (such as Git) as easy as possible.
+Designers don’t even need to be using the same design tools!
 
 Almost every aspect of the build steps and workflow can be tweaked on a per-project basis, but out of the box settings should work to build most font projects.
 
@@ -27,11 +32,13 @@ Fontship can be used in any of three different ways:
 2. Locally via an all-inclusive Docker image for low hassle setup.
 3. Locally via a regular system utility install (provided all the required dependencies are also installed).
 
-*Note:* a fourth method supported through v0.5.0, direct inclusion of Fontship’s rule files into your project’s existing Makefile, has been deprecated. Depending on your project, such usage may or may not continue to function with limitations for the time being, but new features added to the CLI will be *assumed* in the rules going forward.
+*Note:* a fourth method supported through v0.5.0, direct inclusion of Fontship’s rule files into your project’s existing Makefile, has been deprecated.
+Depending on your project, such usage may or may not continue to function with limitations for the time being, but new features added to the CLI will be *assumed* in the rules going forward.
 
 ### CI Setup
 
-Build your fonts without installing or running anything locally! Just push your sources to a remote Git repository and let Fontship do the rest.
+Build your fonts without installing or running anything locally!
+Just push your sources to a remote Git repository and let Fontship do the rest.
 
 For use with Github Actions, add a configuration file to your repository such as `.github/workflow/fontship.yml`:
 
@@ -53,7 +60,8 @@ jobs:
         uses: docker://theleagueof/fontship:latest
 ```
 
-Note that this example workflow used the syntax to pull a container from Docker Hub because it is much faster to pull an existing container than to use Github Action’s default method which rebuilds a new container at runtime on every invocation. If you’d prefer to wait the couple extra minutes you may also use the default invocation suggested by Github by substituting this line:
+Note that this example workflow used the syntax to pull a container from Docker Hub because it is much faster to pull an existing container than to use Github Action’s default method which rebuilds a new container at runtime on every invocation.
+If you’d prefer to wait the couple extra minutes you may also use the default invocation suggested by Github by substituting this line:
 
 ```yaml
         uses: docker://theleagueof/fontship:latest
@@ -65,7 +73,8 @@ With:
         uses: theleagueof/fontship@latest
 ```
 
-At the current time Fontship only builds the fonts into the current project directory, it doesn’t publish them anywhere. You’ll need to post the resulting artifacts by (e.g. by attaching them to each CI run or publishing them on releases) as another step your project’s workflow. For a full working examples see [League Spartan’s](https://github.com/theleagueof/league-spartan/blob/master/.github/workflow/fontship.yml) or [Libertinus’s workflow](https://github.com/alerque/libertinus/blob/master/.github/workflow/fontship.yml)s.
+At the current time Fontship only builds the fonts into the current project directory, it doesn’t publish them anywhere.
+You’ll need to post the resulting artifacts by (e.g. by attaching them to each CI run or publishing them on releases) as another step your project’s workflow. For a full working examples see [League Spartan’s](https://github.com/theleagueof/league-spartan/blob/master/.github/workflow/fontship.yml) or [Libertinus’s workflow](https://github.com/alerque/libertinus/blob/master/.github/workflow/fontship.yml)s.
 
 Other CI runners could easily be supported, see [issue #32](https://github.com/theleagueof/fontship/issues/32) for details or to request sample configs for your favorite.
 
@@ -156,4 +165,5 @@ $ fontship make dist
 
 ### Versioning
 
-The font version setting in all generated fonts is determined by the tag on the git repository. Version tags should conform to the `MAJOR.MINOR` format descriped by [openfv](https://github.com/openfv/openfv#3-version-number-semantics).
+The font version setting in all generated fonts is determined by the tag on the git repository.
+Version tags should conform to the `MAJOR.MINOR` format descriped by [openfv](https://github.com/openfv/openfv#3-version-number-semantics).
