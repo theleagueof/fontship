@@ -35,6 +35,10 @@
   "standard-version": {
     "bumpFiles": [
       {
+        "filename": "action.yml",
+        "updater": "build-aux/action-updater.js"
+      },
+      {
         "filename": "package.json",
         "type": "json"
       },

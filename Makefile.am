@@ -25,7 +25,7 @@ _fontship_assets = assets/en-US/cli.ftl
 fontship_SOURCES = Cargo.toml build.rs src/main.rs $(_fontship_libs) $(_fontship_modules) $(_fontship_assets)
 EXTRA_fontship_SOURCES = Cargo.lock
 EXTRA_DIST = requirements.txt
-EXTRA_DIST += build-aux/cargo-updater.js build-aux/git-version-gen
+EXTRA_DIST += build-aux/action-updater.js build-aux/cargo-updater.js build-aux/git-version-gen
 EXTRA_DIST += Dockerfile build-aux/bootstrap-docker.sh build-aux/docker-glibc-workaround.sh hooks/build
 
 BUILT_SOURCES = .version
