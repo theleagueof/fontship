@@ -57,19 +57,6 @@ jobs:
       - name: Fetch tags
         run: git fetch --prune --tags
       - name: Fontship
-        uses: docker://theleagueof/fontship:latest
-```
-
-Note that this example workflow used the syntax to pull a container from Docker Hub because it is much faster to pull an existing container than to use Github Action’s default method which rebuilds a new container at runtime on every invocation.
-If you’d prefer to wait the couple extra minutes you may also use the default invocation suggested by Github by substituting this line:
-
-```yaml
-        uses: docker://theleagueof/fontship:latest
-```
-
-With:
-
-```yaml
         uses: theleagueof/fontship@latest
 ```
 
@@ -80,7 +67,7 @@ Other CI runners could easily be supported, see [issue #32](https://github.com/t
 
 ### Docker Setup
 
-Prebuilt Docker images are available from [Docker Hub](https://hub.docker.com/repository/docker/theleagueof/fontship), [Github Packages](https://github.com/theleagueof/fontship/packages), or you can build them yourself.
+Prebuilt Docker images are available from [Docker Hub](https://hub.docker.com/repository/docker/theleagueof/fontship), [Github Packages](https://github.com/orgs/theleagueof/packages/container/package/fontship), or you can build them yourself.
 
 The easiest way to instantiate a Docker container with all the right arguments is to set an alias (which can be added to your shell’s RC file to persist it):
 
