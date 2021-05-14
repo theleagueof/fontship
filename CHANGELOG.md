@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.8.1](https://github.com/theleagueof/fontship/compare/v0.8.0...v0.8.1) (2021-05-14)
+
+
+### Features
+
+* **actions:** Run GitHub Action workflows with prebuilt containers ([3dd5443](https://github.com/theleagueof/fontship/commit/3dd544362700507ac3adb60658f2c1bcaf25825f))
+
 ## [0.8.0](https://github.com/theleagueof/fontship/compare/v0.7.6...v0.8.0) (2021-04-17)
 
 

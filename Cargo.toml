@@ -1,6 +1,6 @@
 [package]
 name = "fontship"
-version = "0.8.0"
+version = "0.8.1"
 authors = [ "Caleb Maclennan <caleb@alerque.com>" ]
 edition = "2018"
 description = "A font development toolkit and collaborative work flow"
