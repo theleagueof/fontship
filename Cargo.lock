@@ -278,7 +278,7 @@ checksum = "ac0f7e83d14cccbf26e165d8881dcac5891af0d85a88543c09dd72ebd31d91ba"
 
 [[package]]
 name = "fontship"
-version = "0.8.1"
+version = "0.8.2"
 dependencies = [
  "Inflector",
  "clap",

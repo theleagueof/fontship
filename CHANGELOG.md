@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.8.2](https://github.com/theleagueof/fontship/compare/v0.8.1...v0.8.2) (2021-05-14)
+
+
+### Bug Fixes
+
+* **build:** Replace all spaces in font family when deriving project id ([da4fa72](https://github.com/theleagueof/fontship/commit/da4fa720948a733a1a76975095b35b5195f83b56))
+
 ### [0.8.1](https://github.com/theleagueof/fontship/compare/v0.8.0...v0.8.1) (2021-05-14)
 
 
