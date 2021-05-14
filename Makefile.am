@@ -150,7 +150,7 @@ tagrelease:
 	test -z $$($(GIT) tag --points-at HEAD) || \
 	$(GIT) diff-index --quiet --cached HEAD && \
 	$(GIT) diff-files --quiet && \
-	npm run release $(and $(RELTYPE),--release-as $(RELTYPE))
+	npm run release -- $(and $(RELTYPE),--release-as $(RELTYPE))
 
 .PHONY: release-preview
 release-preview:
