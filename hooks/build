@@ -1,7 +1,7 @@
 #!/usr/bin/env sh
 set -e
 
-: "${ARCHTAG:=20220102.0.42924}"
+: "${ARCHTAG:=latest}"
 
 DESC=$(git describe --long --tags | sed 's/^v//;s/\([^-]*-g\)/r\1/;s/-/./g')
 

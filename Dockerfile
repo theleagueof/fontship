@@ -2,7 +2,7 @@
 
 ARG ARCHTAG
 
-FROM docker.io/library/archlinux:base-$ARCHTAG AS base
+FROM docker.io/library/archlinux:$ARCHTAG AS base
 
 # Monkey patch glibc to avoid issues with old kernels on hosts
 RUN --mount=type=bind,target=/mp,source=build-aux/docker-glibc-workaround.sh /mp
