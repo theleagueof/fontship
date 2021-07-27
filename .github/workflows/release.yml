@@ -33,5 +33,3 @@ jobs:
           files: |
             fontship-${{ env.VERSION }}.zip
             fontship-${{ env.VERSION }}.tar.xz
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
