@@ -2,12 +2,12 @@ use clap::IntoApp;
 use clap_complete::generator::generate_to;
 use clap_complete::shells::{Bash, Elvish, Fish, PowerShell, Zsh};
 use std::{collections, env, fs};
-use vergen::vergen;
+use vergen::{vergen, Config};
 
 include!("src/cli.rs");
 
 fn main() {
-    let mut flags = vergen::Config::default();
+    let mut flags = Config::default();
     // If passed a version, use that instead of vergen's formatting
     if let Ok(val) = env::var("FONTSHIP_VERSION") {
         *flags.git_mut().semver_mut() = false;
@@ -16,6 +16,7 @@ fn main() {
     // Try to output flags based on Git repo, but if that fails turn off Git features and try again
     // with just cargo generated version info
     if vergen(flags).is_err() {
+        let mut flags = Config::default();
         *flags.git_mut().semver_mut() = false;
         *flags.git_mut().branch_mut() = false;
         *flags.git_mut().commit_timestamp_mut() = false;
