@@ -14,8 +14,7 @@ fn main() -> Result<()> {
     // invocation interchangeable with the default run-time built invocation we
     // need to set some default arguments. These are not used by the regular CLI.
     // See the action.yml file for matching arguments for run-time invocations.
-    let invocation: Vec<String> = env::args().collect();
-    let ret = if status::is_gha()? && invocation.len() == 1 {
+    let ret = if status::is_gha()? && env::args().count() == 1 {
         CONF.set_str("language", "en-US")?;
         fontship::show_welcome();
         let target = vec![String::from("_gha"), String::from("dist")];

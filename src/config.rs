@@ -43,7 +43,7 @@ impl CONF {
             self.set_str("path", path)?;
         }
         if let Some(language) = &args.language {
-            self.set_str("language", &language)?;
+            self.set_str("language", language)?;
         };
         Ok(())
     }

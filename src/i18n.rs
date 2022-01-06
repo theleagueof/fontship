@@ -142,7 +142,7 @@ impl<'a> LocalText<'a> {
 /// Strip off any potential system locale encoding on the end of LC_LANG
 pub fn normalize_lang(input: &str) -> String {
     let re = Regex::new(r"\..*$").unwrap();
-    re.replace(&input, "").to_string()
+    re.replace(input, "").to_string()
 }
 
 /// Scan our embedded assets for what recognisable locale data we have on hand
