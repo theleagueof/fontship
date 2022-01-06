@@ -1,10 +1,10 @@
-use clap::{AppSettings, Clap};
+use clap::{AppSettings, Parser, Subcommand};
 use std::path;
 
 // FTL: help-description
 /// The command line interface to Fontship,
 /// a font development toolkit and collaborative work flow.
-#[derive(Clap, Debug)]
+#[derive(Parser, Debug)]
 #[clap(bin_name = "fontship")]
 #[clap(setting = AppSettings::InferSubcommands)]
 pub struct Cli {
@@ -34,11 +34,11 @@ pub struct Cli {
     pub verbose: bool,
 
     #[clap(subcommand)]
-    pub subcommand: Subcommand,
+    pub subcommand: Commands,
 }
 
-#[derive(Clap, Debug)]
-pub enum Subcommand {
+#[derive(Subcommand, Debug)]
+pub enum Commands {
     // FTL: help-subcommand-make
     /// Build specified target(s) with ‘make’
     Make {

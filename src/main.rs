@@ -1,6 +1,6 @@
 use clap::{FromArgMatches, IntoApp};
 
-use fontship::cli::{Cli, Subcommand};
+use fontship::cli::{Cli, Commands};
 use fontship::config::CONF;
 use fontship::{make, setup, status};
 use fontship::{Result, VERSION};
@@ -23,13 +23,13 @@ fn main() -> Result<()> {
     } else {
         let app = Cli::into_app().version(VERSION);
         let matches = app.get_matches();
-        let args = Cli::from_arg_matches(&matches);
+        let args = Cli::from_arg_matches(&matches)?;
         CONF.from_args(&args)?;
         fontship::show_welcome();
         match args.subcommand {
-            Subcommand::Make { target } => make::run(target),
-            Subcommand::Setup {} => setup::run(),
-            Subcommand::Status {} => status::run(),
+            Commands::Make { target } => make::run(target),
+            Commands::Setup {} => setup::run(),
+            Commands::Status {} => status::run(),
         }
     };
     fontship::show_outro();
