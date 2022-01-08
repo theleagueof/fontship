@@ -33,10 +33,8 @@ CLEANFILES = $(BUILT_SOURCES) .version-prev $(bin_PROGRAMS)
 
 if DEBUG_RELEASE
 CARGO_RELEASE_ARGS=--all-features
-_TARGETDIR=debug
 else
 CARGO_RELEASE_ARGS=--release --locked --all-features
-_TARGETDIR=release
 endif
 
 CARGO_ENV = CARGO_TARGET_DIR=@abs_top_builddir@/target
@@ -77,7 +75,7 @@ cargo_verbose_1 = --verbose
 $(COMPLETIONS_OUT_DIR):
 	mkdir -p $@
 
-fontship$(EXEEXT): $(RUST_BIN)
+$(PACKAGE_NAME)$(EXEEXT): $(RUST_BIN)
 	install $< $@
 
 $(COMPLETIONS_OUT_DIR)/$(TRANSFORMED_PACKAGE_NAME): $(RUST_BIN) | $(COMPLETIONS_OUT_DIR)
