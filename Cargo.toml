@@ -14,12 +14,12 @@ colored = "2.0.0"
 fluent = "0.12.0"
 fluent-fallback = "0.0.4"
 fluent-langneg = "0.13.0"
-itertools = "0.10.0"
+itertools = "0.10.3"
 lazy_static = "1.4.0"
-num_cpus = "1.13.0"
-rayon = "1.5.0"
-rust-embed = "5.9.0"
-subprocess = "0.2.6"
+num_cpus = "1.13.1"
+rayon = "1.5.1"
+rust-embed = "6.3.0"
+subprocess = "0.2.8"
 unic-langid = "0.9.0"
 
   [dependencies.config]
@@ -28,15 +28,15 @@ unic-langid = "0.9.0"
   features = [ "yaml" ]
 
   [dependencies.clap]
-  version = "3.0.5"
+  version = "3.1.6"
   features = [ "derive", "env", "wrap_help" ]
 
   [dependencies.git2]
-  version = "0.13.17"
+  version = "0.13.25"
   default-features = false
 
   [dependencies.git-warp-time]
-  version = "0.4.3"
+  version = "0.4.4"
   default-features = false
 
   [dependencies.Inflector]
@@ -44,13 +44,13 @@ unic-langid = "0.9.0"
   default-features = false
 
   [dependencies.regex]
-  version = "1.4.5"
+  version = "1.5.4"
   default-features = false
   features = [ "std" ]
 
 [build-dependencies]
-clap = "3.0.5"
-clap_complete = "3.0.2"
+clap = "3.1.6"
+clap_complete = "3.1.1"
 
   [build-dependencies.vergen]
   version = "6.0.0"
