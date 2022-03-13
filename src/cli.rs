@@ -1,4 +1,4 @@
-use clap::{AppSettings, Parser, Subcommand};
+use clap::{Parser, Subcommand};
 use std::path;
 
 // FTL: help-description
@@ -6,7 +6,6 @@ use std::path;
 /// a font development toolkit and collaborative work flow.
 #[derive(Parser, Debug)]
 #[clap(bin_name = "fontship")]
-#[clap(setting = AppSettings::InferSubcommands)]
 pub struct Cli {
     // FTL: help-flags-debug
     /// Enable extra debug output from tooling

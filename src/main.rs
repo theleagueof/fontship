@@ -20,7 +20,7 @@ fn main() -> Result<()> {
         let target = vec![String::from("_gha"), String::from("dist")];
         make::run(target)
     } else {
-        let app = Cli::into_app().version(VERSION);
+        let app = Cli::command().infer_subcommands(true).version(VERSION);
         let matches = app.get_matches();
         let args = Cli::from_arg_matches(&matches)?;
         CONF.from_args(&args)?;

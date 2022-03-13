@@ -27,11 +27,11 @@ fn generate_shell_completions() {
     let completions_dir = path::Path::new(&out_dir).join("completions");
     fs::create_dir_all(&completions_dir)
         .expect("Could not create directory in which to place completions");
-    let app = Cli::into_app();
+    let app = Cli::command();
     let bin_name: &str = app
         .get_bin_name()
         .expect("Could not retrieve bin-name from generated Clap app");
-    let mut app = Cli::into_app();
+    let mut app = Cli::command();
     generate_to(Bash, &mut app, bin_name, &completions_dir)
         .expect("Unable to generate bash completions");
     generate_to(Elvish, &mut app, bin_name, &completions_dir)
