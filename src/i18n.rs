@@ -1,4 +1,5 @@
-use crate::*;
+use crate::config::CONF;
+use crate::DEFAULT_LOCALE;
 
 use fluent::{FluentArgs, FluentBundle, FluentResource, FluentValue};
 use fluent_fallback::Localization;
@@ -116,7 +117,7 @@ impl<'a> LocalText<'a> {
                     for res_id in &res_ids {
                         let path = res_path.replace("{res_id}", res_id);
                         if let Some(source) = Asset::get(&path) {
-                            let data = str::from_utf8(source.as_ref())
+                            let data = str::from_utf8(source.data.as_ref())
                                 .expect("Fluent data source not valid UTF-8");
                             let res = FluentResource::try_new(data.to_string())
                                 .expect("Fluent data source not valid resource");
