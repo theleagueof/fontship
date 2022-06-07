@@ -40,7 +40,7 @@ Depending on your project, such usage may or may not continue to function with l
 Build your fonts without installing or running anything locally!
 Just push your sources to a remote Git repository and let Fontship do the rest.
 
-For use with Github Actions, add a configuration file to your repository such as `.github/workflow/fontship.yml`:
+For use with Github Actions, add a configuration file to your repository such as `.github/workflows/fontship.yml`:
 
 ```yaml
 name: Fontship
@@ -61,7 +61,7 @@ jobs:
 ```
 
 At the current time Fontship only builds the fonts into the current project directory, it doesn’t publish them anywhere.
-You’ll need to post the resulting artifacts by (e.g. by attaching them to each CI run or publishing them on releases) as another step your project’s workflow. For a full working examples see [League Spartan’s](https://github.com/theleagueof/league-spartan/blob/master/.github/workflow/fontship.yml) or [Libertinus’s workflow](https://github.com/alerque/libertinus/blob/master/.github/workflow/fontship.yml)s.
+You’ll need to post the resulting artifacts by (e.g. by attaching them to each CI run or publishing them on releases) as another step your project’s workflow. For a full working examples see [League Spartan’s](https://github.com/theleagueof/league-spartan/blob/master/.github/workflows/fontship.yml) or [Libertinus’s workflow](https://github.com/alerque/libertinus/blob/master/.github/workflows/fontship.yml)s.
 
 Other CI runners could easily be supported, see [issue #32](https://github.com/theleagueof/fontship/issues/32) for details or to request sample configs for your favorite.
 
@@ -100,7 +100,7 @@ Otherwise to install and use locally from source, you’ll need some dependencie
 * GNU `make` (4.2+) with corresponding autoconf tools,
 * Python 3 plus assorted modules, see *requirements.txt* file,
 * Rust tools including `cargo` and `rustc` to build the CLI,
-* And a handfull of other font related CLI utilities, namely: `sfn2woff-zopfli`, `psautohint`, `ttfautohint`, and `woff2_compress`.
+* And a handfull of other font related CLI utilities, namely: `sfnt2woff-zopfli`, `psautohint`, `ttfautohint`, and `woff2_compress`.
 
 To install the software to your computer, either clone this repository and run `./bootstrap.sh` or [download and extract the latest release](https://github.com/theleagueof/fontship/releases), then run:
 
