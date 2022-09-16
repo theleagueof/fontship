@@ -182,13 +182,13 @@ media/emblum.svg: media/logo-source.svg
 
 media/icon.svg: media/logo-source.svg
 	inkscape --batch-process \
-		--actions "select-by-id:F,Fontship;EditDelete;select-by-id:truck;FitCanvasToSelection;select-by-id:cargo;object-set-attribute:fill,#000;$(_svg_cleanup)" \
+		--actions "select-by-id:F,Fontship,airhorn;EditDelete;select-by-id:truck;FitCanvasToSelection;select-by-id:cargo;object-set-attribute:fill,#000;$(_svg_cleanup)" \
 		$< -o $@
 	scour $(_scour_args) $@ /dev/stdout | sponge $@
 
 media/badge.svg: media/logo-source.svg
 	inkscape --batch-process \
-		--actions "select-by-id:F,Fontship;EditDelete;select-by-id:truck;FitCanvasToSelection;$(_svg_cleanup);select-all;object-set-attribute:stroke,#FFF;object-set-attribute:fill,#FFF" \
+		--actions "select-by-id:F,Fontship,airhorn;EditDelete;select-by-id:truck;FitCanvasToSelection;$(_svg_cleanup);select-all;object-set-attribute:stroke,#FFF;object-set-attribute:fill,#FFF" \
 		$< -o $@
 	scour $(_scour_args) $@ /dev/stdout | sponge $@
 
