@@ -4,9 +4,6 @@ ARG ARCHTAG
 
 FROM docker.io/library/archlinux:$ARCHTAG AS base
 
-# Monkey patch glibc to avoid issues with old kernels on hosts
-RUN --mount=type=bind,target=/mp,source=build-aux/docker-glibc-workaround.sh /mp
-
 # Setup Caleb’s hosted Arch repository with prebuilt dependencies
 RUN pacman-key --init && pacman-key --populate
 RUN sed -i  /etc/pacman.conf -e \
