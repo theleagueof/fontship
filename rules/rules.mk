@@ -310,6 +310,7 @@ $(BUILDDIR)/%-hinted.ttf: $(BUILDDIR)/%.ttf
 	$(TTFAUTOHINT) $(TTFAUTOHINTFLAGS) -n $< $@
 
 $(STATICTTFS): %.ttf: $(BUILDDIR)/%-instance$(and $(HINT),-hinted).ttf $(BUILDDIR)/last-commit
+	export PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION=python
 	$(GFTOOLS) $(GFTOOLSFLAGS) fix-font -o $@ $<
 	$(normalizeVersion)
 
@@ -317,14 +318,17 @@ $(BUILDDIR)/%-subr.otf: $(BUILDDIR)/%-instance$(and $(HINT),-hinted).otf
 	$(PYTHON) -m cffsubr -o $@ $<
 
 $(STATICOTFS): %.otf: $(BUILDDIR)/%-subr.otf $(BUILDDIR)/last-commit
+	export PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION=python
 	$(GFTOOLS) $(GFTOOLSFLAGS) fix-font -o $@ $<
 	$(normalizeVersion)
 
 $(VARIABLEOTFS): %.otf: $(BUILDDIR)/%-variable$(and $(_VTTSOURCES),-hinted).otf $(BUILDDIR)/last-commit
+	export PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION=python
 	$(GFTOOLS) $(GFTOOLSFLAGS) fix-font -o $@ $<
 	$(normalizeVersion)
 
 $(VARIABLETTFS): %.ttf: $(BUILDDIR)/%-variable$(and $(_VTTSOURCES),-hinted).ttf $(BUILDDIR)/last-commit
+	export PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION=python
 	$(GFTOOLS) $(GFTOOLSFLAGS) fix-font -o $@ $<
 	$(normalizeVersion)
 
@@ -350,7 +354,7 @@ endif
 
 # Utility stuff
 
-forceiftagchange = $(shell $(CMP) -s $@ - <<< "$(GitVersion)" || echo force)
+forceiftagchange = $(shell $(_ENV) $(CMP) -s $@ - <<< "$(GitVersion)" || echo force)
 $(BUILDDIR)/last-commit: $$(forceiftagchange) | $(BUILDDIR)
 	$(GIT) update-index --refresh --ignore-submodules ||:
 	$(GIT) diff-index --quiet --cached HEAD -- $(SOURCES)

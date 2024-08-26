@@ -1,4 +1,5 @@
 #![allow(clippy::trivial_regex)]
+#![allow(clippy::borrowed_box)]
 
 #[macro_use]
 extern crate lazy_static;
@@ -6,17 +7,19 @@ extern crate num_cpus;
 
 use crate::config::CONF;
 
-use colored::{ColoredString, Colorize};
 use git2::{Oid, Repository, Signature};
 use i18n::LocalText;
 use inflector::Inflector;
 use regex::Regex;
 use std::ffi::OsStr;
-use std::{error, fmt, path, result, str};
+use std::{env, error, fmt, path, result, str};
 
 pub mod cli;
 pub mod config;
 pub mod i18n;
+pub mod ui;
+pub mod ui_ascii;
+pub mod ui_indicatif;
 
 // Subcommands
 pub mod make;
@@ -31,8 +34,11 @@ pub static CONFIGURE_DATADIR: &str = env!["CONFIGURE_DATADIR"];
 /// If all else fails, use this BCP-47 locale
 pub static DEFAULT_LOCALE: &str = "en-US";
 
-/// Fontship version number as detected by `git describe --tags` at build time
-pub static VERSION: &str = env!("VERGEN_GIT_SEMVER");
+lazy_static! {
+    /// Fontship version number as detected by `git describe --tags` at build time
+    pub static ref VERSION: &'static str =
+        option_env!("VERGEN_GIT_DESCRIBE").unwrap_or_else(|| env!("CARGO_PKG_VERSION"));
+}
 
 pub type Result<T> = result::Result<T, Box<dyn error::Error>>;
 
@@ -71,21 +77,31 @@ pub fn pname(input: &str) -> String {
 
 /// Get repository object
 pub fn get_repo() -> Result<Repository> {
-    let path = CONF.get_string("path")?;
-    Ok(Repository::discover(path)?)
+    let project = CONF.get_string("project")?;
+    Ok(Repository::discover(project)?)
+}
+
+/// Check to see if we're running in GitHub Actions
+pub fn is_gha() -> bool {
+    env::var("GITHUB_ACTIONS").is_ok()
+}
+
+/// Check to see if we're running in GitLab CI
+pub fn is_glc() -> bool {
+    env::var("GITLAB_CI").is_ok()
 }
 
 pub fn commit(repo: Repository, oid: Oid, msg: &str) -> result::Result<Oid, git2::Error> {
     let prefix = "[fontship]";
-    let commiter = repo.signature()?;
-    let author = Signature::now("Fontship", commiter.email().unwrap())?;
+    let committer = repo.signature()?;
+    let author = Signature::now("Fontship", committer.email().unwrap())?;
     let parent = repo.head()?.peel_to_commit()?;
     let tree = repo.find_tree(oid)?;
     let parents = [&parent];
     repo.commit(
         Some("HEAD"),
         &author,
-        &commiter,
+        &committer,
         &[prefix, msg].join(" "),
         &tree,
         &parents,
@@ -97,43 +113,13 @@ pub fn format_font_version(version: String) -> String {
     String::from(re.replace(version.as_str(), ""))
 }
 
-/// Output welcome header at start of run before moving on to actual commands
-pub fn show_welcome() {
-    let welcome = LocalText::new("welcome").arg("version", VERSION);
-    eprintln!("{} {}", "┏━".cyan(), welcome.fmt().cyan());
-}
-
-/// Output welcome header at start of run before moving on to actual commands
-pub fn show_outro() {
-    let outro = LocalText::new("outro");
-    eprintln!("{} {}", "┗━".cyan(), outro.fmt().cyan());
-}
-
-/// Output header before starting work on a subcommand
-pub fn show_header(key: &str) {
-    let text = LocalText::new(key);
-    eprintln!("{} {}", "┣━".cyan(), text.fmt().yellow());
-}
-
-pub fn display_check(key: &str, val: bool) {
-    if CONF.get_bool("debug").unwrap() || CONF.get_bool("verbose").unwrap() {
-        eprintln!(
-            "{} {} {}",
-            "┠─".cyan(),
-            LocalText::new(key).fmt(),
-            fmt_t_f(val)
-        );
-    };
-}
-
-/// Format a localized string just for true / false status prints
-fn fmt_t_f(val: bool) -> ColoredString {
-    let key = if val { "setup-true" } else { "setup-false" };
-    let text = LocalText::new(key).fmt();
-    if val {
-        text.green()
-    } else {
-        text.red()
+pub fn locale_to_language(lang: String) -> String {
+    let re = Regex::new(r"[-_\.].*$").unwrap();
+    let locale_frag = lang.as_str().to_lowercase();
+    let lang = re.replace(&locale_frag, "");
+    match &lang[..] {
+        "c" => String::from("en"),
+        _ => String::from(lang),
     }
 }
 

@@ -7,11 +7,11 @@ on:
 jobs:
   actions-tagger:
 
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
       - uses: Actions-R-Us/actions-tagger@v2
         with:
           publish_latest_tag: true

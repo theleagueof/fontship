@@ -1,0 +1,7 @@
+# Since autotools sets these and we are *not* forcing them here, this will not
+# affect release builds. It will affect `cargo run`, `cargo clippy` and others
+# making it easier to test locally since the Lua loader path and other
+# resources will be relative to the current sources.
+[env]
+CONFIGURE_DATADIR = { value = "", relative = true }
+

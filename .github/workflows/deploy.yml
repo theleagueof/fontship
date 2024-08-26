@@ -13,10 +13,10 @@ jobs:
   ghcr:
     strategy:
       fail-fast: false
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
       - name: Fetch tags
@@ -24,18 +24,21 @@ jobs:
           git fetch --prune --tags ||:
       - name: Setup system dependencies
         run: |
-          sudo apt-get install autoconf-archive
+          sudo apt-get install clang mold
       - name: Configure
         run: |
-          echo "REF=${GITHUB_REF##refs/*/}" >> $GITHUB_ENV
           ./bootstrap.sh
-          ./configure --without-{bash,fish,zsh}-completion-dir --disable-dependency-checks
-      - name: Publish Docker Image to GH Pakcages
+          ./configure \
+            --without-{bash,fish,zsh}-completion-dir \
+            --enable-developer-mode \
+            --disable-dependency-checks \
+            CURL=curl DOCKER=docker DIFF=diff TR=tr SORT=sort
+      - name: Publish Docker Image to GH Container Registry
         run: |
           make docker-build-push
         env:
           DOCKER_REGISTRY: ghcr.io
           DOCKER_REPO: ${{ github.repository }}
-          DOCKER_TAG: ${{ env.REF }}
+          DOCKER_TAG: ${{ github.ref_name }}
           DOCKER_USERNAME: ${{ github.actor }}
           DOCKER_PAT: ${{ secrets.CR_FONTSHIP }}

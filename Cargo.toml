@@ -2,60 +2,73 @@
 name = "fontship"
 version = "0.8.2"
 authors = [ "Caleb Maclennan <caleb@alerque.com>" ]
-edition = "2018"
+edition = "2021"
 description = "A font development toolkit and collaborative work flow"
 homepage = "https://github.com/theleagueof/fontship"
 repository = "https://github.com/theleagueof/fontship"
 license = "AGPL-3"
-build = "build.rs"
+build = "build-aux/build.rs"
 
 [dependencies]
-colored = "2.0.0"
-fluent = "0.12.0"
-fluent-fallback = "0.0.4"
-fluent-langneg = "0.13.0"
-itertools = "0.10.3"
-lazy_static = "1.4.0"
-num_cpus = "1.13.1"
-rayon = "1.5.1"
-rust-embed = "6.3.0"
-subprocess = "0.2.8"
-unic-langid = "0.9.0"
+console = "0.15"
+fluent = "0.16"
+fluent-fallback = "0.7"
+fluent-langneg = "0.13"
+futures = "0.3"
+itertools = "0.13"
+lazy_static = "1.4"
+num_cpus = "1.16"
+rayon = "1.10"
+rust-embed = "8.3"
+rustc-hash = "1.1"
+subprocess = "0.2"
+unic-langid = "0.9"
+unic-langid-impl = "0.9"
 
   [dependencies.config]
-  version = "0.11.0"
+  version = "0.14"
   default-features = false
   features = [ "yaml" ]
 
   [dependencies.clap]
-  version = "3.1.6"
-  features = [ "derive", "env", "wrap_help" ]
+  version = "4.5"
+  features = [ "derive", "wrap_help" ]
 
   [dependencies.git2]
-  version = "0.13.25"
+  version = "0.19"
   default-features = false
 
   [dependencies.git-warp-time]
-  version = "0.4.4"
+  version = "0.8"
   default-features = false
 
+  [dependencies.indicatif]
+  version = "0.17"
+  features = [ "improved_unicode", "rayon" ]
+
   [dependencies.Inflector]
-  version = "0.11.4"
+  version = "0.11"
   default-features = false
 
   [dependencies.regex]
-  version = "1.5.4"
+  version = "1.10"
   default-features = false
   features = [ "std" ]
 
-[build-dependencies]
-clap = "3.1.6"
-clap_complete = "3.1.1"
+[build-dependencies.clap_mangen]
+version = "0.2"
 
-  [build-dependencies.vergen]
-  version = "6.0.0"
-  default-features = false
-  features = [ "build", "git" ]
+[build-dependencies.clap]
+version = "4.5"
+features = [ "derive" ]
+
+[build-dependencies.clap_complete]
+version = "4.5"
+
+[build-dependencies.vergen]
+version = "8.3"
+default-features = false
+features = [ "build", "cargo", "git", "gitoxide" ]
 
 [profile.release]
 lto = true

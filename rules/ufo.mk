@@ -1,5 +1,5 @@
 ufoNormalize ?= $(UFONORMALIZER) $(UFONORMALIZERFLAGS) "$1" -o "$2"
-expandUFOParts = $(shell $(FIND) "$1" -type f 2> /dev/null)
+expandUFOParts = $(shell $(_ENV) $(FIND) "$1" -type f 2> /dev/null)
 ufoParts = $(call expandUFOParts,$(patsubst %-normalized.ufo,%.ufo,$(patsubst $(BUILDDIR)/%,$(SOURCEDIR)/%,$@)))
 instanceToDS = $(_DSF_$(subst -,,$*))
 
@@ -11,9 +11,9 @@ for instance in designspace.instances: print("_DSI_{1}{0} = {1} {2}\n_DSF_{1}{0}
 endef
 
 ifneq ($(SOURCES_DESIGNSPACE),)
-_TMP := $(shell local tmp=$$(mktemp vars-XXXXXX.mk); echo $${tmp}; {$(foreach SOURCE,$(SOURCES_DESIGNSPACE),$(PYTHON) -c '$(makeVars)';)} >> $${tmp})
+_TMP := $(shell $(_ENV) local tmp=$$(mktemp vars-XXXXXX.mk); echo $${tmp}; {$(foreach SOURCE,$(SOURCES_DESIGNSPACE),$(PYTHON) -c '$(makeVars)';)} >> $${tmp})
 $(eval $(file < $(_TMP)))
-$(shell rm -f $(_TMP))
+$(shell $(_ENV) rm -f $(_TMP))
 endif
 
 $(BUILDDIR)/%-VF-variable.otf: $(SOURCEDIR)/%.designspace | $(BUILDDIR)

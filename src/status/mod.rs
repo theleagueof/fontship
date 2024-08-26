@@ -1,15 +1,17 @@
+use crate::ui::*;
 use crate::*;
 
 use git2::{DescribeFormatOptions, DescribeOptions};
 use regex::Regex;
-use std::{env, path};
+use std::path;
 
 // FTL: help-subcommand-status
 /// Show status information about setup, configuration, and build state
 pub fn run() -> Result<()> {
-    show_header("status-header");
+    let is_setup = setup::is_setup()?;
+    let subcommand_status = FONTSHIPUI.new_subcommand("status");
     CONF.set_bool("verbose", true)?;
-    setup::is_setup()?;
+    subcommand_status.end(is_setup);
     Ok(())
 }
 
@@ -29,9 +31,18 @@ fn run_as() -> RunAsMode {
 }
 
 /// Check to see if we're running in GitHub Actions
-pub fn is_gha() -> Result<bool> {
-    let ret = env::var("GITHUB_ACTIONS").is_ok();
-    display_check("status-is-gha", ret);
+pub fn status_is_gha() -> Result<bool> {
+    let ret = is_gha();
+    let status = FONTSHIPUI.new_check("status-is-gha");
+    status.end(ret);
+    Ok(ret)
+}
+
+/// Check to see if we're running in GitLab CI
+pub fn status_is_glc() -> Result<bool> {
+    let ret = is_glc();
+    let status = FONTSHIPUI.new_check("status-is-glc");
+    status.end(ret);
     Ok(ret)
 }
 
@@ -55,29 +66,23 @@ pub fn get_gitname() -> Result<String> {
             .as_str();
         Ok(String::from(name))
     }
-    fn path() -> Result<String> {
-        let path = &CONF.get_string("path")?;
-        let file = path::Path::new(path)
+    fn project() -> Result<String> {
+        let project = &CONF.get_string("project")?;
+        let file = path::Path::new(project)
             .file_name()
-            .ok_or_else(|| Error::new("error-no-path"))?
+            .ok_or_else(|| Error::new("error-no-project"))?
             .to_str();
         Ok(file.unwrap().to_string())
     }
     let default = Ok(String::from("fontship"));
-    origin().or_else(|_| path().or(default))
+    origin().or_else(|_| project().or(default))
 }
 
 /// Scan for existing makefiles with Fontship rules
 pub fn get_rules() -> Result<Vec<path::PathBuf>> {
     let repo = get_repo()?;
     let root = repo.workdir().unwrap();
-    let files = vec![
-        "GNUMakefile",
-        "makefile",
-        "Makefile",
-        "fontship.mk",
-        "rules.mk",
-    ];
+    let files = vec!["fontship.mk", "rules.mk"];
     let mut rules = Vec::new();
     for file in &files {
         let p = root.join(file);
