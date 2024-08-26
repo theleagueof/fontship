@@ -10,17 +10,20 @@ license = "AGPL-3"
 build = "build-aux/build.rs"
 
 [dependencies]
-colored = "2.0.0"
-fluent = "0.12.0"
-fluent-fallback = "0.0.4"
-fluent-langneg = "0.13.0"
-itertools = "0.10.3"
-lazy_static = "1.4.0"
-num_cpus = "1.13.1"
-rayon = "1.5.1"
-rust-embed = "6.3.0"
-subprocess = "0.2.8"
-unic-langid = "0.9.0"
+console = "0.15"
+fluent = "0.16"
+fluent-fallback = "0.7"
+fluent-langneg = "0.13"
+futures = "0.3"
+itertools = "0.13"
+lazy_static = "1.4"
+num_cpus = "1.16"
+rayon = "1.10"
+rust-embed = "8.3"
+rustc-hash = "1.1"
+subprocess = "0.2"
+unic-langid = "0.9"
+unic-langid-impl = "0.9"
 
   [dependencies.config]
   version = "0.14"
@@ -39,12 +42,16 @@ unic-langid = "0.9.0"
   version = "0.8"
   default-features = false
 
+  [dependencies.indicatif]
+  version = "0.17"
+  features = [ "improved_unicode", "rayon" ]
+
   [dependencies.Inflector]
-  version = "0.11.4"
+  version = "0.11"
   default-features = false
 
   [dependencies.regex]
-  version = "1.5.4"
+  version = "1.10"
   default-features = false
   features = [ "std" ]
 

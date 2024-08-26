@@ -2,6 +2,7 @@ use clap::{Args, Command, FromArgMatches as _};
 
 use fontship::cli::{Cli, Commands};
 use fontship::config::CONF;
+use fontship::ui::{UserInterface, FONTSHIPUI};
 use fontship::{make, setup, status};
 use fontship::{Result, VERSION};
 
@@ -13,13 +14,13 @@ fn main() -> Result<()> {
     let matches = cli.get_matches();
     let args = Cli::from_arg_matches(&matches).expect("Unable to parse arguments");
     CONF.merge_args(&args)?;
-    fontship::show_welcome();
+    FONTSHIPUI.welcome();
     let subcommand = Commands::from_arg_matches(&matches)?;
     let ret = match subcommand {
         Commands::Make { target } => make::run(target),
         Commands::Setup {} => setup::run(),
         Commands::Status {} => status::run(),
     };
-    fontship::show_outro();
+    FONTSHIPUI.farewell();
     ret
 }

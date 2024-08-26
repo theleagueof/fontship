@@ -4,19 +4,22 @@ help-description =
   a font development toolkit and collaborative work flow.
 
 # Currently hard coded, see clap issue #1880
-help-flags-debug =
+help-flag-debug =
   Enable extra debug output from tooling
 
 # Currently hard coded, see clap issue #1880
-help-flags-language =
+help-flag-language =
   Set language
 
 # Currently hard coded, see clap issue #1880
-help-flags-quiet =
+help-flag-quiet =
   Discard all non-error output messages
 
+help-flag-passthrough =
+  Eschew all UI output and just pass the subprocess output through
+
 # Currently hard coded, see clap issue #1880
-help-flags-verbose =
+help-flag-verbose =
   Enable extra verbose output from tooling
 
 # Currently hard coded, see clap issue #1880
@@ -55,26 +58,32 @@ error-no-path =
 welcome =
   Welcome to Fontship { $version }
 
-outro =
-  Fontship run complete
+farewell =
+  Fontship run completed in { $duration }.
 
 make-header =
   Building target(s) using ‘make’
 
-make-report-start =
-  Starting make job for target: { $target }
+make-good =
+  All target(s) successfully made.
 
-make-report-end =
-  Finished make job for target: { $target }
+make-bad =
+  Unable to finish making some or all target(s).
+
+make-report-start =
+  Started to make: { $target }
+
+make-report-pass =
+  Finished making: { $target }
 
 make-report-fail =
-  Failed make job for target: { $target }
+  Make recipe for target { $target } failed with exit code { $code }.
 
 make-backlog-start =
-  Dumping captured output of ‘make’
+  Dumping captured output of ‘make’ for target { $target }:
 
 make-backlog-end =
-  End dump
+  End of dump.
 
 make-error-unknown-code =
   Make returned an action code Fontship doesn't have a handler for.  The most
@@ -85,6 +94,9 @@ make-error-unknown-code =
 make-error =
   Failed to execute a subprocess for ‘make’.
 
+make-error-oom =
+  Make reported process aborted because system ran out of memory (OOM).
+
 make-error-unfinished =
   Make reported outdated targets were not built.
 
@@ -94,17 +106,14 @@ make-error-build =
 make-error-target =
   Make failed to execute a recipe.
 
+make-error-unidentified-target =
+  Make asked to print output related to a target we didn't know was running: { $target }
+
 make-error-unknown =
   Make returned unknown error.
 
 setup-header =
   Configuring repository for use with Fontship
-
-setup-true =
-  Yes
-
-setup-false =
-  No
 
 setup-good =
   Everything seems to be ship shape, anchors up!
@@ -112,8 +121,17 @@ setup-good =
 setup-bad =
   Something isn’t seaworthy, run ‘fontship setup’
 
+setup-true =
+  Yes
+
+setup-false =
+  No
+
 setup-is-repo =
   Is the path a Git repository?
+
+setup-is-deep =
+  Is the Git a deep clone?
 
 setup-is-not-fontship =
   Are we not in the Fontship source repository?
@@ -137,13 +155,31 @@ setup-short-shas =
   Setting default length of short SHA hashes in repository
 
 setup-warp-time =
-  Reseting version tracked file timestamps to last affecting commit
+  Resetting version tracked file timestamps to last affecting commit
 
 setup-warp-time-file =
   Rewound clock on { $path }
 
+is-setup-header =
+  { setup-header }
+
+is-setup-good =
+  { status-good }
+
+is-setup-bad =
+  { status-bad }
+
 status-header =
   Scanning project status
 
+status-good =
+  Everything seems to be ship shape, warm up the presses!
+
+status-bad =
+  Hold the presses, something isn’t right, run ‘fontship setup’
+
 status-is-gha =
   Are we running as a GitHub Action?
+
+status-is-glc =
+  Are we running as a GitLab CI job?

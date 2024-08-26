@@ -1,7 +1,8 @@
 # Utility variables for later, http://blog.jgc.org/2007/06/escaping-comma-and-space-in-gnu-make.html
 , := ,
-space := $() $()
-$(space) := $() $()
+empty :=
+space := $(empty) $(empty)
+$(space) := $(empty) $(empty)
 lparen := (
 rparen := )
 
