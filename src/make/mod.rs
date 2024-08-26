@@ -50,9 +50,11 @@ pub fn run(target: Vec<String>) -> Result<()> {
     let git_version = status::get_git_version();
     let font_version = format_font_version(git_version.clone());
     process = process
+        .env("BUILDDIR", CONF.get_string("builddir")?)
         .env("FONTSHIP_CLI", "true")
         .env("FONTSHIPDIR", CONFIGURE_DATADIR)
         .env("CONTAINERIZED", status::is_container().to_string())
+        .env("LANGUAGE", locale_to_language(CONF.get_string("language")?))
         .env("GITNAME", &gitname)
         .env("PROJECT", pname(&gitname))
         .env("PROJECTDIR", CONF.get_string("path")?)

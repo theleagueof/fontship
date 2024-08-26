@@ -350,7 +350,7 @@ endif
 
 # Utility stuff
 
-forceiftagchange = $(shell $(CMP) -s $@ - <<< "$(GitVersion)" || echo force)
+forceiftagchange = $(shell $(_ENV) $(CMP) -s $@ - <<< "$(GitVersion)" || echo force)
 $(BUILDDIR)/last-commit: $$(forceiftagchange) | $(BUILDDIR)
 	$(GIT) update-index --refresh --ignore-submodules ||:
 	$(GIT) diff-index --quiet --cached HEAD -- $(SOURCES)

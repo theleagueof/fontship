@@ -31,8 +31,11 @@ pub static CONFIGURE_DATADIR: &str = env!["CONFIGURE_DATADIR"];
 /// If all else fails, use this BCP-47 locale
 pub static DEFAULT_LOCALE: &str = "en-US";
 
-/// Fontship version number as detected by `git describe --tags` at build time
-pub static VERSION: &str = env!("VERGEN_GIT_SEMVER");
+lazy_static! {
+    /// Fontship version number as detected by `git describe --tags` at build time
+    pub static ref VERSION: &'static str =
+        option_env!("VERGEN_GIT_DESCRIBE").unwrap_or_else(|| env!("CARGO_PKG_VERSION"));
+}
 
 pub type Result<T> = result::Result<T, Box<dyn error::Error>>;
 
@@ -92,6 +95,16 @@ pub fn commit(repo: Repository, oid: Oid, msg: &str) -> result::Result<Oid, git2
     )
 }
 
+pub fn locale_to_language(lang: String) -> String {
+    let re = Regex::new(r"[-_\.].*$").unwrap();
+    let locale_frag = lang.as_str().to_lowercase();
+    let lang = re.replace(&locale_frag, "");
+    match &lang[..] {
+        "c" => String::from("en"),
+        _ => String::from(lang),
+    }
+}
+
 pub fn format_font_version(version: String) -> String {
     let re = Regex::new(r"-r.*$").unwrap();
     String::from(re.replace(version.as_str(), ""))
@@ -99,7 +112,7 @@ pub fn format_font_version(version: String) -> String {
 
 /// Output welcome header at start of run before moving on to actual commands
 pub fn show_welcome() {
-    let welcome = LocalText::new("welcome").arg("version", VERSION);
+    let welcome = LocalText::new("welcome").arg("version", VERSION.to_string());
     eprintln!("{} {}", "┏━".cyan(), welcome.fmt().cyan());
 }
 

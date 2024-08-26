@@ -4,7 +4,7 @@ use clap_complete::shells::{Bash, Elvish, Fish, PowerShell, Zsh};
 use std::{collections, env, fs};
 use vergen::{vergen, Config};
 
-include!("src/cli.rs");
+include!("../src/cli.rs");
 
 fn main() {
     let mut flags = Config::default();

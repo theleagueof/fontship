@@ -4,9 +4,12 @@ MAKEFLAGS += --output-sync=none
 MAKEFLAGS += --silent
 # Disable as many built in file type builds as possible
 MAKEFLAGS += --no-builtin-rules
+# Avoid silent errors to ease debugging
+MAKEFLAGS += --warn-undefined-variables
+
 .SUFFIXES:
 
-# Don't drop intermediate artifacts (saves rebulid time and aids debugging)
+# Don't drop intermediate artifacts (saves rebuild time and aids debugging)
 .SECONDARY:
 .PRECIOUS: %
 .DELETE_ON_ERROR:
@@ -17,8 +20,25 @@ $(error Use of fontship rule file inclusion outside of the CLI is deprecated!)
 endif
 
 # Run complete recipes in wrapper script that facilitates clean CLI output
-SHELL := $(FONTSHIPDIR)/make-shell.zsh
-.SHELLFLAGS = target=$@
+SHELL := $(FONTSHIPDIR)/lib/make-shell.zsh
+
+.SHELLFLAGS = -w
+
+DEBUG ?= false # also later set in rules.mk just to be visible with other settings
+ifeq ($(DEBUG),true)
+.SHELLFLAGS += -x
+endif
+
+# We *must* pass at least one argument to our custom shell before make adds the
+# shell code it wants to execute. We use this one because its easy to falsify
+# in our $(shell) wrapper environment...
+.SHELLFLAGS += _WRAPTARGET=true
+
+# Differentiate shells used to run recipes vs. shell wrapper function
+# See https://stackoverflow.com/q/65553367/313192
+_ENV := _WRAPTARGET=false
+
+.SHELLFLAGS += $(eval @?=)$(and $@,target=$@)
 .ONESHELL:
 .SECONDEXPANSION:
 
@@ -42,8 +62,6 @@ TTX ?= @TTX@
 UFONORMALIZER ?= @UFONORMALIZER@
 WOFF2COMPRESS ?= @WOFF2_COMPRESS@
 ZSH ?= @ZSH@
-
-BUILDDIR ?= .fontship
 
 .PHONY: default
 default: all

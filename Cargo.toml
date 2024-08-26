@@ -7,7 +7,7 @@ description = "A font development toolkit and collaborative work flow"
 homepage = "https://github.com/theleagueof/fontship"
 repository = "https://github.com/theleagueof/fontship"
 license = "AGPL-3"
-build = "build.rs"
+build = "build-aux/build.rs"
 
 [dependencies]
 colored = "2.0.0"
