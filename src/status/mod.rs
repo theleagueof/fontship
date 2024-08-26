@@ -108,7 +108,7 @@ pub fn get_sources() -> Result<Vec<path::PathBuf>> {
         if !path.exists() {
             continue;
         }
-        if let Ok(part) = path.strip_prefix(&sourcedir) {
+        if let Ok(part) = path.strip_prefix(sourcedir) {
             let mut components = part.components();
             if let Some(path::Component::Normal(name)) = components.next() {
                 let n = name.to_str().unwrap();
