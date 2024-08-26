@@ -1,11 +1,11 @@
-use clap::{Parser, Subcommand};
+use clap::{Args, Subcommand};
 use std::path;
 
 // FTL: help-description
 /// The command line interface to Fontship,
 /// a font development toolkit and collaborative work flow.
-#[derive(Parser, Debug)]
-#[clap(bin_name = "fontship")]
+#[derive(Args, Debug)]
+#[clap(author)]
 pub struct Cli {
     // FTL: help-flags-debug
     /// Enable extra debug output from tooling
@@ -14,13 +14,18 @@ pub struct Cli {
 
     // FTL: help-flags-language
     /// Set language
-    #[clap(short, long, env = "LANG")]
+    #[clap(short, long)]
     pub language: Option<String>,
+
+    // FTL: help-flag-passthrough
+    /// Eschew all UI output and just pass the subprocess output through
+    #[clap(short, long)]
+    pub passthrough: bool,
 
     // FTL: help-flags-path
     /// Set project root path
-    #[clap(short, long, default_value = "./")]
-    pub path: path::PathBuf,
+    #[clap(short = 'P', long, default_value = "./", value_hint = clap::ValueHint::DirPath)]
+    pub project: path::PathBuf,
 
     // FTL: help-flags-quiet
     /// Discard all non-error output messages
@@ -43,6 +48,7 @@ pub enum Commands {
     Make {
         // FTL: help-subcommand-make-target
         /// Target as defined in Fontship or project rules
+        #[clap(value_hint = clap::ValueHint::AnyPath)]
         target: Vec<String>,
     },
 

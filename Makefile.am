@@ -13,7 +13,7 @@ pkgdatadir = $(datadir)
 
 dist_doc_DATA = README.md CHANGELOG.md
 dist_license_DATA = LICENSE.md
-dist_man_MANS = fontship.1
+dist_man_MANS =
 nobase_data_DATA = rules/fontship.mk
 nobase_dist_data_DATA = rules/rules.mk rules/functions.mk rules/glyphs.mk rules/sfd.mk rules/ufo.mk
 _fontship_libs = src/lib.rs src/cli.rs src/config.rs src/i18n.rs

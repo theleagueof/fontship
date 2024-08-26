@@ -2,7 +2,7 @@
 name = "fontship"
 version = "0.8.2"
 authors = [ "Caleb Maclennan <caleb@alerque.com>" ]
-edition = "2018"
+edition = "2021"
 description = "A font development toolkit and collaborative work flow"
 homepage = "https://github.com/theleagueof/fontship"
 repository = "https://github.com/theleagueof/fontship"
@@ -23,13 +23,13 @@ subprocess = "0.2.8"
 unic-langid = "0.9.0"
 
   [dependencies.config]
-  version = "0.11.0"
+  version = "0.14"
   default-features = false
   features = [ "yaml" ]
 
   [dependencies.clap]
-  version = "3.1.6"
-  features = [ "derive", "env", "wrap_help" ]
+  version = "4.5"
+  features = [ "derive", "wrap_help" ]
 
   [dependencies.git2]
   version = "0.13.25"
@@ -48,14 +48,19 @@ unic-langid = "0.9.0"
   default-features = false
   features = [ "std" ]
 
-[build-dependencies]
-clap = "3.1.6"
-clap_complete = "3.1.1"
+[build-dependencies.clap_mangen]
+version = "0.2"
 
-  [build-dependencies.vergen]
-  version = "6.0.0"
-  default-features = false
-  features = [ "build", "git" ]
+[build-dependencies.clap]
+version = "4.5"
+features = [ "derive" ]
+[build-dependencies.clap_complete]
+version = "4.5"
+
+[build-dependencies.vergen]
+version = "8.3"
+default-features = false
+features = [ "build", "cargo", "git", "gitoxide" ]
 
 [profile.release]
 lto = true

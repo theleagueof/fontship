@@ -70,15 +70,7 @@ AM_COND_IF([DEVELOPER_MODE], [
     datarootdir="$(cd ..; pwd)"
 ])
 
-if [[ -d .git ]]; then
-    MAN_DATE=$(git log -1 --format="%cd" --date=format:"%d %B %Y" -- fontship.1.in)
-else
-    MAN_DATE=$(date "+%d %B %Y")
-fi
-AC_SUBST([MAN_DATE])
-
 AC_CONFIG_FILES([Makefile])
-AC_CONFIG_FILES([fontship.1])
 AC_CONFIG_FILES([rules/fontship.mk])
 
 AC_CONFIG_FILES([lib/make-shell.zsh], [chmod +x lib/make-shell.zsh])

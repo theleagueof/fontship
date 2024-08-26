@@ -13,8 +13,8 @@ use subprocess::{Exec, NullFile, Redirection};
 /// Setup a font project for use with Fontship
 pub fn run() -> Result<()> {
     show_header("setup-header");
-    let path = &CONF.get_string("path")?;
-    let metadata = fs::metadata(&path)?;
+    let project = &CONF.get_string("project")?;
+    let metadata = fs::metadata(project)?;
     match metadata.is_dir() {
         true => match is_repo()? {
             true => {

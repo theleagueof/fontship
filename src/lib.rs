@@ -74,8 +74,8 @@ pub fn pname(input: &str) -> String {
 
 /// Get repository object
 pub fn get_repo() -> Result<Repository> {
-    let path = CONF.get_string("path")?;
-    Ok(Repository::discover(path)?)
+    let project = CONF.get_string("project")?;
+    Ok(Repository::discover(project)?)
 }
 
 pub fn commit(repo: Repository, oid: Oid, msg: &str) -> result::Result<Oid, git2::Error> {

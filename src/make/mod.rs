@@ -57,7 +57,7 @@ pub fn run(target: Vec<String>) -> Result<()> {
         .env("LANGUAGE", locale_to_language(CONF.get_string("language")?))
         .env("GITNAME", &gitname)
         .env("PROJECT", pname(&gitname))
-        .env("PROJECTDIR", CONF.get_string("path")?)
+        .env("PROJECTDIR", CONF.get_string("project")?)
         .env("GitVersion", git_version)
         .env("FontVersion", font_version)
         .env("SOURCEDIR", CONF.get_string("sourcedir")?)

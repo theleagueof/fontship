@@ -1,35 +1,24 @@
-use clap::{FromArgMatches, IntoApp};
+use clap::{Args, Command, FromArgMatches as _};
 
 use fontship::cli::{Cli, Commands};
 use fontship::config::CONF;
 use fontship::{make, setup, status};
 use fontship::{Result, VERSION};
 
-use std::env;
-
 fn main() -> Result<()> {
     CONF.defaults()?;
-    CONF.from_env()?;
-    // Workaround for Github Actions usage to make the prebuilt Docker image
-    // invocation interchangeable with the default run-time built invocation we
-    // need to set some default arguments. These are not used by the regular CLI.
-    // See the action.yml file for matching arguments for run-time invocations.
-    let ret = if status::is_gha()? && env::args().count() == 1 {
-        CONF.set_str("language", "en-US")?;
-        fontship::show_welcome();
-        let target = vec![String::from("_gha"), String::from("dist")];
-        make::run(target)
-    } else {
-        let app = Cli::command().infer_subcommands(true).version(*VERSION);
-        let matches = app.get_matches();
-        let args = Cli::from_arg_matches(&matches)?;
-        CONF.from_args(&args)?;
-        fontship::show_welcome();
-        match args.subcommand {
-            Commands::Make { target } => make::run(target),
-            Commands::Setup {} => setup::run(),
-            Commands::Status {} => status::run(),
-        }
+    CONF.merge_env()?;
+    let cli = Command::new("fontship").version(*VERSION);
+    let cli = Cli::augment_args(cli);
+    let matches = cli.get_matches();
+    let args = Cli::from_arg_matches(&matches).expect("Unable to parse arguments");
+    CONF.merge_args(&args)?;
+    fontship::show_welcome();
+    let subcommand = Commands::from_arg_matches(&matches)?;
+    let ret = match subcommand {
+        Commands::Make { target } => make::run(target),
+        Commands::Setup {} => setup::run(),
+        Commands::Status {} => status::run(),
     };
     fontship::show_outro();
     ret
