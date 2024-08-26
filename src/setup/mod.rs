@@ -3,7 +3,7 @@ use crate::*;
 
 use colored::Colorize;
 use git2::{Repository, Status};
-use git_warp_time::reset_mtime;
+use git_warp_time::reset_mtimes;
 use std::io::prelude::*;
 use std::sync::{Arc, RwLock};
 use std::{fs, io, path};
@@ -20,7 +20,9 @@ pub fn run() -> Result<()> {
             true => {
                 regen_gitignore(get_repo()?)?;
                 configure_short_shas(get_repo()?)?;
-                warp_time(get_repo()?)?;
+                if is_deep()? {
+                    warp_time(get_repo()?)?;
+                }
                 Ok(())
             }
             false => Err(Box::new(io::Error::new(
@@ -86,7 +88,14 @@ pub fn is_repo() -> Result<bool> {
     Ok(ret)
 }
 
-/// Are we not in the CaSILE source repo?
+/// Is this repo a deep clone?
+pub fn is_deep() -> Result<bool> {
+    let ret = !get_repo()?.is_shallow();
+    display_check("setup-is-deep", ret);
+    Ok(ret)
+}
+
+/// Are we not in the Fontship source repo?
 pub fn is_not_fontship_source() -> Result<bool> {
     let repo = get_repo()?;
     let workdir = repo.workdir().unwrap();
@@ -165,12 +174,13 @@ fn warp_time(repo: Repository) -> Result<()> {
     let opts = git_warp_time::Options::new();
     let text = LocalText::new("setup-warp-time").fmt();
     eprintln!("{} {}", "┠┄".cyan(), text);
-    let files = reset_mtime(repo, opts)?;
+    let files = reset_mtimes(repo, opts)?;
     match CONF.get_bool("verbose")? {
         true => {
             for file in files.iter() {
+                let path = file.clone().into_os_string().into_string().unwrap();
                 let text = LocalText::new("setup-warp-time-file")
-                    .arg("path", file.white().bold())
+                    .arg("path", path.white().bold())
                     .fmt();
                 eprintln!("{} {}", "┠┄".cyan(), text);
             }

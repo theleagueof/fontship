@@ -32,11 +32,11 @@ unic-langid = "0.9.0"
   features = [ "derive", "wrap_help" ]
 
   [dependencies.git2]
-  version = "0.13.25"
+  version = "0.19"
   default-features = false
 
   [dependencies.git-warp-time]
-  version = "0.4.4"
+  version = "0.8"
   default-features = false
 
   [dependencies.Inflector]
@@ -54,6 +54,7 @@ version = "0.2"
 [build-dependencies.clap]
 version = "4.5"
 features = [ "derive" ]
+
 [build-dependencies.clap_complete]
 version = "4.5"
 
