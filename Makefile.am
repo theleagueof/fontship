@@ -112,13 +112,15 @@ ruff-format:
 RELTYPE ?=
 
 tagrelease:
-	test -z $$($(GIT) tag --points-at HEAD) || \
-	$(GIT) diff-index --quiet --cached HEAD && \
-	$(GIT) diff-files --quiet && \
-	$(NPM) run release --preMajor $(and $(RELTYPE),--release-as $(RELTYPE))
+	test -z $$($(GIT) tag --points-at HEAD) || exit 0 # end if we are already on a release tag
+	$(GIT) diff-index --quiet --cached HEAD || exit 1 # die if anything staged but not committed
+	$(GIT) diff-files --quiet || exit 1 # die if any tracked files have unstagged changes
+	$(NPM) run release -- --preMajor $(and $(RELTYPE),--release-as $(RELTYPE))
+
+prerelease: test docs update_libtexpdf
 
 release-preview:
-	$(NPM) run release --preMajor --dry-run $(and $(RELTYPE),--release-as $(RELTYPE))
+	$(NPM) run release -- --preMajor --dry-run $(and $(RELTYPE),--release-as $(RELTYPE))
 
 release: tagrelease
 

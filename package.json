@@ -4,8 +4,10 @@
   "description": "A font development toolkit and collaborative work flow",
   "main": "fontship",
   "scripts": {
-    "release": "standard-version",
-    "prepare": "husky install"
+    "test": "make test",
+    "lint": "make lint",
+    "release": "commit-and-tag-version",
+    "prepare": "husky"
   },
   "repository": {
     "type": "git",
@@ -18,21 +20,22 @@
   },
   "homepage": "https://github.com/theleagueof/fontship",
   "devDependencies": {
-    "@commitlint/cli": "^12.1.4",
-    "@commitlint/config-conventional": "^12.1.4",
-    "@commitlint/prompt": "^12.1.4",
-    "@iarna/toml": "2.2.5",
-    "commitizen": "^4.2.3",
-    "conventional-changelog-cli": "^2.1.1",
-    "husky": "^6.0.0",
-    "standard-version": "^9.3.0"
+    "@commitlint/cli": "^19.3",
+    "@commitlint/config-conventional": "^19.2",
+    "@commitlint/prompt": "^19.3",
+    "@iarna/toml": "^2.2",
+    "commitizen": "^4.3",
+    "conventional-changelog-cli": "^5.0",
+    "husky": "^9.0",
+    "commit-and-tag-version": "^12.4",
+    "yaml": "^2.4"
   },
   "config": {
     "commitizen": {
       "path": "@commitlint/prompt"
     }
   },
-  "standard-version": {
+  "commit-and-tag-version": {
     "bumpFiles": [
       {
         "filename": "action.yml",
@@ -87,7 +90,6 @@
         "type": "test",
         "hidden": true
       }
-    ],
-    "preset": "conventionalcommits"
+    ]
   }
 }

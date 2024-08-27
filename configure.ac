@@ -59,6 +59,7 @@ AM_COND_IF([DEPENDENCY_CHECKS], [
     AM_COND_IF([DEVELOPER_MODE], [
         QUE_PROGVAR([checkmake])
         QUE_PROGVAR([docker])
+        QUE_PROGVAR([npm])
         QUE_PROGVAR([ruff])
         QUE_PROGVAR([tr])
     ])
