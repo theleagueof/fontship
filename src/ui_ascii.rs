@@ -119,11 +119,7 @@ pub struct AsciiJobStatus {
 impl AsciiJobStatus {
     fn new(target: MakeTarget) -> Self {
         if !CONF.get_bool("passthrough").unwrap() {
-            // Without this, copying the string in the terminal as a word brings a U+2069 with it
-            // c.f. https://github.com/XAMPPRocky/fluent-templates/issues/72
-            let mut printable_target: String = target.to_string();
-            printable_target.push(' ');
-            let printable_target = style(printable_target).white().bold();
+            let printable_target = style(target.to_string()).white().bold();
             let msg = LocalText::new("make-report-start")
                 .arg("target", printable_target)
                 .fmt();
@@ -147,7 +143,7 @@ impl JobStatus for AsciiJobStatus {
     fn dump(&self) {
         if !CONF.get_bool("passthrough").unwrap() {
             let start = LocalText::new("make-backlog-start")
-                .arg("target", self.target.clone())
+                .arg("target", self.target.to_string())
                 .fmt();
             println!("{}{start}", style("----- ").cyan());
         }
@@ -173,12 +169,7 @@ impl JobStatus for AsciiJobStatus {
         if CONF.get_bool("passthrough").unwrap() {
             return;
         }
-        // Without this, copying the string in the terminal as a word brings a U+2069 with it
-        // c.f. https://github.com/XAMPPRocky/fluent-templates/issues/72
-        let mut printable_target: String = self.target.to_string();
-        printable_target.push(' ');
-        let target = printable_target;
-        let target = style(target).white().bold();
+        let target = style(self.target.to_string()).white().bold();
         let msg = LocalText::new("make-report-pass")
             .arg("target", target)
             .fmt();
@@ -189,11 +180,7 @@ impl JobStatus for AsciiJobStatus {
         if CONF.get_bool("passthrough").unwrap() {
             return;
         }
-        // Without this, copying the string in the terminal as a word brings a U+2069 with it
-        let mut printable_target: String = self.target.to_string();
-        printable_target.push(' ');
-        let target = printable_target;
-        let target = style(target).white().bold();
+        let target = style(self.target.to_string()).white().bold();
         let msg = LocalText::new("make-report-fail")
             .arg("target", target)
             .arg("code", code)

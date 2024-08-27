@@ -145,6 +145,7 @@ impl Iterator for BundleIter {
     fn next(&mut self) -> Option<Self::Item> {
         let locale = self.locales.next()?;
         let mut bundle = FluentBundle::new(vec![locale.clone()]);
+        bundle.set_use_isolating(false);
         let mut res_path_scheme = PathBuf::new();
         res_path_scheme.push("{locale}");
         res_path_scheme.push("{res_id}");

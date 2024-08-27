@@ -241,13 +241,9 @@ impl std::ops::Deref for IndicatifJobStatus {
 impl IndicatifJobStatus {
     // pub fn new(ui: &IndicatifInterface, mut target: String) -> Self {
     pub fn new(subcommand: &IndicatifSubcommandStatus, target: MakeTarget) -> Self {
-        // Without this, copying the string in the terminal as a word brings a U+2069 with it
-        // c.f. https://github.com/XAMPPRocky/fluent-templates/issues/72
-        let mut printable_target: String = target.to_string();
-        printable_target.push(' ');
         let msg = style(
             LocalText::new("make-report-start")
-                .arg("target", style(printable_target).white().bold())
+                .arg("target", style(target.to_string()).white().bold())
                 .fmt(),
         )
         .yellow()
@@ -282,7 +278,7 @@ impl JobStatus for IndicatifJobStatus {
     }
     fn dump(&self) {
         let start = LocalText::new("make-backlog-start")
-            .arg("target", self.target.clone())
+            .arg("target", self.target.to_string())
             .fmt();
         let start = format!("{} {start}", style(style("┄┄┄┄┄").cyan()));
         self.bar.println(start);
@@ -303,7 +299,7 @@ impl JobStatus for IndicatifJobStatus {
         self.bar.println(end);
     }
     fn pass_msg(&self) {
-        let target = self.target.clone();
+        let target = self.target.to_string();
         let allow_hide = !CONF.get_bool("debug").unwrap() && !CONF.get_bool("verbose").unwrap();
         if allow_hide && target.starts_with(".fontship") {
             // UI.remove(&self.bar);
@@ -322,7 +318,7 @@ impl JobStatus for IndicatifJobStatus {
     fn fail_msg(&self, code: u32) {
         let msg = style(
             LocalText::new("make-report-fail")
-                .arg("target", style(self.target.clone()).white().bold())
+                .arg("target", style(self.target.to_string()).white().bold())
                 .arg("code", style(code).white().bold())
                 .fmt(),
         )
