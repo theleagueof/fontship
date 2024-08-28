@@ -1,9 +1,8 @@
 # ![Fontship Logo](https://raw.githubusercontent.com/theleagueof/fontship/master/media/logo.svg)
 
-[![Rust Test Status](https://img.shields.io/github/workflow/status/theleagueof/fontship/Rust%20Test?label=Rust+Test&logo=Rust)](https://github.com/theleagueof/fontship/actions?workflow=Rust+Test)
-[![Docker Build Status](https://img.shields.io/docker/cloud/build/theleagueof/fontship?label=Docker&logo=Docker)](https://hub.docker.com/repository/docker/theleagueof/fontship/builds)
-[![Rust Lint Status](https://img.shields.io/github/workflow/status/theleagueof/fontship/Rust%20Lint?label=Rust+Lint&logo=Rust)](https://github.com/theleagueof/fontship/actions?workflow=Rust+Lint)
-[![GitHub Workflow Status](https://img.shields.io/github/workflow/status/theleagueof/fontship/Superlinter?label=Linter&logo=Github)](https://github.com/theleagueof/fontship/actions?workflow=Superlinter)<br />
+[![Rust Test Status](https://img.shields.io/github/actions/workflow/status/theleagueof/fontship/rust_test.yml?label=Rust+Test&logo=Rust)](https://github.com/theleagueof/fontship/actions?workflow=Rust+Test)
+[![Docker Build Status](https://img.shields.io/github/actions/workflow/status/theleagueof/fontship/deploy.yml?branch=master&label=Docker+Build&logo=Docker)](https://github.com/theleagueof/fontship/pkgs/container/fontship)
+[![Rust Lint Status](https://img.shields.io/github/actions/workflow/status/theleagueof/fontship/rust_lint.yml?label=Rust+Lint&logo=Rust)](https://github.com/theleagueof/fontship/actions?workflow=Rust+Lint)<br />
 [![Latest Release](https://img.shields.io/github/v/release/theleagueof/fontship?label=Release&logo=dependabot)](https://github.com/theleagueof/fontship/releases/latest)
 [![Chat on Gitter](https://img.shields.io/gitter/room/theleagueof/tooling?color=blue&label=Chat&logo=Gitter)](https://gitter.im/theleagueof/tooling?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![Conventional Commits](https://img.shields.io/badge/Conventional%20Commits-1.0.0-blue.svg)](https://conventionalcommits.org)
