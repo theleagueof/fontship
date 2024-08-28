@@ -64,8 +64,7 @@ RUN make
 RUN make check-version
 RUN make install DESTDIR=/pkgdir
 
-# Work around BuiltKit / buildx bug, they can’t copy to symlinks only dirs
-RUN mv /pkgdir/usr/local/{share/,}/man
+FROM base AS final
 
 # Same args as above, repeated because they went out of scope with FROM
 ARG REVISION
@@ -107,4 +106,4 @@ COPY --from=builder /src/lib/fontship-entry.zsh /usr/local/bin
 RUN fontship --version
 
 WORKDIR /data
-ENTRYPOINT ["fontship-entry.zsh"]
+ENTRYPOINT [ "fontship-entry.zsh" ]
