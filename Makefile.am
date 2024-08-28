@@ -125,7 +125,7 @@ release-preview:
 release: tagrelease
 
 export GHCR_REGISTRY ?= ghcr.io
-export GHCR_REPO ?= sile-typesetter/$(TRANSFORMED_PACKAGE_NAME)
+export GHCR_REPO ?= theleagueof/$(TRANSFORMED_PACKAGE_NAME)
 
 export DOCKER_REGISTRY ?= docker.io
 export DOCKER_REPO ?= theleagueof/$(TRANSFORMED_PACKAGE_NAME)
