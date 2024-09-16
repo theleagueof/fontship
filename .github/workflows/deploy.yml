@@ -19,20 +19,17 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - name: Fetch tags
+      - name: Install system dependencies
         run: |
-          git fetch --prune --tags ||:
-      - name: Setup system dependencies
-        run: |
+          sudo apt-get update
           sudo apt-get install clang mold
       - name: Configure
         run: |
           ./bootstrap.sh
           ./configure \
-            --without-{bash,fish,zsh}-completion-dir \
             --enable-developer-mode \
             --disable-dependency-checks \
-            CURL=curl DOCKER=docker DIFF=diff TR=tr SORT=sort
+            CHECKMAKE=false RUFF=false TYPOS=false
       - name: Publish Docker Image to GH Container Registry
         run: |
           make docker-build-push
