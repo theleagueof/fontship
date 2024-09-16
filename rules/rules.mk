@@ -62,7 +62,6 @@ isTagged := $(and $(findstring -r0-,$(GitVersion)),true)
 
 ifeq ($(DEBUG),true)
 .SHELLFLAGS += -x
-MAKEFLAGS += --no-silent
 FONTMAKEFLAGS ?= --verbose DEBUG
 FONTVFLAGS ?=
 PSAUTOHINTFLAGS ?= -vv --traceback
@@ -76,7 +75,6 @@ SFNT2WOFFFLAGS ?=
 UFONORMALIZERFLAGS ?= -v
 else
 ifeq ($(VERBOSE),true)
-MAKEFLAGS += --no-silent
 FONTMAKEFLAGS ?= --verbose INFO
 FONTVFLAGS ?=
 GFTOOLSFLAGS ?=
@@ -121,12 +119,10 @@ STATICOTFS = $(and $(STATICOTF),$(addsuffix .otf,$(INSTANCES)))
 STATICTTFS = $(and $(STATICTTF),$(addsuffix .ttf,$(INSTANCES)))
 STATICWOFFS = $(and $(STATICWOFF),$(addsuffix .woff,$(INSTANCES)))
 STATICWOFF2S = $(and $(STATICWOFF2),$(addsuffix .woff2,$(INSTANCES)))
-ifeq ($(isVariable),true)
 VARIABLEOTFS = $(and $(VARIABLEOTF),$(addsuffix -VF.otf,$(FamilyMasters)))
 VARIABLETTFS = $(and $(VARIABLETTF),$(addsuffix -VF.ttf,$(FamilyMasters)))
 VARIABLEWOFFS = $(and $(VARIABLEWOFF),$(addsuffix -VF.woff,$(FamilyMasters)))
 VARIABLEWOFF2S = $(and $(VARIABLEWOFF2),$(addsuffix -VF.woff2,$(FamilyMasters)))
-endif
 
 .PHONY: debug
 debug:

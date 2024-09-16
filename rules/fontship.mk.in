@@ -66,4 +66,6 @@ ZSH ?= @ZSH@
 .PHONY: default
 default: all
 
+NORMALIZE_MODE = false
+
 include $(FONTSHIPDIR)/rules/functions.mk
