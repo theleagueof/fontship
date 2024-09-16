@@ -1,6 +1,22 @@
 # Changelog
 
-All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
+All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
+
+## [0.9.0](https://github.com/theleagueof/fontship/compare/v0.8.2...v0.9.0) (2024-09-16)
+
+
+### New Features
+
+* **cli:** Overhaul UI, friendlier to both CI/scripts and interactive use ([517a46b](https://github.com/theleagueof/fontship/commit/517a46b73635785250369886aa16c2fbbb53fe16))
+* **rules:** Allow extension of rules *after* Fontship loads ([b7df1fd](https://github.com/theleagueof/fontship/commit/b7df1fd9030841e487d00e3cd24abc02c5fe8030))
+
+
+### Bug Fixes
+
+* **build:** Avoid the perceived need for an extra automake cycle in dist tarball ([7b72816](https://github.com/theleagueof/fontship/commit/7b7281640c8feb2ba204d381d27f1ba4cebc93bb))
+* **build:** Swap unportable ‘cp -bf’ for ‘install’ ([41ed637](https://github.com/theleagueof/fontship/commit/41ed637ade5e8dc55759e4113d75cdc76ae6e2c3))
+* **cli:** Avoid Unicode direction isolation marks in CLI output ([bbae252](https://github.com/theleagueof/fontship/commit/bbae2527a22518c780f922c07baa77f8689618eb))
+* **rules:** Use python protobuf, our protoc is too new for gftools ([fc0e4f2](https://github.com/theleagueof/fontship/commit/fc0e4f29b74aa2d90508b60f2a4f5b7a3584dd48))
 
 ### [0.8.2](https://github.com/theleagueof/fontship/compare/v0.8.1...v0.8.2) (2021-05-14)
 
