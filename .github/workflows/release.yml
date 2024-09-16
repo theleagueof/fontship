@@ -31,7 +31,7 @@ jobs:
           make dist
       - name: Publish Release
         uses: softprops/action-gh-release@v1
-        if: github.repository == 'tehleagueof/fontship' && startsWith(github.ref, 'refs/tags/v')
+        if: github.repository == 'theleagueof/fontship' && startsWith(github.ref, 'refs/tags/v')
         with:
           body_path: fontship-${{ env.VERSION }}.md
           files: |
