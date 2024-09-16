@@ -71,18 +71,18 @@ while true; do
       shift
       ;;
     'target='*)
-eval $1
-shift
+      eval $1
+      shift
       ;;
       # Bogus filler flag to force make to have at least one flag even if debug
       # isn't set hence forcing it to quote the actual shell code argument.
-      '-w')
+    '-w')
       shift
       ;;
     '_WRAPTARGET='*)
       final=${final##$1 }
       eval $1
-  shift
+      shift
       ;;
     *)
       break
