@@ -54,8 +54,8 @@ impl CONF {
         if args.passthrough {
             self.set_bool("passthrough", true)?;
         }
-        if let Some(project) = &args.project.to_str() {
-            self.set_str("project", project)?;
+        if let Some(path) = &args.project.to_str() {
+            self.set_str("project", path)?;
         }
         if let Some(language) = &args.language {
             self.set_str("language", language)?;
