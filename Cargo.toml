@@ -3,10 +3,11 @@ name = "fontship"
 version = "0.8.2"
 authors = [ "Caleb Maclennan <caleb@alerque.com>" ]
 edition = "2021"
+rust-version = "1.74.1"
 description = "A font development toolkit and collaborative work flow"
 homepage = "https://github.com/theleagueof/fontship"
 repository = "https://github.com/theleagueof/fontship"
-license = "AGPL-3"
+license = "AGPL-3.0"
 build = "build-aux/build.rs"
 
 [dependencies]
