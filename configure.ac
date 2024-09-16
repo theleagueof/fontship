@@ -5,32 +5,38 @@ AC_CONFIG_MACRO_DIR([build-aux])
 AM_INIT_AUTOMAKE([foreign tar-pax dist-zstd dist-zip no-dist-gzip color-tests subdir-objects])
 AM_SILENT_RULES([yes])
 
+# Load up re-usable m4 bits shared across Caleb's projects
 QUE_GIT_VERSION
 QUE_TRANSFORM_PACKAGE_NAME
 QUE_DEVELOPER_MODE
 QUE_DIST_CHECKSUMS
 
-# Build time deps
+# Check for and set variables for tooling used during our build process
 AC_PROG_AWK
-AC_PROG_SED
 AC_PROG_GREP
+AC_PROG_SED
 QUE_PROGVAR([cmp])
+QUE_PROGVAR([find])
+QUE_PROGVAR([jq])
+QUE_PROGVAR([sort])
 QUE_PROGVAR([xargs])
 
 QUE_RUST_BOILERPLATE
 QUE_DOCKER_BOILERPLATE
 
 AC_ARG_ENABLE([dependency-checks],
-              AS_HELP_STRING([--disable-dependency-checks],                                                                                                          │    │
-                      [Disable build tooling dependency checks]))                                                                                                    │    │
+              AS_HELP_STRING([--disable-dependency-checks],
+                      [Disable build tooling dependency checks]))
 AM_CONDITIONAL([DEPENDENCY_CHECKS], [test "x$enable_dependency_checks" != "xno"])
 
 
 AM_COND_IF([DEPENDENCY_CHECKS], [
 
     # Run time deps
+    AC_PROG_EGREP
+    AC_PROG_INSTALL
+    AC_PROG_MKDIR_P
     QUE_PROGVAR([babelfont])
-    QUE_PROGVAR([find])
     QUE_PROGVAR([fontmake])
     QUE_PROGVAR([fontv], [font-v])
     QUE_PROGVAR([gftools])
