@@ -35,4 +35,4 @@ define delline ?=
 endef
 
 # Useful for testing secondary expanstions in dependencies
-ifTrue ?= $(and $1,$2)
+ifTrue ?= $(and $(filter true,$1),$2)

@@ -60,6 +60,10 @@ INSTANCES ?= $(foreach FamilyName,$(FamilyNames),$(foreach STYLE,$(FontInstances
 
 isTagged := $(and $(findstring -r0-,$(GitVersion)),true)
 
+DEBUG ?=
+VERBOSE ?=
+QUIET ?=
+
 ifeq ($(DEBUG),true)
 .SHELLFLAGS += -x
 FONTMAKEFLAGS ?= --verbose DEBUG
@@ -171,7 +175,7 @@ _gha:
 	echo "::set-output name=DISTDIR::$(DISTDIR)"
 
 .PHONY: all
-all: fonts $(and $(DEBUG),debug)
+all: fonts $(call ifTrue,$(DEBUG),debug)
 
 .PHONY: clean
 clean:
