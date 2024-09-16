@@ -393,3 +393,13 @@ install-local-otf: otf
 install-local-ttf: ttf
 	$(and $(STATICTTFS),install -Dm644 -t "$${HOME}/.local/share/fonts/TTF/" $(STATICTTFS))
 	$(and $(VARIABLETTFS),install -Dm644 -t "$${HOME}/.local/share/fonts/variable/" $(VARIABLETTFS))
+
+POSTFONTSHIPEVAL ?=
+ifneq (,$(POSTFONTSHIPEVAL))
+$(eval $(POSTFONTSHIPEVAL))
+endif
+
+POSTFONTSHIPINCLUDE ?=
+ifneq (,$(POSTFONTSHIPINCLUDE))
+-include $(POSTFONTSHIPINCLUDE)
+endif
