@@ -15,7 +15,7 @@ RUN pacman-key --recv-keys 63CC496475267693 && pacman-key --lsign-key 63CC496475
 # this as a separate layer because it saves time for local builds. Incrementing
 # this when pushing dependency updates to Caleb's Arch user repository or just
 # when the remote Docker Hub builds die should be enough.
-ARG DOCKER_HUB_CACHE=1
+ARG DOCKER_HUB_CACHE=2
 
 ARG RUNTIME_DEPS
 
