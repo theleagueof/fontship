@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.9.4](https://github.com/theleagueof/fontship/compare/v0.9.3...v0.9.4) (2024-09-19)
+
+
+### Bug Fixes
+
+* **docker:** Supply stat to Docker entry point for UID detection ([30377dc](https://github.com/theleagueof/fontship/commit/30377dcb3bde30c936228f79ace51e1899b57c09))
+
 ## [0.9.3](https://github.com/theleagueof/fontship/compare/v0.9.2...v0.9.3) (2024-09-19)
 
 
