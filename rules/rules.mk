@@ -171,9 +171,10 @@ force:;
 .PHONY: _gha
 _gha:
 	exec >> $${GITHUB_OUTPUT:-/dev/stdout}
-	echo "PROJECT=$(PROJECT)"
+	echo "family-names=$(FamilyNames)"
 	echo "font-version=$(FontVersion)"
 	echo "DISTDIR=$(DISTDIR)"
+	echo "PROJECT=$(PROJECT)"
 
 .PHONY: all
 all: fonts $(call ifTrue,$(DEBUG),debug)

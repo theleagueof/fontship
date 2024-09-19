@@ -1,12 +1,14 @@
 name: Fontship
 description: A font development toolkit and collaborative work flow
 outputs:
-  family-name:
-    description: Font Family Name
+  family-names:
+    description: Font Family Names
   font-version:
     description: Font Version
   DISTDIR:
     description: Directory name with font family and detailed git version string
+  PROJECT:
+    description: Project Name
 runs:
   using: docker
   image: docker://ghcr.io/theleagueof/fontship:v0.9.5
