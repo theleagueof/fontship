@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.9.5](https://github.com/theleagueof/fontship/compare/v0.9.4...v0.9.5) (2024-09-19)
+
+
+### Bug Fixes
+
+* **docker:** Rebuild Docker images with updated gftools dependencies ([c41be73](https://github.com/theleagueof/fontship/commit/c41be731ffbafe3952ff6bfa3ff3433073ffabd5))
+
 ## [0.9.4](https://github.com/theleagueof/fontship/compare/v0.9.3...v0.9.4) (2024-09-19)
 
 
