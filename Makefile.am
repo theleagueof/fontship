@@ -43,6 +43,11 @@ include $(top_srcdir)/aminclude.am
 
 CLEANFILES += $(bin_PROGRAMS)
 
+scriptlibdir = $(datadir)/lib
+dist_scriptlib_SCRIPTS = \
+	lib/fontship-entry.zsh \
+	lib/make-shell.zsh
+
 .PHONY: clean-embedded-assets
 clean-embedded-assets:
 	[[ ! -e .git  ]] || $(GIT) clean -dxf assets
