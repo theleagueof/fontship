@@ -170,9 +170,10 @@ force:;
 
 .PHONY: _gha
 _gha:
-	echo "::set-output name=PROJECT::$(PROJECT)"
-	echo "::set-output name=font-version::$(FontVersion)"
-	echo "::set-output name=DISTDIR::$(DISTDIR)"
+	exec >> $${GITHUB_OUTPUT:-/dev/stdout}
+	echo "PROJECT=$(PROJECT)"
+	echo "font-version=$(FontVersion)"
+	echo "DISTDIR=$(DISTDIR)"
 
 .PHONY: all
 all: fonts $(call ifTrue,$(DEBUG),debug)

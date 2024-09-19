@@ -12,7 +12,6 @@ runs:
   image: docker://ghcr.io/theleagueof/fontship:v0.9.5
   args:
     - make
-    - _gha
     - dist
 branding:
   icon: truck
