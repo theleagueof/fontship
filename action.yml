@@ -9,7 +9,7 @@ outputs:
     description: Directory name with font family and detailed git version string
 runs:
   using: docker
-  image: docker://ghcr.io/theleagueof/fontship:v0.9.2
+  image: docker://ghcr.io/theleagueof/fontship:v0.9.3
   args:
     - make
     - _gha

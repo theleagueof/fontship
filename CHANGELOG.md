@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.9.3](https://github.com/theleagueof/fontship/compare/v0.9.2...v0.9.3) (2024-09-19)
+
+
+### Bug Fixes
+
+* **build:** Inform autotools of the new location for packaged shell scripts ([0d15eb8](https://github.com/theleagueof/fontship/commit/0d15eb8b4f32363d8f197be238abf3800246a6f8))
+
 ## [0.9.2](https://github.com/theleagueof/fontship/compare/v0.9.1...v0.9.2) (2024-09-17)
 
 ## [0.9.1](https://github.com/theleagueof/fontship/compare/v0.9.0...v0.9.1) (2024-09-16)
