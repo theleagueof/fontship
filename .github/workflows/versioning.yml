@@ -2,7 +2,7 @@ name: Versioning
 
 on:
   release:
-    types: [ released ]
+    types: [ created, released, published, edited ]
 
 jobs:
   actions-tagger:
