@@ -1,5 +1,10 @@
 name: Fontship
 description: A font development toolkit and collaborative work flow
+inputs:
+  args:
+    description: Arguments passed to CLI; defaults to ‘make’.
+    required: false
+    default: make
 outputs:
   family-names:
     description: Font Family Names
@@ -12,9 +17,7 @@ outputs:
 runs:
   using: docker
   image: docker://ghcr.io/theleagueof/fontship:v0.9.5
-  args:
-    - make
-    - dist
+  args: ${{ inputs.args }}
 branding:
   icon: truck
   color: green
