@@ -1,6 +1,6 @@
 {
   "name": "fontship",
-  "version": "0.9.5",
+  "version": "0.9.6",
   "description": "A font development toolkit and collaborative work flow",
   "main": "fontship",
   "scripts": {

@@ -16,7 +16,7 @@ outputs:
     description: Project Name
 runs:
   using: docker
-  image: docker://ghcr.io/theleagueof/fontship:v0.9.5
+  image: docker://ghcr.io/theleagueof/fontship:v0.9.6
   args: ${{ inputs.args }}
 branding:
   icon: truck

@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.9.6](https://github.com/theleagueof/fontship/compare/v0.9.5...v0.9.6) (2024-09-20)
+
+
+### New Features
+
+* **actions:** Make it easier to override input arguments from workflows ([8150a90](https://github.com/theleagueof/fontship/commit/8150a90db09c9f78d707b75354947ee404f25206))
+* **rules:** Output detected family names to GitHub Actions ([73cc0c6](https://github.com/theleagueof/fontship/commit/73cc0c6877dabc590352d69bf5a1789e5cf0c201))
+
+
+### Bug Fixes
+
+* **rules:** Update method of passing GitHub CI variables to current API ([fe277e4](https://github.com/theleagueof/fontship/commit/fe277e4ca72edc59a06c99e653bd52b60c0979f3))
+
 ## [0.9.5](https://github.com/theleagueof/fontship/compare/v0.9.4...v0.9.5) (2024-09-19)
 
 
