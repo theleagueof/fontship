@@ -368,7 +368,7 @@ $(DISTDIR):
 	mkdir -p $@
 
 .PHONY: dist
-dist: $(DISTDIR).zip $(DISTDIR).tar.xz
+dist: $(DISTDIR).zip $(DISTDIR).tar.zst
 
 $(DISTDIR).tar.bz2 $(DISTDIR).tar.gz $(DISTDIR).tar.xz $(DISTDIR).zip $(DISTDIR).tar.zst: install-dist
 	bsdtar -acf $@ $(DISTDIR)
