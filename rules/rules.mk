@@ -370,8 +370,11 @@ $(DISTDIR):
 .PHONY: dist
 dist: $(DISTDIR).zip $(DISTDIR).tar.zst
 
-$(DISTDIR).tar.bz2 $(DISTDIR).tar.gz $(DISTDIR).tar.xz $(DISTDIR).zip $(DISTDIR).tar.zst: install-dist
+$(DISTDIR).tar.bz2 $(DISTDIR).tar.gz $(DISTDIR).tar.xz $(DISTDIR).zip: install-dist
 	bsdtar -acf $@ $(DISTDIR)
+
+$(DISTDIR).tar.zst: install-dist
+	bsdtar --zstd --options zstd:compression-level=19 -cf $@ $(DISTDIR)
 
 _E = md txt markdown
 dist_doc_DATA ?= $(wildcard $(foreach B,readme README contributors CONTRIBUTORS fontlog FONTLOG,$(foreach E,$(_E),$(B).$(E))))
