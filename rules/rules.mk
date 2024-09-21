@@ -363,12 +363,13 @@ $(BUILDDIR)/last-commit: $$(forceiftagchange) | $(BUILDDIR)
 	echo $(GitVersion) > $@
 
 DISTDIR ?= $(PROJECT)-$(if $(isTagged),$(FontVersion),$(GitVersion))
+DISTEXT ?= zip tar.zst
 
 $(DISTDIR):
 	mkdir -p $@
 
 .PHONY: dist
-dist: $(DISTDIR).zip $(DISTDIR).tar.zst
+dist: $(foreach EXT,$(DISTEXT),$(DISTDIR).$(EXT))
 
 $(DISTDIR).tar.bz2 $(DISTDIR).tar.gz $(DISTDIR).tar.xz $(DISTDIR).zip: install-dist
 	bsdtar -acf $@ $(DISTDIR)
