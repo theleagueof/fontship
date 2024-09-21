@@ -14,7 +14,7 @@
     "url": "git+https://github.com/theleagueof/fontship.git"
   },
   "author": "Caleb Maclennan <caleb@alerque.com>",
-  "license": "AGPL-3.0",
+  "license": "GPL-3.0-only",
   "bugs": {
     "url": "https://github.com/theleagueof/fontship/issues"
   },

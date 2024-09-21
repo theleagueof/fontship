@@ -94,7 +94,7 @@ RUN ln -s /usr/{,/local}/lib/lua && ln -s /usr/{,local/}share/lua
 LABEL org.opencontainers.image.title="Fontship"
 LABEL org.opencontainers.image.description="A containerized version of Fontship, a font development toolkit and collaborative work flow"
 LABEL org.opencontainers.image.authors="Caleb Maclennan <caleb@alerque.com>"
-LABEL org.opencontainers.image.licenses="AGPL-3.0"
+LABEL org.opencontainers.image.licenses="GPL-3.0-only"
 LABEL org.opencontainers.image.url="https://github.com/theleagueof/fontship/pkgs/container/fontship"
 LABEL org.opencontainers.image.source="https://github.com/theleagueof/fontship"
 LABEL org.opencontainers.image.version="v$VERSION"
