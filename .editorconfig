@@ -6,10 +6,16 @@ insert_final_newline = true
 charset = utf-8
 trim_trailing_whitespace = true
 
-[{*.py,fontship.in}]
+[*.md]
+trim_trailing_whitespace = false
+
+[{Makefile*,*.mk,*.mk.in}]
+indent_style = tab
+indent_size = 4
+
+[{*.py,*.py.in}]
 indent_style = space
 indent_size = 4
 
-[{*.mk,Makefile*}]
-indent_style = tab
+[*.rs]
 indent_size = 4
