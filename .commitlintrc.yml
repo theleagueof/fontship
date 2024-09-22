@@ -21,15 +21,13 @@ rules:
   scope-enum:
   - 1
   - 'always'
-  - - actions
-    - azure
-    - build
-    - cirrus
+  - - build
     - cli
     - debug
     - deps
     - docker
-    - github
+    - gha
+    - glc
     - glyphs
     - i18n
     - manpage
@@ -41,7 +39,6 @@ rules:
     - sfd
     - shaper
     - tooling
-    - travis
     - ttf
     - ufo
     - woff
