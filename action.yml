@@ -17,8 +17,10 @@ outputs:
 runs:
   using: docker
   image: docker://ghcr.io/theleagueof/fontship:v0.9.6
+  entrypoint: sh
   args:
-    - ${{ inputs.args }}
+    - -c
+    - fontship ${{ inputs.args }}
 branding:
   icon: truck
   color: green
