@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: © 2020 Caleb Maclennan <caleb@alerque.com>
+# SPDX-License-Identifier: GPL-3.0-only
+
 # Utility variables for later, http://blog.jgc.org/2007/06/escaping-comma-and-space-in-gnu-make.html
 , := ,
 empty :=

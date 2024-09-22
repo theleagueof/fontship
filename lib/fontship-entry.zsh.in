@@ -1,4 +1,6 @@
 #!@ZSH@
+# SPDX-FileCopyrightText: © 2020 Caleb Maclennan <caleb@alerque.com>
+# SPDX-License-Identifier: GPL-3.0-only
 
 # This entire entry point script is only necessary because GitHub
 # actions insists on checking out the project as a non-privileged user,

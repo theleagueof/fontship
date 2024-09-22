@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: © 2020 Caleb Maclennan <caleb@alerque.com>
+# SPDX-License-Identifier: GPL-3.0-only
+
 sfdNormalize ?= $(SFDNORMALIZE) $(SFDNORMALIZEFLAGS) "$1" "$2"
 
 $(SOURCEDIR)/%.sfd: $$(call ifTrue,$$(NORMALIZE_MODE),force) | $(BUILDDIR)

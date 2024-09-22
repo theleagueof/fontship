@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: © 2020 Caleb Maclennan <caleb@alerque.com>
+// SPDX-License-Identifier: GPL-3.0-only
+
 #![allow(clippy::trivial_regex)]
 #![allow(clippy::borrowed_box)]
 

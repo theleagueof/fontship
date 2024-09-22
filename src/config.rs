@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: © 2020 Caleb Maclennan <caleb@alerque.com>
+// SPDX-License-Identifier: GPL-3.0-only
+
 use crate::cli::Cli;
 use crate::Result;
 

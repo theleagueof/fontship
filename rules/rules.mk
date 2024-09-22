@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: © 2020 Caleb Maclennan <caleb@alerque.com>
+# SPDX-License-Identifier: GPL-3.0-only
+
 # If called using the fontship CLI the init rules will be sourced before any
 # project specific ones, then everything will be sourced in order. If people do
 # a manual include to rules they may or may not know to source the

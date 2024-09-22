@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: © 2020 Caleb Maclennan <caleb@alerque.com>
+// SPDX-License-Identifier: GPL-3.0-only
+
 use clap::Command;
 use clap_complete::generator::generate_to;
 use clap_complete::shells::{Bash, Elvish, Fish, PowerShell, Zsh};

@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: © 2020 Caleb Maclennan <caleb@alerque.com>
+// SPDX-License-Identifier: GPL-3.0-only
+
 use crate::i18n::LocalText;
 use crate::ui_ascii::AsciiInterface;
 use crate::ui_indicatif::IndicatifInterface;

@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: © 2020 Caleb Maclennan <caleb@alerque.com>
+# SPDX-License-Identifier: GPL-3.0-only
+
 ufoNormalize ?= $(UFONORMALIZER) $(UFONORMALIZERFLAGS) "$1" -o "$2"
 expandUFOParts = $(shell $(_ENV) $(FIND) "$1" -type f 2> /dev/null)
 ufoParts = $(call expandUFOParts,$(patsubst %-normalized.ufo,%.ufo,$(patsubst $(BUILDDIR)/%,$(SOURCEDIR)/%,$@)))

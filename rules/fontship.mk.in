@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: © 2020 Caleb Maclennan <caleb@alerque.com>
+# SPDX-License-Identifier: GPL-3.0-only
+
 # Mix output messages from parallel targets, will be collated by CLI
 MAKEFLAGS += --output-sync=none
 # Default to not echoing commands before running
