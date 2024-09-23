@@ -16,7 +16,7 @@ outputs:
     description: Project Name
 runs:
   using: docker
-  image: docker://ghcr.io/theleagueof/fontship:v0.9.6
+  image: docker://ghcr.io/theleagueof/fontship:v0.10.0
   entrypoint: sh
   args:
     - -c

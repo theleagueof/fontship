@@ -2,6 +2,29 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.10.0](https://github.com/theleagueof/fontship/compare/v0.9.6...v0.10.0) (2024-09-23)
+
+
+### ⚠ BREAKING CHANGES
+
+* Everything is relicensed. All previous contributors
+signed off ages ago so old code can now be used under either terms and
+future contributions will be only under the GPL.
+
+### New Features
+
+* **rules:** Make output compression more easily configurable ([72c5ea7](https://github.com/theleagueof/fontship/commit/72c5ea7222e2a63de72362781fb20d65b24e2f88))
+
+
+### Bug Fixes
+
+* **action:** Args passed to Docker must be an array even if all you want is a string ([a1cabd2](https://github.com/theleagueof/fontship/commit/a1cabd2c92b0147ab6e9ea732d7a9a377b148c7f))
+
+
+### Behind the Scenes
+
+* Relicense AGPL → GPL ([f098f20](https://github.com/theleagueof/fontship/commit/f098f209a041f7a1b7759f333baa49e2a8931488)), closes [#35](https://github.com/theleagueof/fontship/issues/35)
+
 ## [0.9.6](https://github.com/theleagueof/fontship/compare/v0.9.5...v0.9.6) (2024-09-20)
 
 
