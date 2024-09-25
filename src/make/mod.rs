@@ -48,12 +48,6 @@ pub fn run(target: Vec<String>) -> Result<()> {
     if is_glc {
         targets.push(String::from("_glc"));
     }
-    if (is_gha || is_glc)
-        && targets.first().unwrap() != "debug"
-        && targets.first().unwrap() != ".gitignore"
-    {
-        targets.push(String::from("install-dist"));
-    }
     let mut process = Exec::cmd("make")
         .args(&makeflags)
         .args(&makefiles)
