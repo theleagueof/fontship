@@ -73,3 +73,14 @@ version = "4.5"
 version = "8.3"
 default-features = false
 features = ["build", "cargo", "git", "gitoxide"]
+
+[package.metadata.typos.default]
+locale = "en-us"
+
+[package.metadata.typos.files]
+ignore-hidden = false
+extend-exclude = [
+  "/.git",
+  "CHANGELOG.md",
+  "build-aux/ax*",
+]
