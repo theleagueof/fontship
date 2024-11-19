@@ -64,10 +64,12 @@ AM_COND_IF([DEPENDENCY_CHECKS], [
 
     # Developer tooling deps
     AM_COND_IF([DEVELOPER_MODE], [
+        QUE_PROGVAR([cargosetversion], [cargo-set-version])
         QUE_PROGVAR([checkmake])
         QUE_PROGVAR([docker])
         QUE_PROGVAR([npm])
         QUE_PROGVAR([ruff])
+        QUE_PROGVAR([taplo])
         QUE_PROGVAR([tr])
     ])
 ])
