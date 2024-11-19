@@ -90,7 +90,7 @@ $ make docker
 
 ### System Setup
 
-If you use Arch Linux, you can install [this AUR package](https://aur.archlinux.org/packages/fontship) (prebuilt in [this repostiory](https://wiki.archlinux.org/index.php/Unofficial_user_repositories#alerque)).
+If you use Arch Linux, you can install [this AUR package](https://aur.archlinux.org/packages/fontship) (prebuilt in [this repository](https://wiki.archlinux.org/index.php/Unofficial_user_repositories#alerque)).
 
 Otherwise to install and use locally from source, you’ll need some dependencies:
 
@@ -99,7 +99,7 @@ Otherwise to install and use locally from source, you’ll need some dependencie
 * GNU `make` (4.2+) with corresponding autoconf tools,
 * Python 3 plus assorted modules, see *requirements.txt* file,
 * Rust tools including `cargo` and `rustc` to build the CLI,
-* And a handfull of other font related CLI utilities, namely: `sfnt2woff-zopfli`, `psautohint`, `ttfautohint`, and `woff2_compress`.
+* And a handful of other font related CLI utilities, namely: `sfnt2woff-zopfli`, `psautohint`, `ttfautohint`, and `woff2_compress`.
 
 To install the software to your computer, either clone this repository and run `./bootstrap.sh` or [download and extract the latest release](https://github.com/theleagueof/fontship/releases), then run:
 
@@ -152,4 +152,4 @@ $ fontship make dist
 ### Versioning
 
 The font version setting in all generated fonts is determined by the tag on the git repository.
-Version tags should conform to the `MAJOR.MINOR` format descriped by [openfv](https://github.com/openfv/openfv#3-version-number-semantics).
+Version tags should conform to the `MAJOR.MINOR` format described by [openfv](https://github.com/openfv/openfv#3-version-number-semantics).

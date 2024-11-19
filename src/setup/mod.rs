@@ -55,7 +55,7 @@ pub fn is_setup() -> Result<bool> {
             results.write().unwrap().push(ret);
         });
         s.spawn(|_| {
-            let ret = is_make_exectuable().unwrap();
+            let ret = is_make_executable().unwrap();
             results.write().unwrap().push(ret);
         });
     });
@@ -125,7 +125,7 @@ pub fn is_writable() -> Result<bool> {
 }
 
 /// Check if we can execute the system's `make` utility
-pub fn is_make_exectuable() -> Result<bool> {
+pub fn is_make_executable() -> Result<bool> {
     let status = FONTSHIPUI.new_check("setup-is-make-executable");
     let ret = Exec::cmd("make")
         .arg("-v")

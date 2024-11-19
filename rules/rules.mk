@@ -279,7 +279,7 @@ $(BUILDDIR):
 	mkdir -p $@
 
 ifeq ($(PROJECT),Data)
-$(warning We cannot read the Project’s name inside Docker. Please manually specify it by adding PROJECT='Name' as an agument to your command invocation)
+$(warning We cannot read the Project’s name inside Docker. Please manually specify it by adding PROJECT='Name' as an argument to your command invocation)
 endif
 
 -include $(FONTSHIPDIR)/rules/$(CANONICAL).mk

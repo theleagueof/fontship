@@ -22,12 +22,12 @@ $(shell rm -f $(_TMP))
 %.designspace: %.glyphs
 	echo MM $@
 
-# Glyphs -> Varibale OTF
+# Glyphs -> Variable OTF
 
 $(BUILDDIR)/%-VF-variable.otf: $(SOURCEDIR)/%.glyphs | $(BUILDDIR)
 	$(FONTMAKE) $(FONTMAKEFLAGS) -g $< -o variable-cff2 --output-path $@
 
-# Glyphs -> Varibale TTF
+# Glyphs -> Variable TTF
 
 $(BUILDDIR)/%-VF-variable.ttf: $(SOURCEDIR)/%.glyphs | $(BUILDDIR)
 	$(FONTMAKE) $(FONTMAKEFLAGS) -g $< -o variable --output-path $@
