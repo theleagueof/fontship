@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.10.1](https://github.com/theleagueof/fontship/compare/v0.10.0...v0.10.1) (2025-01-25)
+
+
+### New Features
+
+* **deps:** Update git2 crate to enable build against libgit2-1.9 ([a42e03a](https://github.com/theleagueof/fontship/commit/a42e03a478bdced8cb39719830f48748e02cb7a0))
+
+
+### Bug Fixes
+
+* **build:** Set correct final permissions on intermediary shell completion artifacts ([7cee491](https://github.com/theleagueof/fontship/commit/7cee4915b5950da0e1e8cd39db20d3156978108c))
+* **gha:** Stop forcing all GH Action runs to install-dist ([319c56f](https://github.com/theleagueof/fontship/commit/319c56f942d796aa4c52bc6359e7e48bd1bdb3f9))
+
 ## [0.10.0](https://github.com/theleagueof/fontship/compare/v0.9.6...v0.10.0) (2024-09-23)
 
 
