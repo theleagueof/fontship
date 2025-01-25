@@ -20,15 +20,15 @@
   },
   "homepage": "https://github.com/theleagueof/fontship",
   "devDependencies": {
-    "@commitlint/cli": "^19.5",
-    "@commitlint/config-conventional": "^19.5",
-    "@commitlint/prompt": "^19.5",
+    "@commitlint/cli": "^19.6",
+    "@commitlint/config-conventional": "^19.6",
+    "@commitlint/prompt": "^19.7",
     "@iarna/toml": "^2.2",
     "commitizen": "^4.3",
     "conventional-changelog-cli": "^5.0",
-    "husky": "^9.9",
-    "commit-and-tag-version": "^12.4",
-    "yaml": "^2.5"
+    "husky": "^9.1",
+    "commit-and-tag-version": "^12.5",
+    "yaml": "^2.7"
   },
   "config": {
     "commitizen": {
