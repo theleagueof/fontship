@@ -36,7 +36,6 @@ AM_COND_IF([DEPENDENCY_CHECKS], [
     AC_PROG_EGREP
     AC_PROG_INSTALL
     AC_PROG_MKDIR_P
-    QUE_PROGVAR([babelfont])
     QUE_PROGVAR([fontmake])
     QUE_PROGVAR([fontv], [font-v])
     QUE_PROGVAR([gftools])
@@ -53,6 +52,7 @@ AM_COND_IF([DEPENDENCY_CHECKS], [
     QUE_PROGVAR([zsh])
 
     AM_PATH_PYTHON([3.6])
+    AX_PYTHON_MODULE(babelfont, true)
     AX_PYTHON_MODULE(cffsubr, true)
     AX_PYTHON_MODULE(defcon, true)
     AX_PYTHON_MODULE(pcpp, true)
