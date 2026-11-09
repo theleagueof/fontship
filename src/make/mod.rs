@@ -11,7 +11,7 @@ use regex::Regex;
 use std::io::prelude::*;
 use std::path::PathBuf;
 use std::{ffi::OsString, io};
-use subprocess::{Exec, ExitStatus, Redirection};
+use subprocess::{Exec, Redirection};
 
 // FTL: help-subcommand-make
 /// Build specified target(s)
@@ -89,8 +89,8 @@ pub fn run(target: Vec<String>) -> Result<()> {
     let workdir = repo.workdir().unwrap();
     process = process.cwd(workdir);
     let process = process.stderr(Redirection::Merge).stdout(Redirection::Pipe);
-    let mut popen = process.popen()?;
-    let buf = io::BufReader::new(popen.stdout.as_mut().unwrap());
+    let mut job = process.start()?;
+    let buf = io::BufReader::new(job.stdout.as_mut().unwrap());
     let seps = Regex::new(r"").unwrap();
     for line in buf.lines() {
         let text: &str =
@@ -170,23 +170,23 @@ pub fn run(target: Vec<String>) -> Result<()> {
             }
         }
     }
-    let status = popen.wait();
+    let status = job.wait();
     let ret = match status {
-        Ok(ExitStatus::Exited(code)) => match code {
-            0 => Ok(()),
-            1 => Err(Box::new(io::Error::new(
+        Ok(status) => match status.code() {
+            Some(0) => Ok(()),
+            Some(1) => Err(Box::new(io::Error::new(
                 io::ErrorKind::InvalidInput,
                 LocalText::new("make-error-unfinished").fmt(),
             ))),
-            2 => Err(Box::new(io::Error::new(
+            Some(2) => Err(Box::new(io::Error::new(
                 io::ErrorKind::InvalidInput,
                 LocalText::new("make-error-build").fmt(),
             ))),
-            3 => Err(Box::new(io::Error::new(
+            Some(3) => Err(Box::new(io::Error::new(
                 io::ErrorKind::InvalidInput,
                 LocalText::new("make-error-target").fmt(),
             ))),
-            137 => Err(Box::new(io::Error::new(
+            Some(137) => Err(Box::new(io::Error::new(
                 io::ErrorKind::InvalidInput,
                 LocalText::new("make-error-oom").fmt(),
             ))),
@@ -195,7 +195,7 @@ pub fn run(target: Vec<String>) -> Result<()> {
                 LocalText::new("make-error-unknown").fmt(),
             ))),
         },
-        _ => Err(Box::new(io::Error::new(
+        Err(_) => Err(Box::new(io::Error::new(
             io::ErrorKind::InvalidInput,
             LocalText::new("make-error").fmt(),
         ))),

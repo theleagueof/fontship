@@ -11,7 +11,7 @@ use git_warp_time::reset_mtimes;
 use std::io::prelude::*;
 use std::sync::{Arc, RwLock};
 use std::{fs, io, path};
-use subprocess::{Exec, NullFile, Redirection};
+use subprocess::{Exec, Redirection};
 
 // FTL: help-subcommand-setup
 /// Setup a font project for use with Fontship
@@ -129,8 +129,8 @@ pub fn is_make_executable() -> Result<bool> {
     let status = FONTSHIPUI.new_check("setup-is-make-executable");
     let ret = Exec::cmd("make")
         .arg("-v")
-        .stdout(NullFile)
-        .stderr(NullFile)
+        .stdout(Redirection::Null)
+        .stderr(Redirection::Null)
         .join()
         .is_ok();
     status.end(ret);
@@ -143,7 +143,7 @@ pub fn is_make_gnu() -> Result<bool> {
     let out = Exec::cmd("make")
         .arg("-v")
         .stdout(Redirection::Pipe)
-        .stderr(NullFile)
+        .stderr(Redirection::Null)
         .capture()?
         .stdout_str();
     let ret = out.starts_with("GNU Make 4.");
