@@ -25,8 +25,8 @@ define normalizeVersion ?=
 endef
 
 define abort_if_not_clean ?=
-	$(GIT) diff-index --quiet --cached HEAD -- $@ || exit 1 # die if anything is staged
-	$(GIT) diff-files --quiet -- $@ || exit 1 # die if unstaged changes
+	$(if $(FONTSHIP_GIT_VERSION),:,$(GIT) diff-index --quiet --cached HEAD -- $@ || exit 1 # die if anything is staged)
+	$(if $(FONTSHIP_GIT_VERSION),:,$(GIT) diff-files --quiet -- $@ || exit 1 # die if unstaged changes)
 endef
 
 define addline ?=
