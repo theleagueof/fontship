@@ -6,6 +6,7 @@ use crate::*;
 
 use git2::{DescribeFormatOptions, DescribeOptions};
 use regex::Regex;
+use std::fs;
 use std::path;
 
 // FTL: help-subcommand-status
@@ -98,6 +99,12 @@ pub fn get_rules() -> Result<Vec<path::PathBuf>> {
 
 /// Scan for sources
 pub fn get_sources() -> Result<Vec<path::PathBuf>> {
+    // If the git steps are bypassed via the environment, scan the
+    // filesystem instead of the git index, e.g. for a project directory
+    // which has no (staged) commits yet.
+    if std::env::var("FONTSHIP_GIT_VERSION").is_ok() {
+        return get_sources_fs();
+    }
     let repo = get_repo()?;
     let index = repo.index()?;
     let mut sources = vec![];
@@ -129,9 +136,38 @@ pub fn get_sources() -> Result<Vec<path::PathBuf>> {
     Ok(sources)
 }
 
+/// Scan the sourcedir on the filesystem for source files
+fn get_sources_fs() -> Result<Vec<path::PathBuf>> {
+    let sourcedir = CONF.get_string("sourcedir")?;
+    let sourcedir = path::Path::new(&sourcedir);
+    let mut sources = vec![];
+    if let Ok(entries) = fs::read_dir(sourcedir) {
+        for entry in entries {
+            let entry = entry?;
+            let name = entry.file_name().to_string_lossy().into_owned();
+            let p = entry.path();
+            let ext = path::Path::new(&name)
+                .extension()
+                .and_then(|e| e.to_str());
+            match ext {
+                Some("sfd") | Some("glyphs") | Some("designspace") if p.is_file() => {
+                    sources.push(p)
+                }
+                Some("ufo") if p.is_dir() => sources.push(p),
+                _ => {}
+            }
+        }
+    }
+    sources.dedup();
+    Ok(sources)
+}
+
 /// Figure out version string from repo tags
 pub fn get_git_version() -> String {
     let zero_version = String::from("0.000");
+    if let Ok(version) = std::env::var("FONTSHIP_GIT_VERSION") {
+        return version;
+    }
     let repo = get_repo().unwrap();
     let mut opts = DescribeOptions::new();
     opts.describe_tags().pattern("*[0-9].[0-9][0-9][0-9]");

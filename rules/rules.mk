@@ -61,7 +61,7 @@ VARIABLEWOFF2 ?= $(isVariable)
 
 INSTANCES ?= $(foreach FamilyName,$(FamilyNames),$(foreach STYLE,$(FontInstances),$(FamilyName)-$(STYLE)))
 
-isTagged := $(and $(findstring -r0-,$(GitVersion)),true)
+isTagged := $(if $(FONTSHIP_GIT_VERSION),true,$(and $(findstring -r0-,$(GitVersion)),true))
 
 DEBUG ?=
 VERBOSE ?=
@@ -188,7 +188,7 @@ all: fonts $(call ifTrue,$(DEBUG),debug)
 
 .PHONY: clean
 clean:
-	$(GIT) clean -dxf
+	$(if $(FONTSHIP_GIT_VERSION),$(RM) -rf $(BUILDDIR) $(DISTDIR) $(DISTDIR).*,$(GIT) clean -dxf)
 
 .PHONY: ufo
 ufo: $$(addsuffix .ufo,$$(INSTANCES))
@@ -365,8 +365,8 @@ endif
 
 forceiftagchange = $(shell $(_ENV) $(CMP) -s $@ - <<< "$(GitVersion)" || echo force)
 $(BUILDDIR)/last-commit: $$(forceiftagchange) | $(BUILDDIR)
-	$(GIT) update-index --refresh --ignore-submodules ||:
-	$(GIT) diff-index --quiet --cached HEAD -- $(SOURCES)
+	$(if $(FONTSHIP_GIT_VERSION),:,$(GIT) update-index --refresh --ignore-submodules ||:)
+	$(if $(FONTSHIP_GIT_VERSION),:,$(GIT) diff-index --quiet --cached HEAD -- $(SOURCES))
 	echo $(GitVersion) > $@
 
 DISTDIR ?= $(PROJECT)-$(if $(isTagged),$(FontVersion),$(GitVersion))
